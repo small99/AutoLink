@@ -1,0 +1,1279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordspec name="AppiumLibrary" type="library" format="ROBOT" generated="20180425 10:46:44">
+<version>1.4.6</version>
+<scope>global</scope>
+<namedargs>yes</namedargs>
+<doc>AppiumLibrary is a Mobile App testing library for Robot Framework.
+
+= Locating or specifying elements =
+
+All keywords in AppiumLibrary that need to find an element on the page
+take an argument, either a ``locator`` or a ``webelement``. ``locator``
+is a string that describes how to locate an element using a syntax
+specifying different location strategies. ``webelement`` is a variable that
+holds a WebElement instance, which is a representation of the element.
+
+== Using locators ==
+
+By default, when a locator is provided, it is matched against the key attributes
+of the particular element type. For iOS and Android, key attribute is ``id`` for
+all elements and locating elements is easy using just the ``id``. For example:
+
+| Click Element    id=my_element
+
+New in AppiumLibrary 1.4, ``id`` and ``xpath`` are not required to be specified,
+however ``xpath`` should start with ``//`` else just use ``xpath`` locator as explained below.
+
+For example:
+
+| Click Element    my_element
+| Wait Until Page Contains Element    //*[@type="android.widget.EditText"]
+
+
+Appium additionally supports some of the [https://w3c.github.io/webdriver/webdriver-spec.html|Mobile JSON Wire Protocol] locator strategies.
+It is also possible to specify the approach AppiumLibrary should take
+to find an element by specifying a lookup strategy with a locator
+prefix. Supported strategies are:
+
+| *Strategy*        | *Example*                                                      | *Description*                     | *Note*                      |
+| identifier        | Click Element `|` identifier=my_element                        | Matches by @id attribute          |                             |
+| id                | Click Element `|` id=my_element                                | Matches by @resource-id attribute |                             |
+| accessibility_id  | Click Element `|` accessibility_id=button3                     | Accessibility options utilize.    |                             |
+| xpath             | Click Element `|` xpath=//UIATableView/UIATableCell/UIAButton  | Matches with arbitrary XPath      |                             |
+| class             | Click Element `|` class=UIAPickerWheel                         | Matches by class                  |                             |
+| android           | Click Element `|` android=UiSelector().description('Apps')     | Matches by Android UI Automator   |                             |
+| ios               | Click Element `|` ios=.buttons().withName('Apps')              | Matches by iOS UI Automation      |                             |
+| css               | Click Element `|` css=.green_button                            | Matches by css in webview         |                             |
+| name              | Click Element `|` name=my_element                              | Matches by @name attribute        | *Only valid* for Selendroid |
+
+== Using webelements ==
+
+Starting with version 1.4 of the AppiumLibrary, one can pass an argument
+that contains a WebElement instead of a string locator. To get a WebElement,
+use the new `Get WebElements` or `Get WebElement` keyword.
+
+For example:
+| @{elements}    Get Webelements    class=UIAButton
+| Click Element    @{elements}[2]</doc>
+<init>
+<arguments>
+<arg>timeout=5</arg>
+<arg>run_on_failure=Capture Page Screenshot</arg>
+</arguments>
+<doc>AppiumLibrary can be imported with optional arguments.
+
+``timeout`` is the default timeout used to wait for all waiting actions.
+It can be later set with `Set Appium Timeout`.
+
+``run_on_failure`` specifies the name of a keyword (from any available
+libraries) to execute when a AppiumLibrary keyword fails.
+
+By default `Capture Page Screenshot` will be used to take a screenshot of the current page.
+Using the value `No Operation` will disable this feature altogether. See
+`Register Keyword To Run On Failure` keyword for more information about this
+functionality.
+
+Examples:
+| Library | AppiumLibrary | 10 | # Sets default timeout to 10 seconds                                                                             |
+| Library | AppiumLibrary | timeout=10 | run_on_failure=No Operation | # Sets default timeout to 10 seconds and does nothing on failure           |</doc>
+<tags>
+</tags>
+</init>
+<kw name="Background App">
+<arguments>
+<arg>seconds=5</arg>
+</arguments>
+<doc>Puts the application in the background on the device for a certain
+duration.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Capture Page Screenshot">
+<arguments>
+<arg>filename=None</arg>
+</arguments>
+<doc>Takes a screenshot of the current page and embeds it into the log.
+
+`filename` argument specifies the name of the file to write the
+screenshot into. If no `filename` is given, the screenshot is saved into file
+`appium-screenshot-&lt;counter&gt;.png` under the directory where
+the Robot Framework log file is written into. The `filename` is
+also considered relative to the same directory, if it is not
+given in absolute format.
+
+`css` can be used to modify how the screenshot is taken. By default
+the bakground color is changed to avoid possible problems with
+background leaking when the page layout is somehow broken.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Clear Text">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Clears the text field identified by `locator`.
+
+See `introduction` for details about locating elements.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Click A Point">
+<arguments>
+<arg>x=0</arg>
+<arg>y=0</arg>
+<arg>duration=100</arg>
+</arguments>
+<doc>Click on a point</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Click Button">
+<arguments>
+<arg>index_or_name</arg>
+</arguments>
+<doc>Click button</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Click Element">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Click element identified by `locator`.
+
+Key attributes for arbitrary elements are `index` and `name`. See
+`introduction` for details about locating elements.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Click Element At Coordinates">
+<arguments>
+<arg>coordinate_X</arg>
+<arg>coordinate_Y</arg>
+</arguments>
+<doc>click element at a certain coordinate</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Click Text">
+<arguments>
+<arg>text</arg>
+<arg>exact_match=False</arg>
+</arguments>
+<doc>Click text identified by ``text``.
+
+By default tries to click first text involves given ``text``, if you would
+like to click exactly matching text, then set ``exact_match`` to `True`.
+
+If there are multiple use  of ``text`` and you do not want first one,
+use `locator` with `Get Web Elements` instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Close All Applications">
+<arguments>
+</arguments>
+<doc>Closes all open applications.
+
+This keyword is meant to be used in test or suite teardown to
+make sure all the applications are closed before the test execution
+finishes.
+
+After this keyword, the application indices returned by `Open Application`
+are reset and start from `1`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Close Application">
+<arguments>
+</arguments>
+<doc>Closes the current application and also close webdriver session.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Attribute Should Match">
+<arguments>
+<arg>locator</arg>
+<arg>attr_name</arg>
+<arg>match_pattern</arg>
+<arg>regexp=False</arg>
+</arguments>
+<doc>Verify that an attribute of an element matches the expected criteria.
+
+The element is identified by _locator_. See `introduction` for details
+about locating elements. If more than one element matches, the first element is selected.
+
+The _attr_name_ is the name of the attribute within the selected element.
+
+The _match_pattern_ is used for the matching, if the match_pattern is
+- boolean or 'True'/'true'/'False'/'false' String then a boolean match is applied
+- any other string is cause a string match
+
+The _regexp_ defines whether the string match is done using regular expressions (i.e. BuiltIn Library's
+[http://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Should%20Match%20Regexp|Should
+Match Regexp] or string pattern match (i.e. BuiltIn Library's
+[http://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Should%20Match|Should
+Match])
+
+
+Examples:
+
+| Element Attribute Should Match | xpath = //*[contains(@text,'foo')] | text | *foobar |
+| Element Attribute Should Match | xpath = //*[contains(@text,'foo')] | text | f.*ar | regexp = True |
+| Element Attribute Should Match | xpath = //*[contains(@text,'foo')] | enabled | True |
+
+| 1. is a string pattern match i.e. the 'text' attribute should end with the string 'foobar'
+| 2. is a regular expression match i.e. the regexp 'f.*ar' should be within the 'text' attribute
+| 3. is a boolead match i.e. the 'enabled' attribute should be True
+
+
+_*NOTE: *_
+On Android the supported attribute names are hard-coded in the
+[https://github.com/appium/appium/blob/master/lib/devices/android/bootstrap/src/io/appium/android/bootstrap/AndroidElement.java|AndroidElement]
+Class's getBoolAttribute() and getStringAttribute() methods.
+Currently supported (appium v1.4.11):
+_contentDescription, text, className, resourceId, enabled, checkable, checked, clickable, focusable, focused, longClickable, scrollable, selected, displayed_
+
+
+_*NOTE: *_
+Some attributes can be evaluated in two different ways e.g. these evaluate the same thing:
+
+| Element Attribute Should Match | xpath = //*[contains(@text,'example text')] | name | txt_field_name |
+| Element Name Should Be         | xpath = //*[contains(@text,'example text')] | txt_field_name |      |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Name Should Be">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+</arguments>
+<doc></doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Be Disabled">
+<arguments>
+<arg>locator</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that element identified with locator is disabled.
+
+Key attributes for arbitrary elements are `id` and `name`. See
+`introduction` for details about locating elements.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Be Enabled">
+<arguments>
+<arg>locator</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that element identified with locator is enabled.
+
+Key attributes for arbitrary elements are `id` and `name`. See
+`introduction` for details about locating elements.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Be Visible">
+<arguments>
+<arg>locator</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that element identified with locator is visible.
+
+Key attributes for arbitrary elements are `id` and `name`. See
+`introduction` for details about locating elements.
+
+New in AppiumLibrary 1.4.5</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Contain Text">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>message=</arg>
+</arguments>
+<doc>Verifies element identified by ``locator`` contains text ``expected``.
+
+If you wish to assert an exact (not a substring) match on the text
+of the element, use `Element Text Should Be`.
+
+Key attributes for arbitrary elements are ``id`` and ``xpath``. ``message`` can be used to override the default error message.
+
+New in AppiumLibrary 1.4.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Not Contain Text">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>message=</arg>
+</arguments>
+<doc>Verifies element identified by ``locator`` does not contain text ``expected``.
+
+``message`` can be used to override the default error message.
+See `Element Should Contain Text` for more details.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Text Should Be">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>message=</arg>
+</arguments>
+<doc>Verifies element identified by ``locator`` exactly contains text ``expected``.
+
+In contrast to `Element Should Contain Text`, this keyword does not try
+a substring match but an exact match on the element identified by ``locator``.
+
+``message`` can be used to override the default error message.
+
+New in AppiumLibrary 1.4.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Value Should Be">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+</arguments>
+<doc></doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Activity">
+<arguments>
+</arguments>
+<doc>Retrieves the current activity on the device.
+
+Android only.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Appium SessionId">
+<arguments>
+</arguments>
+<doc>Returns the current session ID as a reference</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Appium Timeout">
+<arguments>
+</arguments>
+<doc>Gets the timeout in seconds that is used by various keywords.
+
+See `Set Appium Timeout` for an explanation.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Capability">
+<arguments>
+<arg>capability_name</arg>
+</arguments>
+<doc>Return the desired capability value by desired capability name</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Contexts">
+<arguments>
+</arguments>
+<doc>Get available contexts.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Current Context">
+<arguments>
+</arguments>
+<doc>Get current context.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Element Attribute">
+<arguments>
+<arg>locator</arg>
+<arg>attribute</arg>
+</arguments>
+<doc>Get element attribute using given attribute: name, value,...
+
+Examples:
+
+| Get Element Attribute | locator | name |
+| Get Element Attribute | locator | value |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Element Location">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Get element location
+
+Key attributes for arbitrary elements are `id` and `name`. See
+`introduction` for details about locating elements.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Element Size">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Get element size
+
+Key attributes for arbitrary elements are `id` and `name`. See
+`introduction` for details about locating elements.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Matching Xpath Count">
+<arguments>
+<arg>xpath</arg>
+</arguments>
+<doc>Returns number of elements matching ``xpath``
+
+One should not use the `xpath=` prefix for 'xpath'. XPath is assumed.
+
+| *Correct:* |
+| ${count}  | Get Matching Xpath Count | //android.view.View[@text='Test'] |
+| Incorrect:  |
+| ${count}  | Get Matching Xpath Count | xpath=//android.view.View[@text='Test'] |
+
+If you wish to assert the number of matching elements, use
+`Xpath Should Match X Times`.
+
+New in AppiumLibrary 1.4.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Network Connection Status">
+<arguments>
+</arguments>
+<doc>Returns an integer bitmask specifying the network connection type.
+
+Android only.
+
+See `set network connection status` for more details.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Source">
+<arguments>
+</arguments>
+<doc>Returns the entire source of the current page.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Text">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Get element text (for hybrid and mobile browser use `xpath` locator, others might cause problem)
+
+Example:
+
+| ${text} | Get Text | //*[contains(@text,'foo')] |
+
+New in AppiumLibrary 1.4.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Webelement">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns the first [http://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.remote.webelement|WebElement] object matching ``locator``.
+
+Example:
+| ${element}     | Get Webelement | id=my_element |
+| Click Element  | ${element}     |               |
+
+New in AppiumLibrary 1.4.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Webelements">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns list of [http://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.remote.webelement|WebElement] objects matching ``locator``.
+
+Example:
+| @{elements}    | Get Webelements | id=my_element |
+| Click Element  | @{elements}[2]  |               |
+
+This keyword was changed in AppiumLibrary 1.4 in following ways:
+- Name is changed from `Get Elements` to current one.
+- Deprecated argument ``fail_on_error``, use `Run Keyword and Ignore Error` if necessary.
+
+New in AppiumLibrary 1.4.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Window Height">
+<arguments>
+</arguments>
+<doc>Get current device height.
+
+Example:
+| ${width}       | Get Window Height |
+| ${height}      | Get Window Height |
+| Click A Point  | ${width           | ${height} |
+       
+New in AppiumLibrary 1.4.5</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Window Width">
+<arguments>
+</arguments>
+<doc>Get current device width.
+
+Example:
+| ${width}       | Get Window Height |
+| ${height}      | Get Window Height |
+| Click A Point  | ${width           | ${height} |
+
+New in AppiumLibrary 1.4.5</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Go Back">
+<arguments>
+</arguments>
+<doc>Goes one step backward in the browser history.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Go To Url">
+<arguments>
+<arg>url</arg>
+</arguments>
+<doc>Opens URL in default web browser.
+
+Example:
+| Open Application  | http://localhost:4755/wd/hub | platformName=iOS | platformVersion=7.0 | deviceName='iPhone Simulator' | browserName=Safari |
+| Go To URL         | http://m.webapp.com          |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Hide Keyboard">
+<arguments>
+<arg>key_name=None</arg>
+</arguments>
+<doc>Hides the software keyboard on the device. (optional) In iOS, use `key_name` to press
+a particular key, ex. `Done`. In Android, no parameters are used.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Input Password">
+<arguments>
+<arg>locator</arg>
+<arg>text</arg>
+</arguments>
+<doc>Types the given password into text field identified by `locator`.
+
+Difference between this keyword and `Input Text` is that this keyword
+does not log the given password. See `introduction` for details about
+locating elements.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Input Text">
+<arguments>
+<arg>locator</arg>
+<arg>text</arg>
+</arguments>
+<doc>Types the given `text` into text field identified by `locator`.
+
+See `introduction` for details about locating elements.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Input Value">
+<arguments>
+<arg>locator</arg>
+<arg>text</arg>
+</arguments>
+<doc>Sets the given value into text field identified by `locator`. This is an IOS only keyword, input value makes use of set_value
+
+See `introduction` for details about locating elements.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Install App">
+<arguments>
+<arg>app_path</arg>
+<arg>app_package</arg>
+</arguments>
+<doc>Install App via Appium
+
+Android only.
+
+- app_path - path to app
+- app_package - package of install app to verify</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Landscape">
+<arguments>
+</arguments>
+<doc>Set the device orientation to LANDSCAPE</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Launch Application">
+<arguments>
+</arguments>
+<doc>Launch application. Application can be launched while Appium session running.
+This keyword can be used to launch application during test case or between test cases.
+
+This keyword works while `Open Application` has a test running. This is good practice to `Launch Application`
+and `Quit Application` between test cases. As Suite Setup is `Open Application`, `Test Setup` can be used to `Launch Application`
+
+Example (syntax is just a representation, refer to RF Guide for usage of Setup/Teardown):
+| [Setup Suite] |
+|  | Open Application | http://localhost:4723/wd/hub | platformName=Android | deviceName=192.168.56.101:5555 | app=${CURDIR}/demoapp/OrangeDemoApp.apk |
+| [Test Setup] |
+|  | Launch Application |
+|  |  | &lt;&lt;&lt;test execution&gt;&gt;&gt; |
+|  |  | &lt;&lt;&lt;test execution&gt;&gt;&gt; |
+| [Test Teardown] |
+|  | Quit Application |
+| [Suite Teardown] |
+|  | Close Application |
+
+See `Quit Application` for quiting application but keeping Appium sesion running.
+
+New in AppiumLibrary 1.4.6</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Lock">
+<arguments>
+<arg>seconds=5</arg>
+</arguments>
+<doc>Lock the device for a certain period of time. iOS only.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Log Source">
+<arguments>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Logs and returns the entire html source of the current page or frame.
+
+The `loglevel` argument defines the used log level. Valid log levels are
+`WARN`, `INFO` (default), `DEBUG`, `TRACE` and `NONE` (no logging).</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Long Press">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Long press the element</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Long Press Keycode">
+<arguments>
+<arg>keycode</arg>
+<arg>metastate=None</arg>
+</arguments>
+<doc>Sends a long press of keycode to the device.
+
+Android only.
+
+See `press keycode` for more details.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Open Application">
+<arguments>
+<arg>remote_url</arg>
+<arg>alias=None</arg>
+<arg>**kwargs</arg>
+</arguments>
+<doc>Opens a new application to given Appium server.
+Capabilities of appium server, Android and iOS,
+Please check http://appium.io/slate/en/master/?python#appium-server-capabilities
+| *Option*            | *Man.* | *Description*     |
+| remote_url          | Yes    | Appium server url |
+| alias               | no     | alias             |
+
+Examples:
+| Open Application | http://localhost:4723/wd/hub | alias=Myapp1         | platformName=iOS      | platformVersion=7.0            | deviceName='iPhone Simulator'           | app=your.app                         |
+| Open Application | http://localhost:4723/wd/hub | platformName=Android | platformVersion=4.2.2 | deviceName=192.168.56.101:5555 | app=${CURDIR}/demoapp/OrangeDemoApp.apk | appPackage=com.netease.qa.orangedemo | appActivity=MainActivity |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Contain Element">
+<arguments>
+<arg>locator</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that current page contains `locator` element.
+
+If this keyword fails, it automatically logs the page source
+using the log level specified with the optional `loglevel` argument.
+Giving `NONE` as level disables logging.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Contain Text">
+<arguments>
+<arg>text</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that current page contains `text`.
+
+If this keyword fails, it automatically logs the page source
+using the log level specified with the optional `loglevel` argument.
+Giving `NONE` as level disables logging.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Not Contain Element">
+<arguments>
+<arg>locator</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that current page not contains `locator` element.
+
+If this keyword fails, it automatically logs the page source
+using the log level specified with the optional `loglevel` argument.
+Giving `NONE` as level disables logging.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Not Contain Text">
+<arguments>
+<arg>text</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that current page not contains `text`.
+
+If this keyword fails, it automatically logs the page source
+using the log level specified with the optional `loglevel` argument.
+Giving `NONE` as level disables logging.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Pinch">
+<arguments>
+<arg>locator</arg>
+<arg>percent=200%</arg>
+<arg>steps=1</arg>
+</arguments>
+<doc>Pinch in on an element a certain amount.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Portrait">
+<arguments>
+</arguments>
+<doc>Set the device orientation to PORTRAIT</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Press Keycode">
+<arguments>
+<arg>keycode</arg>
+<arg>metastate=None</arg>
+</arguments>
+<doc>Sends a press of keycode to the device.
+
+Android only.
+
+Possible keycodes &amp; meta states can be found in
+http://developer.android.com/reference/android/view/KeyEvent.html
+
+Meta state describe the pressed state of key modifiers such as
+Shift, Ctrl &amp; Alt keys. The Meta State is an integer in which each
+bit set to 1 represents a pressed meta key.
+
+For example
+- META_SHIFT_ON = 1
+- META_ALT_ON = 2
+
+| metastate=1 --&gt; Shift is pressed
+| metastate=2 --&gt; Alt is pressed
+| metastate=3 --&gt; Shift+Alt is pressed
+
+ - _keycode- - the keycode to be sent to the device
+ - _metastate- - status of the meta keys</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Pull File">
+<arguments>
+<arg>path</arg>
+<arg>decode=False</arg>
+</arguments>
+<doc>Retrieves the file at `path` and return it's content.
+
+Android only.
+
+ - _path_ - the path to the file on the device
+ - _decode_ - True/False decode the data (base64) before returning it (default=False)</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Pull Folder">
+<arguments>
+<arg>path</arg>
+<arg>decode=False</arg>
+</arguments>
+<doc>Retrieves a folder at `path`. Returns the folder's contents zipped.
+
+Android only.
+
+ - _path_ - the path to the folder on the device
+ - _decode_ - True/False decode the data (base64) before returning it (default=False)</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Push File">
+<arguments>
+<arg>path</arg>
+<arg>data</arg>
+<arg>encode=False</arg>
+</arguments>
+<doc>Puts the data in the file specified as `path`.
+
+Android only.
+
+ - _path_ - the path on the device
+ - _data_ - data to be written to the file
+ - _encode_ - True/False encode the data as base64 before writing it to the file (default=False)</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Quit Application">
+<arguments>
+</arguments>
+<doc>Quit application. Application can be quit while Appium session is kept alive. 
+This keyword can be used to close application during test case or between test cases.
+
+See `Launch Application` for an explanation.
+
+New in AppiumLibrary 1.4.6</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Register Keyword To Run On Failure">
+<arguments>
+<arg>keyword</arg>
+</arguments>
+<doc>Sets the keyword to execute when a AppiumLibrary keyword fails.
+
+`keyword_name` is the name of a keyword (from any available
+libraries) that  will be executed if a AppiumLibrary keyword fails.
+It is not possible to use a keyword that requires arguments.
+Using the value "Nothing" will disable this feature altogether.
+
+The initial keyword to use is set in `importing`, and the
+keyword that is used by default is `Capture Page Screenshot`.
+Taking a screenshot when something failed is a very useful
+feature, but notice that it can slow down the execution.
+
+This keyword returns the name of the previously registered
+failure keyword. It can be used to restore the original
+value later.
+
+Example:
+| Register Keyword To Run On Failure  | Log Source | # Run `Log Source` on failure. |
+| ${previous kw}= | Register Keyword To Run On Failure  | Nothing    | # Disables run-on-failure functionality and stores the previous kw name in a variable. |
+| Register Keyword To Run On Failure  | ${previous kw} | # Restore to the previous keyword. |
+
+This run-on-failure functionality only works when running tests on Python/Jython 2.4
+or newer and it does not work on IronPython at all.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Remove Application">
+<arguments>
+<arg>application_id</arg>
+</arguments>
+<doc>Removes the application that is identified with an application id
+
+Example:
+| Remove Application |  com.netease.qa.orangedemo |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Reset Application">
+<arguments>
+</arguments>
+<doc>Reset application. Open Application can be reset while Appium session is kept alive.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Scroll">
+<arguments>
+<arg>start_locator</arg>
+<arg>end_locator</arg>
+</arguments>
+<doc>Scrolls from one element to another
+Key attributes for arbitrary elements are `id` and `name`. See
+`introduction` for details about locating elements.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Scroll Down">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Scrolls down to element</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Scroll Up">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Scrolls up to element</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Appium Timeout">
+<arguments>
+<arg>seconds</arg>
+</arguments>
+<doc>Sets the timeout in seconds used by various keywords.
+
+There are several `Wait ...` keywords that take timeout as an
+argument. All of these timeout arguments are optional. The timeout
+used by all of them can be set globally using this keyword.
+
+The previous timeout value is returned by this keyword and can
+be used to set the old value back later. The default timeout
+is 5 seconds, but it can be altered in `importing`.
+
+Example:
+| ${orig timeout} = | Set Appium Timeout | 15 seconds |
+| Open page that loads slowly |
+| Set Appium Timeout | ${orig timeout} |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Network Connection Status">
+<arguments>
+<arg>connectionStatus</arg>
+</arguments>
+<doc>Sets the network connection Status.
+
+Android only.
+
+Possible values:
+    | =Value= | =Alias=          | =Data= | =Wifi= | =Airplane Mode=  |
+    |  0      | (None)           | 0      |   0    | 0                |
+    |  1      | (Airplane Mode)  | 0      |   0    | 1                |
+    |  2      | (Wifi only)      | 0      |   1    | 0                |
+    |  4      | (Data only)      | 1      |   0    | 0                |
+    |  6      | (All network on) | 1      |   1    | 0                |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Shake">
+<arguments>
+</arguments>
+<doc>Shake the device</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Start Activity">
+<arguments>
+<arg>appPackage</arg>
+<arg>appActivity</arg>
+<arg>**opts</arg>
+</arguments>
+<doc>Opens an arbitrary activity during a test. If the activity belongs to
+another application, that application is started and the activity is opened.
+
+Android only.
+
+- _appPackage_ - The package containing the activity to start.
+- _appActivity_ - The activity to start.
+- _appWaitPackage_ - Begin automation after this package starts (optional).
+- _appWaitActivity_ - Begin automation after this activity starts (optional).
+- _intentAction_ - Intent to start (opt_ional).
+- _intentCategory_ - Intent category to start (optional).
+- _intentFlags_ - Flags to send to the intent (optional).
+- _optionalIntentArguments_ - Optional arguments to the intent (optional).
+- _stopAppOnReset_ - Should the app be stopped on reset (optional)?</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Swipe">
+<arguments>
+<arg>start_x</arg>
+<arg>start_y</arg>
+<arg>offset_x</arg>
+<arg>offset_y</arg>
+<arg>duration=1000</arg>
+</arguments>
+<doc>Swipe from one point to another point, for an optional duration.
+
+Args:
+ - start_x - x-coordinate at which to start
+ - start_y - y-coordinate at which to start
+ - offset_x - x-coordinate distance from start_x at which to stop
+ - offset_y - y-coordinate distance from start_y at which to stop
+ - duration - (optional) time to take the swipe, in ms.
+
+Usage:
+| Swipe | 500 | 100 | 100 | 0 | 1000 |
+
+_*NOTE: *_ 
+Android 'Swipe' is not working properly, use ``offset_x`` and ``offset_y`` as if these are destination points.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Swipe By Percent">
+<arguments>
+<arg>start_x</arg>
+<arg>start_y</arg>
+<arg>end_x</arg>
+<arg>end_y</arg>
+<arg>duration=1000</arg>
+</arguments>
+<doc>Swipe from one percent of the screen to another percent, for an optional duration. 
+Normal swipe fails to scale for different screen resolutions, this can be avoided using percent.
+
+Args:
+ - start_x - x-percent at which to start
+ - start_y - y-percent at which to start
+ - end_x - x-percent distance from start_x at which to stop
+ - end_y - y-percent distance from start_y at which to stop
+ - duration - (optional) time to take the swipe, in ms.
+ 
+Usage:
+| Swipe By Percent | 90 | 50 | 10 | 50 | # Swipes screen from right to left. |
+
+_*NOTE: *_
+This also considers swipe acts different between iOS and Android.
+
+New in AppiumLibrary 1.4.5</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Switch Application">
+<arguments>
+<arg>index_or_alias</arg>
+</arguments>
+<doc>Switches the active application by index or alias.
+
+`index_or_alias` is either application index (an integer) or alias
+(a string). Index is got as the return value of `Open Application`.
+
+This keyword returns the index of the previous active application,
+which can be used to switch back to that application later.
+
+Example:
+| ${appium1}=              | Open Application  | http://localhost:4723/wd/hub                   | alias=MyApp1 | platformName=iOS | platformVersion=7.0 | deviceName='iPhone Simulator' | app=your.app |
+| ${appium2}=              | Open Application  | http://localhost:4755/wd/hub                   | alias=MyApp2 | platformName=iOS | platformVersion=7.0 | deviceName='iPhone Simulator' | app=your.app |
+| Click Element            | sendHello         | # Executed on appium running at localhost:4755 |
+| Switch Application       | ${appium1}        | # Switch using index                           |
+| Click Element            | ackHello          | # Executed on appium running at localhost:4723 |
+| Switch Application       | MyApp2            | # Switch using alias                           |
+| Page Should Contain Text | ackHello Received | # Executed on appium running at localhost:4755 |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Switch To Context">
+<arguments>
+<arg>context_name</arg>
+</arguments>
+<doc>Switch to a new context</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Tap">
+<arguments>
+<arg>locator</arg>
+<arg>x_offset=None</arg>
+<arg>y_offset=None</arg>
+<arg>count=1</arg>
+</arguments>
+<doc>Tap element identified by ``locator``.
+
+Args:
+- ``x_offset`` - (optional) x coordinate to tap, relative to the top left corner of the element.
+- ``y_offset`` - (optional) y coordinate. If y is used, x must also be set, and vice versa
+- ``count`` - can be used for multiple times of tap on that element</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Text Should Be Visible">
+<arguments>
+<arg>text</arg>
+<arg>exact_match=False</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that element identified with text is visible.
+
+New in AppiumLibrary 1.4.5</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Activity">
+<arguments>
+<arg>activity</arg>
+<arg>timeout</arg>
+<arg>interval=1</arg>
+</arguments>
+<doc>Wait for an activity: block until target activity presents
+or time out.
+
+Android only.
+
+ - _activity_ - target activity
+ - _timeout_ - max wait time, in seconds
+ - _interval_ - sleep interval between retries, in seconds</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arguments>
+<arg>locator</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until element specified with `locator` is visible.
+
+Fails if `timeout` expires before the element is visible. See
+`introduction` for more information about `timeout` and its
+default value.
+
+`error` can be used to override the default error message.
+
+See also `Wait Until Page Contains`, `Wait Until Page Contains 
+Element`, `Wait For Condition` and BuiltIn keyword `Wait Until Keyword
+Succeeds`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Page Contains">
+<arguments>
+<arg>text</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until `text` appears on current page.
+
+Fails if `timeout` expires before the text appears. See
+`introduction` for more information about `timeout` and its
+default value.
+
+`error` can be used to override the default error message.
+
+See also `Wait Until Page Does Not Contain`,
+`Wait Until Page Contains Element`,
+`Wait Until Page Does Not Contain Element` and
+BuiltIn keyword `Wait Until Keyword Succeeds`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Page Contains Element">
+<arguments>
+<arg>locator</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until element specified with `locator` appears on current page.
+
+Fails if `timeout` expires before the element appears. See
+`introduction` for more information about `timeout` and its
+default value.
+
+`error` can be used to override the default error message.
+
+See also `Wait Until Page Contains`,
+`Wait Until Page Does Not Contain`
+`Wait Until Page Does Not Contain Element`
+and BuiltIn keyword `Wait Until Keyword Succeeds`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Page Does Not Contain">
+<arguments>
+<arg>text</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until `text` disappears from current page.
+
+Fails if `timeout` expires before the `text` disappears. See
+`introduction` for more information about `timeout` and its
+default value.
+
+`error` can be used to override the default error message.
+
+See also `Wait Until Page Contains`,
+`Wait Until Page Contains Element`,
+`Wait Until Page Does Not Contain Element` and
+BuiltIn keyword `Wait Until Keyword Succeeds`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Page Does Not Contain Element">
+<arguments>
+<arg>locator</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until element specified with `locator` disappears from current page.
+
+Fails if `timeout` expires before the element disappears. See
+`introduction` for more information about `timeout` and its
+default value.
+
+`error` can be used to override the default error message.
+
+See also `Wait Until Page Contains`,
+`Wait Until Page Does Not Contain`,
+`Wait Until Page Contains Element` and
+BuiltIn keyword `Wait Until Keyword Succeeds`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Xpath Should Match X Times">
+<arguments>
+<arg>xpath</arg>
+<arg>count</arg>
+<arg>error=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that the page contains the given number of elements located by the given ``xpath``.
+
+One should not use the `xpath=` prefix for 'xpath'. XPath is assumed.
+
+| *Correct:* |
+| Xpath Should Match X Times | //android.view.View[@text='Test'] | 1 |
+| Incorrect: |
+| Xpath Should Match X Times | xpath=//android.view.View[@text='Test'] | 1 |
+
+``error`` can be used to override the default error message.
+
+See `Log Source` for explanation about ``loglevel`` argument.
+
+New in AppiumLibrary 1.4.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Zoom">
+<arguments>
+<arg>locator</arg>
+<arg>percent=200%</arg>
+<arg>steps=1</arg>
+</arguments>
+<doc>Zooms in on an element a certain amount.</doc>
+<tags>
+</tags>
+</kw>
+</keywordspec>

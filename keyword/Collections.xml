@@ -1,0 +1,895 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordspec name="Collections" type="library" format="ROBOT" generated="20180425 10:46:40">
+<version>3.0.3</version>
+<scope>global</scope>
+<namedargs>yes</namedargs>
+<doc>A test library providing keywords for handling lists and dictionaries.
+
+``Collections`` is Robot Framework's standard library that provides a
+set of keywords for handling Python lists and dictionaries. This
+library has keywords, for example, for modifying and getting
+values from lists and dictionaries (e.g. `Append To List`, `Get
+From Dictionary`) and for verifying their contents (e.g. `Lists
+Should Be Equal`, `Dictionary Should Contain Value`).
+
+= Related keywords in BuiltIn =
+
+Following keywords in the BuiltIn library can also be used with
+lists and dictionaries:
+
+| = Keyword Name =             | = Applicable With = | = Comment = |
+| `Create List`                | lists |
+| `Create Dictionary`          | dicts | Was in Collections until RF 2.9. |
+| `Get Length`                 | both  |
+| `Length Should Be`           | both  |
+| `Should Be Empty`            | both  |
+| `Should Not Be Empty`        | both  |
+| `Should Contain`             | both  |
+| `Should Not Contain`         | both  |
+| `Should Contain X Times`     | lists |
+| `Should Not Contain X Times` | lists |
+| `Get Count`                  | lists |
+
+= Using with list-like and dictionary-like objects =
+
+List keywords that do not alter the given list can also be used
+with tuples, and to some extend also with other iterables.
+`Convert To List` can be used to convert tuples and other iterables
+to Python ``list`` objects.
+
+Similarly dictionary keywords can, for most parts, be used with other
+mappings. `Convert To Dictionary` can be used if real Python ``dict``
+objects are needed.
+
+= Boolean arguments =
+
+Some keywords accept arguments that are handled as Boolean values true or
+false. If such an argument is given as a string, it is considered false if
+it is either an empty string or case-insensitively equal to ``false``,
+``none`` or ``no``. Keywords verifying something that allow dropping actual
+and expected values from the possible error message also consider string
+``no values`` to be false. Other strings are considered true regardless
+their value, and other argument types are tested using the same
+[http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+as in Python].
+
+True examples:
+| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=True    | # Strings are generally true.    |
+| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=yes     | # Same as the above.             |
+| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${TRUE} | # Python ``True`` is true.       |
+| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${42}   | # Numbers other than 0 are true. |
+
+False examples:
+| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=False    | # String ``false`` is false.   |
+| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=no       | # Also string ``no`` is false. |
+| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${EMPTY} | # Empty string is false.       |
+| `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${FALSE} | # Python ``False`` is false.   |
+| `Lists Should Be Equal` | ${x}   | ${y} | Custom error | values=no values | # ``no values`` works with ``values`` argument |
+
+Note that prior to Robot Framework 2.9 some keywords considered all
+non-empty strings, including ``False``, to be true.
+Considering ``none`` false is new in Robot Framework 3.0.3.
+
+= Data in examples =
+
+List related keywords use variables in format ``${Lx}`` in their examples.
+They mean lists with as many alphabetic characters as specified by ``x``.
+For example, ``${L1}`` means ``['a']`` and ``${L3}`` means
+``['a', 'b', 'c']``.
+
+Dictionary keywords use similar ``${Dx}`` variables. For example, ``${D1}``
+means ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.</doc>
+<kw name="Append To List">
+<arguments>
+<arg>list_</arg>
+<arg>*values</arg>
+</arguments>
+<doc>Adds ``values`` to the end of ``list``.
+
+Example:
+| Append To List | ${L1} | xxx |   |   |
+| Append To List | ${L2} | x   | y | z |
+=&gt;
+| ${L1} = ['a', 'xxx']
+| ${L2} = ['a', 'b', 'x', 'y', 'z']</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Combine Lists">
+<arguments>
+<arg>*lists</arg>
+</arguments>
+<doc>Combines the given ``lists`` together and returns the result.
+
+The given lists are not altered by this keyword.
+
+Example:
+| ${x} = | Combine List | ${L1} | ${L2} |       |
+| ${y} = | Combine List | ${L1} | ${L2} | ${L1} |
+=&gt;
+| ${x} = ['a', 'a', 'b']
+| ${y} = ['a', 'a', 'b', 'a']
+| ${L1} and ${L2} are not changed.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Convert To Dictionary">
+<arguments>
+<arg>item</arg>
+</arguments>
+<doc>Converts the given ``item`` to a Python ``dict`` type.
+
+Mainly useful for converting other mappings to dictionaries. Use
+`Create Dictionary` from the BuiltIn library for constructing new
+dictionaries.
+
+New in Robot Framework 2.9.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Convert To List">
+<arguments>
+<arg>item</arg>
+</arguments>
+<doc>Converts the given ``item`` to a Python ``list`` type.
+
+Mainly useful for converting tuples and other iterable to lists.
+Use `Create List` from the BuiltIn library for constructing new lists.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Copy Dictionary">
+<arguments>
+<arg>dictionary</arg>
+</arguments>
+<doc>Returns a copy of the given dictionary.
+
+The given dictionary is never altered by this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Copy List">
+<arguments>
+<arg>list_</arg>
+</arguments>
+<doc>Returns a copy of the given list.
+
+The given list is never altered by this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Count Values In List">
+<arguments>
+<arg>list_</arg>
+<arg>value</arg>
+<arg>start=0</arg>
+<arg>end=None</arg>
+</arguments>
+<doc>Returns the number of occurrences of the given ``value`` in ``list``.
+
+The search can be narrowed to the selected sublist by the ``start`` and
+``end`` indexes having the same semantics as with `Get Slice From List`
+keyword. The given list is never altered by this keyword.
+
+Example:
+| ${x} = | Count Values In List | ${L3} | b |
+=&gt;
+| ${x} = 1
+| ${L3} is not changed</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Dictionaries Should Be Equal">
+<arguments>
+<arg>dict1</arg>
+<arg>dict2</arg>
+<arg>msg=None</arg>
+<arg>values=True</arg>
+</arguments>
+<doc>Fails if the given dictionaries are not equal.
+
+First the equality of dictionaries' keys is checked and after that all
+the key value pairs. If there are differences between the values, those
+are listed in the error message. The types of the dictionaries do not
+need to be same.
+
+See `Lists Should Be Equal` for more information about configuring
+the error message with ``msg`` and ``values`` arguments.
+
+The given dictionaries are never altered by this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Dictionary Should Contain Item">
+<arguments>
+<arg>dictionary</arg>
+<arg>key</arg>
+<arg>value</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>An item of ``key``/``value`` must be found in a `dictionary`.
+
+Value is converted to unicode for comparison.
+
+See `Lists Should Be Equal` for an explanation of ``msg``.
+The given dictionary is never altered by this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Dictionary Should Contain Key">
+<arguments>
+<arg>dictionary</arg>
+<arg>key</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if ``key`` is not found from ``dictionary``.
+
+See `List Should Contain Value` for an explanation of ``msg``.
+
+The given dictionary is never altered by this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Dictionary Should Contain Sub Dictionary">
+<arguments>
+<arg>dict1</arg>
+<arg>dict2</arg>
+<arg>msg=None</arg>
+<arg>values=True</arg>
+</arguments>
+<doc>Fails unless all items in ``dict2`` are found from ``dict1``.
+
+See `Lists Should Be Equal` for more information about configuring
+the error message with ``msg`` and ``values`` arguments.
+
+The given dictionaries are never altered by this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Dictionary Should Contain Value">
+<arguments>
+<arg>dictionary</arg>
+<arg>value</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if ``value`` is not found from ``dictionary``.
+
+See `List Should Contain Value` for an explanation of ``msg``.
+
+The given dictionary is never altered by this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Dictionary Should Not Contain Key">
+<arguments>
+<arg>dictionary</arg>
+<arg>key</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if ``key`` is found from ``dictionary``.
+
+See `List Should Contain Value` for an explanation of ``msg``.
+
+The given dictionary is never altered by this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Dictionary Should Not Contain Value">
+<arguments>
+<arg>dictionary</arg>
+<arg>value</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if ``value`` is found from ``dictionary``.
+
+See `List Should Contain Value` for an explanation of ``msg``.
+
+The given dictionary is never altered by this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Dictionary Items">
+<arguments>
+<arg>dictionary</arg>
+</arguments>
+<doc>Returns items of the given ``dictionary``.
+
+Items are returned sorted by keys. The given ``dictionary`` is not
+altered by this keyword.
+
+Example:
+| ${items} = | Get Dictionary Items | ${D3} |
+=&gt;
+| ${items} = ['a', 1, 'b', 2, 'c', 3]</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Dictionary Keys">
+<arguments>
+<arg>dictionary</arg>
+</arguments>
+<doc>Returns keys of the given ``dictionary``.
+
+If keys are sortable, they are returned in sorted order. The given
+``dictionary`` is never altered by this keyword.
+
+Example:
+| ${keys} = | Get Dictionary Keys | ${D3} |
+=&gt;
+| ${keys} = ['a', 'b', 'c']</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Dictionary Values">
+<arguments>
+<arg>dictionary</arg>
+</arguments>
+<doc>Returns values of the given dictionary.
+
+Values are returned sorted according to keys. The given dictionary is
+never altered by this keyword.
+
+Example:
+| ${values} = | Get Dictionary Values | ${D3} |
+=&gt;
+| ${values} = [1, 2, 3]</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get From Dictionary">
+<arguments>
+<arg>dictionary</arg>
+<arg>key</arg>
+</arguments>
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.
+
+If the given ``key`` cannot be found from the ``dictionary``, this
+keyword fails.
+
+The given dictionary is never altered by this keyword.
+
+Example:
+| ${value} = | Get From Dictionary | ${D3} | b |
+=&gt;
+| ${value} = 2</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get From List">
+<arguments>
+<arg>list_</arg>
+<arg>index</arg>
+</arguments>
+<doc>Returns the value specified with an ``index`` from ``list``.
+
+The given list is never altered by this keyword.
+
+Index ``0`` means the first position, ``1`` the second, and so on.
+Similarly, ``-1`` is the last position, ``-2`` the second last, and so on.
+Using an index that does not exist on the list causes an error.
+The index can be either an integer or a string that can be converted
+to an integer.
+
+Examples (including Python equivalents in comments):
+| ${x} = | Get From List | ${L5} | 0  | # L5[0]  |
+| ${y} = | Get From List | ${L5} | -2 | # L5[-2] |
+=&gt;
+| ${x} = 'a'
+| ${y} = 'd'
+| ${L5} is not changed</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Index From List">
+<arguments>
+<arg>list_</arg>
+<arg>value</arg>
+<arg>start=0</arg>
+<arg>end=None</arg>
+</arguments>
+<doc>Returns the index of the first occurrence of the ``value`` on the list.
+
+The search can be narrowed to the selected sublist by the ``start`` and
+``end`` indexes having the same semantics as with `Get Slice From List`
+keyword. In case the value is not found, -1 is returned. The given list
+is never altered by this keyword.
+
+Example:
+| ${x} = | Get Index From List | ${L5} | d |
+=&gt;
+| ${x} = 3
+| ${L5} is not changed</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Match Count">
+<arguments>
+<arg>list</arg>
+<arg>pattern</arg>
+<arg>case_insensitive=False</arg>
+<arg>whitespace_insensitive=False</arg>
+</arguments>
+<doc>Returns the count of matches to ``pattern`` in ``list``.
+
+For more information on ``pattern``, ``case_insensitive``, and
+``whitespace_insensitive``, see `Should Contain Match`.
+
+Examples:
+| ${count}= | Get Match Count | ${list} | a* | # ${count} will be the count of strings beginning with 'a' |
+| ${count}= | Get Match Count | ${list} | regexp=a.* | # ${matches} will be the count of strings beginning with 'a' (regexp version) |
+| ${count}= | Get Match Count | ${list} | a* | case_insensitive=${True} | # ${matches} will be the count of strings beginning with 'a' or 'A' |
+
+New in Robot Framework 2.8.6.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Matches">
+<arguments>
+<arg>list</arg>
+<arg>pattern</arg>
+<arg>case_insensitive=False</arg>
+<arg>whitespace_insensitive=False</arg>
+</arguments>
+<doc>Returns a list of matches to ``pattern`` in ``list``.
+
+For more information on ``pattern``, ``case_insensitive``, and
+``whitespace_insensitive``, see `Should Contain Match`.
+
+Examples:
+| ${matches}= | Get Matches | ${list} | a* | # ${matches} will contain any string beginning with 'a' |
+| ${matches}= | Get Matches | ${list} | regexp=a.* | # ${matches} will contain any string beginning with 'a' (regexp version) |
+| ${matches}= | Get Matches | ${list} | a* | case_insensitive=${True} | # ${matches} will contain any string beginning with 'a' or 'A' |
+
+New in Robot Framework 2.8.6.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Slice From List">
+<arguments>
+<arg>list_</arg>
+<arg>start=0</arg>
+<arg>end=None</arg>
+</arguments>
+<doc>Returns a slice of the given list between ``start`` and ``end`` indexes.
+
+The given list is never altered by this keyword.
+
+If both ``start`` and ``end`` are given, a sublist containing values
+from ``start`` to ``end`` is returned. This is the same as
+``list[start:end]`` in Python. To get all items from the beginning,
+use 0 as the start value, and to get all items until and including
+the end, use ``None`` (default) as the end value.
+
+Using ``start`` or ``end`` not found on the list is the same as using
+the largest (or smallest) available index.
+
+Examples (incl. Python equivalents in comments):
+| ${x} = | Get Slice From List | ${L5} | 2 | 4  | # L5[2:4]    |
+| ${y} = | Get Slice From List | ${L5} | 1 |    | # L5[1:None] |
+| ${z} = | Get Slice From List | ${L5} |   | -2 | # L5[0:-2]   |
+=&gt;
+| ${x} = ['c', 'd']
+| ${y} = ['b', 'c', 'd', 'e']
+| ${z} = ['a', 'b', 'c']
+| ${L5} is not changed</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Insert Into List">
+<arguments>
+<arg>list_</arg>
+<arg>index</arg>
+<arg>value</arg>
+</arguments>
+<doc>Inserts ``value`` into ``list`` to the position specified with ``index``.
+
+Index ``0`` adds the value into the first position, ``1`` to the second,
+and so on. Inserting from right works with negative indices so that
+``-1`` is the second last position, ``-2`` third last, and so on. Use
+`Append To List` to add items to the end of the list.
+
+If the absolute value of the index is greater than
+the length of the list, the value is added at the end
+(positive index) or the beginning (negative index). An index
+can be given either as an integer or a string that can be
+converted to an integer.
+
+Example:
+| Insert Into List | ${L1} | 0     | xxx |
+| Insert Into List | ${L2} | ${-1} | xxx |
+=&gt;
+| ${L1} = ['xxx', 'a']
+| ${L2} = ['a', 'xxx', 'b']</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Keep In Dictionary">
+<arguments>
+<arg>dictionary</arg>
+<arg>*keys</arg>
+</arguments>
+<doc>Keeps the given ``keys`` in the ``dictionary`` and removes all other.
+
+If the given ``key`` cannot be found from the ``dictionary``, it
+is ignored.
+
+Example:
+| Keep In Dictionary | ${D5} | b | x | d |
+=&gt;
+| ${D5} = {'b': 2, 'd': 4}</doc>
+<tags>
+</tags>
+</kw>
+<kw name="List Should Contain Sub List">
+<arguments>
+<arg>list1</arg>
+<arg>list2</arg>
+<arg>msg=None</arg>
+<arg>values=True</arg>
+</arguments>
+<doc>Fails if not all of the elements in ``list2`` are found in ``list1``.
+
+The order of values and the number of values are not taken into
+account.
+
+See `Lists Should Be Equal` for more information about configuring
+the error message with ``msg`` and ``values`` arguments.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="List Should Contain Value">
+<arguments>
+<arg>list_</arg>
+<arg>value</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if the ``value`` is not found from ``list``.
+
+If the keyword fails, the default error messages is ``&lt;list&gt; does
+not contain value '&lt;value&gt;'``. A custom message can be given using
+the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="List Should Not Contain Duplicates">
+<arguments>
+<arg>list_</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if any element in the ``list`` is found from it more than once.
+
+The default error message lists all the elements that were found
+from the ``list`` multiple times, but it can be overridden by giving
+a custom ``msg``. All multiple times found items and their counts are
+also logged.
+
+This keyword works with all iterables that can be converted to a list.
+The original iterable is never altered.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="List Should Not Contain Value">
+<arguments>
+<arg>list_</arg>
+<arg>value</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if the ``value`` is found from ``list``.
+
+See `List Should Contain Value` for an explanation of ``msg``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Lists Should Be Equal">
+<arguments>
+<arg>list1</arg>
+<arg>list2</arg>
+<arg>msg=None</arg>
+<arg>values=True</arg>
+<arg>names=None</arg>
+</arguments>
+<doc>Fails if given lists are unequal.
+
+The keyword first verifies that the lists have equal lengths, and then
+it checks are all their values equal. Possible differences between the
+values are listed in the default error message like ``Index 4: ABC !=
+Abc``. The types of the lists do not need to be the same. For example,
+Python tuple and list with same content are considered equal.
+
+
+The error message can be configured using ``msg`` and ``values``
+arguments:
+- If ``msg`` is not given, the default error message is used.
+- If ``msg`` is given and ``values`` gets a value considered true
+  (see `Boolean arguments`), the error message starts with the given
+  ``msg`` followed by a newline and the default message.
+- If ``msg`` is given and ``values``  is not given a true value,
+  the error message is just the given ``msg``.
+
+Optional ``names`` argument can be used for naming the indices shown in
+the default error message. It can either be a list of names matching
+the indices in the lists or a dictionary where keys are indices that
+need to be named. It is not necessary to name all of the indices.  When
+using a dictionary, keys can be either integers or strings that can be
+converted to integers.
+
+Examples:
+| ${names} = | Create List | First Name | Family Name | Email |
+| Lists Should Be Equal | ${people1} | ${people2} | names=${names} |
+| ${names} = | Create Dictionary | 0=First Name | 2=Email |
+| Lists Should Be Equal | ${people1} | ${people2} | names=${names} |
+
+If the items in index 2 would differ in the above examples, the error
+message would contain a row like ``Index 2 (email): name@foo.com !=
+name@bar.com``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Log Dictionary">
+<arguments>
+<arg>dictionary</arg>
+<arg>level=INFO</arg>
+</arguments>
+<doc>Logs the size and contents of the ``dictionary`` using given ``level``.
+
+Valid levels are TRACE, DEBUG, INFO (default), and WARN.
+
+If you only want to log the size, use keyword `Get Length` from
+the BuiltIn library.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Log List">
+<arguments>
+<arg>list_</arg>
+<arg>level=INFO</arg>
+</arguments>
+<doc>Logs the length and contents of the ``list`` using given ``level``.
+
+Valid levels are TRACE, DEBUG, INFO (default), and WARN.
+
+If you only want to the length, use keyword `Get Length` from
+the BuiltIn library.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Pop From Dictionary">
+<arguments>
+<arg>dictionary</arg>
+<arg>key</arg>
+<arg>default=</arg>
+</arguments>
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.
+
+By default the keyword fails if the given ``key`` cannot be found from
+the ``dictionary``. If optional ``default`` value is given, it will be
+returned instead of failing.
+
+Example:
+| ${val}= | Pop From Dictionary | ${D3} | b |
+=&gt;
+| ${val} = 2
+| ${D3} = {'a': 1, 'c': 3}
+
+New in Robot Framework 2.9.2.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Remove Duplicates">
+<arguments>
+<arg>list_</arg>
+</arguments>
+<doc>Returns a list without duplicates based on the given ``list``.
+
+Creates and returns a new list that contains all items in the given
+list so that one item can appear only once. Order of the items in
+the new list is the same as in the original except for missing
+duplicates. Number of the removed duplicates is logged.
+
+New in Robot Framework 2.7.5.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Remove From Dictionary">
+<arguments>
+<arg>dictionary</arg>
+<arg>*keys</arg>
+</arguments>
+<doc>Removes the given ``keys`` from the ``dictionary``.
+
+If the given ``key`` cannot be found from the ``dictionary``, it
+is ignored.
+
+Example:
+| Remove From Dictionary | ${D3} | b | x | y |
+=&gt;
+| ${D3} = {'a': 1, 'c': 3}</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Remove From List">
+<arguments>
+<arg>list_</arg>
+<arg>index</arg>
+</arguments>
+<doc>Removes and returns the value specified with an ``index`` from ``list``.
+
+Index ``0`` means the first position, ``1`` the second and so on.
+Similarly, ``-1`` is the last position, ``-2`` the second last, and so on.
+Using an index that does not exist on the list causes an error.
+The index can be either an integer or a string that can be converted
+to an integer.
+
+Example:
+| ${x} = | Remove From List | ${L2} | 0 |
+=&gt;
+| ${x} = 'a'
+| ${L2} = ['b']</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Remove Values From List">
+<arguments>
+<arg>list_</arg>
+<arg>*values</arg>
+</arguments>
+<doc>Removes all occurrences of given ``values`` from ``list``.
+
+It is not an error if a value does not exist in the list at all.
+
+Example:
+| Remove Values From List | ${L4} | a | c | e | f |
+=&gt;
+| ${L4} = ['b', 'd']</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Reverse List">
+<arguments>
+<arg>list_</arg>
+</arguments>
+<doc>Reverses the given list in place.
+
+Note that the given list is changed and nothing is returned. Use
+`Copy List` first, if you need to keep also the original order.
+
+| Reverse List | ${L3} |
+=&gt;
+| ${L3} = ['c', 'b', 'a']</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set List Value">
+<arguments>
+<arg>list_</arg>
+<arg>index</arg>
+<arg>value</arg>
+</arguments>
+<doc>Sets the value of ``list`` specified by ``index`` to the given ``value``.
+
+Index ``0`` means the first position, ``1`` the second and so on.
+Similarly, ``-1`` is the last position, ``-2`` second last, and so on.
+Using an index that does not exist on the list causes an error.
+The index can be either an integer or a string that can be converted to
+an integer.
+
+Example:
+| Set List Value | ${L3} | 1  | xxx |
+| Set List Value | ${L3} | -1 | yyy |
+=&gt;
+| ${L3} = ['a', 'xxx', 'yyy']</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set To Dictionary">
+<arguments>
+<arg>dictionary</arg>
+<arg>*key_value_pairs</arg>
+<arg>**items</arg>
+</arguments>
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.
+
+Giving items as ``key_value_pairs`` means giving keys and values
+as separate arguments:
+
+| Set To Dictionary | ${D1} | key | value | second | ${2} |
+=&gt;
+| ${D1} = {'a': 1, 'key': 'value', 'second': 2}
+
+Starting from Robot Framework 2.8.1, items can also be given as kwargs
+using ``key=value`` syntax:
+
+| Set To Dictionary | ${D1} | key=value | second=${2} |
+
+The latter syntax is typically more convenient to use, but it has
+a limitation that keys must be strings.
+
+If given keys already exist in the dictionary, their values are updated.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Should Contain Match">
+<arguments>
+<arg>list</arg>
+<arg>pattern</arg>
+<arg>msg=None</arg>
+<arg>case_insensitive=False</arg>
+<arg>whitespace_insensitive=False</arg>
+</arguments>
+<doc>Fails if ``pattern`` is not found in ``list``.
+
+See `List Should Contain Value` for an explanation of ``msg``.
+
+By default, pattern matching is similar to matching files in a shell
+and is case-sensitive and whitespace-sensitive. In the pattern syntax,
+``*`` matches to anything and ``?`` matches to any single character. You
+can also prepend ``glob=`` to your pattern to explicitly use this pattern
+matching behavior.
+
+If you prepend ``regexp=`` to your pattern, your pattern will be used
+according to the Python
+[http://docs.python.org/2/library/re.html|re module] regular expression
+syntax. Important note: Backslashes are an escape character, and must
+be escaped with another backslash (e.g. ``regexp=\\d{6}`` to search for
+``\d{6}``). See `BuiltIn.Should Match Regexp` for more details.
+
+If ``case_insensitive`` is given a true value (see `Boolean arguments`),
+the pattern matching will ignore case.
+
+If ``whitespace_insensitive`` is given a true value (see `Boolean
+arguments`), the pattern matching will ignore whitespace.
+
+Non-string values in lists are ignored when matching patterns.
+
+The given list is never altered by this keyword.
+
+See also ``Should Not Contain Match``.
+
+Examples:
+| Should Contain Match | ${list} | a*              | | | # Match strings beginning with 'a'. |
+| Should Contain Match | ${list} | regexp=a.*      | | | # Same as the above but with regexp. |
+| Should Contain Match | ${list} | regexp=\\d{6} | | | # Match strings containing six digits. |
+| Should Contain Match | ${list} | a*  | case_insensitive=True       | | # Match strings beginning with 'a' or 'A'. |
+| Should Contain Match | ${list} | ab* | whitespace_insensitive=yes  | | # Match strings beginning with 'ab' with possible whitespace ignored. |
+| Should Contain Match | ${list} | ab* | whitespace_insensitive=true | case_insensitive=true | # Same as the above but also ignore case. |
+
+New in Robot Framework 2.8.6.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Should Not Contain Match">
+<arguments>
+<arg>list</arg>
+<arg>pattern</arg>
+<arg>msg=None</arg>
+<arg>case_insensitive=False</arg>
+<arg>whitespace_insensitive=False</arg>
+</arguments>
+<doc>Fails if ``pattern`` is found in ``list``.
+
+Exact opposite of `Should Contain Match` keyword. See that keyword
+for information about arguments and usage in general.
+
+New in Robot Framework 2.8.6.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Sort List">
+<arguments>
+<arg>list_</arg>
+</arguments>
+<doc>Sorts the given list in place.
+
+The strings are sorted alphabetically and the numbers numerically.
+
+Note that the given list is changed and nothing is returned. Use
+`Copy List` first, if you need to keep also the original order.
+
+${L} = [2,1,'a','c','b']
+| Sort List | ${L} |
+=&gt;
+| ${L} = [1, 2, 'a', 'b', 'c']</doc>
+<tags>
+</tags>
+</kw>
+</keywordspec>

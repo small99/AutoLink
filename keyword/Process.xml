@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordspec name="Process" type="library" format="ROBOT" generated="20180425 10:46:41">
+<version>3.0.3</version>
+<scope>global</scope>
+<namedargs>yes</namedargs>
+<doc>Robot Framework test library for running processes.
+
+This library utilizes Python's
+[http://docs.python.org/2/library/subprocess.html|subprocess]
+module and its
+[http://docs.python.org/2/library/subprocess.html#subprocess.Popen|Popen]
+class.
+
+The library has following main usages:
+
+- Running processes in system and waiting for their completion using
+  `Run Process` keyword.
+- Starting processes on background using `Start Process`.
+- Waiting started process to complete using `Wait For Process` or
+  stopping them with `Terminate Process` or `Terminate All Processes`.
+
+This library is new in Robot Framework 2.8.
+
+== Table of contents ==
+
+- `Specifying command and arguments`
+- `Process configuration`
+- `Active process`
+- `Result object`
+- `Boolean arguments`
+- `Example`
+- `Shortcuts`
+- `Keywords`
+
+= Specifying command and arguments =
+
+Both `Run Process` and `Start Process` accept the command to execute and
+all arguments passed to the command as separate arguments. This makes usage
+convenient and also allows these keywords to automatically escape possible
+spaces and other special characters in commands and arguments. Notice that
+if a command accepts options that themselves accept values, these options
+and their values must be given as separate arguments.
+
+When `running processes in shell`, it is also possible to give the whole
+command to execute as a single string. The command can then contain
+multiple commands to be run together. When using this approach, the caller
+is responsible on escaping.
+
+Examples:
+| `Run Process` | ${tools}${/}prog.py | argument | second arg with spaces |
+| `Run Process` | java | -jar | ${jars}${/}example.jar | --option | value |
+| `Run Process` | prog.py "one arg" &amp;&amp; tool.sh | shell=yes | cwd=${tools} |
+
+Starting from Robot Framework 2.8.6, possible non-string arguments are
+converted to strings automatically.
+
+= Process configuration =
+
+`Run Process` and `Start Process` keywords can be configured using
+optional ``**configuration`` keyword arguments. Configuration arguments
+must be given after other arguments passed to these keywords and must
+use syntax like ``name=value``. Available configuration arguments are
+listed below and discussed further in sections afterwards.
+
+|  = Name =  |                  = Explanation =                      |
+| shell      | Specifies whether to run the command in shell or not. |
+| cwd        | Specifies the working directory.                      |
+| env        | Specifies environment variables given to the process. |
+| env:&lt;name&gt; | Overrides the named environment variable(s) only.     |
+| stdout     | Path of a file where to write standard output.        |
+| stderr     | Path of a file where to write standard error.         |
+| output_encoding | Encoding to use when reading command outputs.    |
+| alias      | Alias given to the process.                           |
+
+Note that because ``**configuration`` is passed using ``name=value`` syntax,
+possible equal signs in other arguments passed to `Run Process` and
+`Start Process` must be escaped with a backslash like ``name\=value``.
+See `Run Process` for an example.
+
+== Running processes in shell ==
+
+The ``shell`` argument specifies whether to run the process in a shell or
+not. By default shell is not used, which means that shell specific commands,
+like ``copy`` and ``dir`` on Windows, are not available. You can, however,
+run shell scripts and batch files without using a shell.
+
+Giving the ``shell`` argument any non-false value, such as ``shell=True``,
+changes the program to be executed in a shell. It allows using the shell
+capabilities, but can also make the process invocation operating system
+dependent. Having a shell between the actually started process and this
+library can also interfere communication with the process such as stopping
+it and reading its outputs. Because of these problems, it is recommended
+to use the shell only when absolutely necessary.
+
+When using a shell it is possible to give the whole command to execute
+as a single string. See `Specifying command and arguments` section for
+examples and more details in general.
+
+== Current working directory ==
+
+By default the child process will be executed in the same directory
+as the parent process, the process running tests, is executed. This
+can be changed by giving an alternative location using the ``cwd`` argument.
+Forward slashes in the given path are automatically converted to
+backslashes on Windows.
+
+`Standard output and error streams`, when redirected to files,
+are also relative to the current working directory possibly set using
+the ``cwd`` argument.
+
+Example:
+| `Run Process` | prog.exe | cwd=${ROOT}/directory | stdout=stdout.txt |
+
+== Environment variables ==
+
+By default the child process will get a copy of the parent process's
+environment variables. The ``env`` argument can be used to give the
+child a custom environment as a Python dictionary. If there is a need
+to specify only certain environment variable, it is possible to use the
+``env:&lt;name&gt;=&lt;value&gt;`` format to set or override only that named variables.
+It is also possible to use these two approaches together.
+
+Examples:
+| `Run Process` | program | env=${environ} |
+| `Run Process` | program | env:http_proxy=10.144.1.10:8080 | env:PATH=%{PATH}${:}${PROGDIR} |
+| `Run Process` | program | env=${environ} | env:EXTRA=value |
+
+== Standard output and error streams ==
+
+By default processes are run so that their standard output and standard
+error streams are kept in the memory. This works fine normally,
+but if there is a lot of output, the output buffers may get full and
+the program can hang. Additionally on Jython, everything written to
+these in-memory buffers can be lost if the process is terminated.
+
+To avoid the above mentioned problems, it is possible to use ``stdout``
+and ``stderr`` arguments to specify files on the file system where to
+redirect the outputs. This can also be useful if other processes or
+other keywords need to read or manipulate the outputs somehow.
+
+Given ``stdout`` and ``stderr`` paths are relative to the `current working
+directory`. Forward slashes in the given paths are automatically converted
+to backslashes on Windows.
+
+As a special feature, it is possible to redirect the standard error to
+the standard output by using ``stderr=STDOUT``.
+
+Regardless are outputs redirected to files or not, they are accessible
+through the `result object` returned when the process ends. Commands are
+expected to write outputs using the console encoding, but `output encoding`
+can be configured using the ``output_encoding`` argument if needed.
+
+Examples:
+| ${result} = | `Run Process` | program | stdout=${TEMPDIR}/stdout.txt | stderr=${TEMPDIR}/stderr.txt |
+| `Log Many`  | stdout: ${result.stdout} | stderr: ${result.stderr} |
+| ${result} = | `Run Process` | program | stderr=STDOUT |
+| `Log`       | all output: ${result.stdout} |
+
+Note that the created output files are not automatically removed after
+the test run. The user is responsible to remove them if needed.
+
+== Output encoding ==
+
+Executed commands are, by default, expected to write outputs to the
+`standard output and error streams` using the encoding used by the
+system console. If the command uses some other encoding, that can be
+configured using the ``output_encoding`` argument. This is especially
+useful on Windows where the console uses a different encoding than rest
+of the system, and many commands use the general system encoding instead
+of the console encoding.
+
+The value used with the ``output_encoding`` argument must be a valid
+encoding and must match the encoding actually used by the command. As a
+convenience, it is possible to use strings ``CONSOLE`` and ``SYSTEM``
+to specify that the console or system encoding is used, respectively.
+If produced outputs use different encoding then configured, values got
+through the `result object` will be invalid.
+
+Examples:
+| `Start Process` | program | output_encoding=UTF-8 |
+| `Run Process`   | program | stdout=${path} | output_encoding=SYSTEM |
+
+The support to set output encoding is new in Robot Framework 3.0.
+
+== Alias ==
+
+A custom name given to the process that can be used when selecting the
+`active process`.
+
+Examples:
+| `Start Process` | program | alias=example |
+| `Run Process`   | python  | -c | print 'hello' | alias=hello |
+
+= Active process =
+
+The test library keeps record which of the started processes is currently
+active. By default it is latest process started with `Start Process`,
+but `Switch Process` can be used to select a different one. Using
+`Run Process` does not affect the active process.
+
+The keywords that operate on started processes will use the active process
+by default, but it is possible to explicitly select a different process
+using the ``handle`` argument. The handle can be the identifier returned by
+`Start Process` or an ``alias`` explicitly given to `Start Process` or
+`Run Process`.
+
+= Result object =
+
+`Run Process`, `Wait For Process` and `Terminate Process` keywords return a
+result object that contains information about the process execution as its
+attributes. The same result object, or some of its attributes, can also
+be get using `Get Process Result` keyword. Attributes available in the
+object are documented in the table below.
+
+| = Attribute = |             = Explanation =               |
+| rc            | Return code of the process as an integer. |
+| stdout        | Contents of the standard output stream.   |
+| stderr        | Contents of the standard error stream.    |
+| stdout_path   | Path where stdout was redirected or ``None`` if not redirected. |
+| stderr_path   | Path where stderr was redirected or ``None`` if not redirected. |
+
+Example:
+| ${result} =            | `Run Process`         | program               |
+| `Should Be Equal As Integers` | ${result.rc}   | 0                     |
+| `Should Match`         | ${result.stdout}      | Some t?xt*            |
+| `Should Be Empty`      | ${result.stderr}      |                       |
+| ${stdout} =            | `Get File`            | ${result.stdout_path} |
+| `Should Be Equal`      | ${stdout}             | ${result.stdout}      |
+| `File Should Be Empty` | ${result.stderr_path} |                       |
+
+= Boolean arguments =
+
+Some keywords accept arguments that are handled as Boolean values true or
+false. If such an argument is given as a string, it is considered false if
+it is either an empty string or case-insensitively equal to ``false``,
+``none`` or ``no``. Other strings are considered true regardless
+their value, and other argument types are tested using the same
+[http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+as in Python].
+
+True examples:
+| `Terminate Process` | kill=True     | # Strings are generally true.    |
+| `Terminate Process` | kill=yes      | # Same as the above.             |
+| `Terminate Process` | kill=${TRUE}  | # Python ``True`` is true.       |
+| `Terminate Process` | kill=${42}    | # Numbers other than 0 are true. |
+
+False examples:
+| `Terminate Process` | kill=False    | # String ``false`` is false.   |
+| `Terminate Process` | kill=no       | # Also string ``no`` is false. |
+| `Terminate Process` | kill=${EMPTY} | # Empty string is false.       |
+| `Terminate Process` | kill=${FALSE} | # Python ``False`` is false.   |
+
+Prior to Robot Framework 2.9, all non-empty strings, including ``false``
+and ``no``, were considered to be true. Considering ``none`` false is
+new in Robot Framework 3.0.3.
+
+= Example =
+
+| ***** Settings *****
+| Library           Process
+| Suite Teardown    `Terminate All Processes`    kill=True
+|
+| ***** Test Cases *****
+| Example
+|     `Start Process`    program    arg1    arg2    alias=First
+|     ${handle} =    `Start Process`    command.sh arg | command2.sh    shell=True    cwd=/path
+|     ${result} =    `Run Process`    ${CURDIR}/script.py
+|     `Should Not Contain`    ${result.stdout}    FAIL
+|     `Terminate Process`    ${handle}
+|     ${result} =    `Wait For Process`    First
+|     `Should Be Equal As Integers`    ${result.rc}    0</doc>
+<kw name="Get Process Id">
+<arguments>
+<arg>handle=None</arg>
+</arguments>
+<doc>Returns the process ID (pid) of the process as an integer.
+
+If ``handle`` is not given, uses the current `active process`.
+
+Notice that the pid is not the same as the handle returned by
+`Start Process` that is used internally by this library.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Process Object">
+<arguments>
+<arg>handle=None</arg>
+</arguments>
+<doc>Return the underlying ``subprocess.Popen`` object.
+
+If ``handle`` is not given, uses the current `active process`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Process Result">
+<arguments>
+<arg>handle=None</arg>
+<arg>rc=False</arg>
+<arg>stdout=False</arg>
+<arg>stderr=False</arg>
+<arg>stdout_path=False</arg>
+<arg>stderr_path=False</arg>
+</arguments>
+<doc>Returns the specified `result object` or some of its attributes.
+
+The given ``handle`` specifies the process whose results should be
+returned. If no ``handle`` is given, results of the current `active
+process` are returned. In either case, the process must have been
+finishes before this keyword can be used. In practice this means
+that processes started with `Start Process` must be finished either
+with `Wait For Process` or `Terminate Process` before using this
+keyword.
+
+If no other arguments than the optional ``handle`` are given, a whole
+`result object` is returned. If one or more of the other arguments
+are given any true value, only the specified attributes of the
+`result object` are returned. These attributes are always returned
+in the same order as arguments are specified in the keyword signature.
+See `Boolean arguments` section for more details about true and false
+values.
+
+Examples:
+| Run Process           | python             | -c            | print 'Hello, world!' | alias=myproc |
+| # Get result object   |                    |               |
+| ${result} =           | Get Process Result | myproc        |
+| Should Be Equal       | ${result.rc}       | ${0}          |
+| Should Be Equal       | ${result.stdout}   | Hello, world! |
+| Should Be Empty       | ${result.stderr}   |               |
+| # Get one attribute   |                    |               |
+| ${stdout} =           | Get Process Result | myproc        | stdout=true |
+| Should Be Equal       | ${stdout}          | Hello, world! |
+| # Multiple attributes |                    |               |
+| ${stdout}             | ${stderr} =        | Get Process Result |  myproc | stdout=yes | stderr=yes |
+| Should Be Equal       | ${stdout}          | Hello, world! |
+| Should Be Empty       | ${stderr}          |               |
+
+Although getting results of a previously executed process can be handy
+in general, the main use case for this keyword is returning results
+over the remote library interface. The remote interface does not
+support returning the whole result object, but individual attributes
+can be returned without problems.
+
+New in Robot Framework 2.8.2.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Is Process Running">
+<arguments>
+<arg>handle=None</arg>
+</arguments>
+<doc>Checks is the process running or not.
+
+If ``handle`` is not given, uses the current `active process`.
+
+Returns ``True`` if the process is still running and ``False`` otherwise.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Join Command Line">
+<arguments>
+<arg>*args</arg>
+</arguments>
+<doc>Joins arguments into one command line string.
+
+In resulting command line string arguments are delimited with a space,
+arguments containing spaces are surrounded with quotes, and possible
+quotes are escaped with a backslash.
+
+If this keyword is given only one argument and that is a list like
+object, then the values of that list are joined instead.
+
+Example:
+| ${cmd} = | Join Command Line | --option | value with spaces |
+| Should Be Equal | ${cmd} | --option "value with spaces" |
+
+New in Robot Framework 2.9.2.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Process Should Be Running">
+<arguments>
+<arg>handle=None</arg>
+<arg>error_message=Process is not running.</arg>
+</arguments>
+<doc>Verifies that the process is running.
+
+If ``handle`` is not given, uses the current `active process`.
+
+Fails if the process has stopped.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Process Should Be Stopped">
+<arguments>
+<arg>handle=None</arg>
+<arg>error_message=Process is running.</arg>
+</arguments>
+<doc>Verifies that the process is not running.
+
+If ``handle`` is not given, uses the current `active process`.
+
+Fails if the process is still running.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Run Process">
+<arguments>
+<arg>command</arg>
+<arg>*arguments</arg>
+<arg>**configuration</arg>
+</arguments>
+<doc>Runs a process and waits for it to complete.
+
+``command`` and ``*arguments`` specify the command to execute and
+arguments passed to it. See `Specifying command and arguments` for
+more details.
+
+``**configuration`` contains additional configuration related to
+starting processes and waiting for them to finish. See `Process
+configuration` for more details about configuration related to starting
+processes. Configuration related to waiting for processes consists of
+``timeout`` and ``on_timeout`` arguments that have same semantics as
+with `Wait For Process` keyword. By default there is no timeout, and
+if timeout is defined the default action on timeout is ``terminate``.
+
+Returns a `result object` containing information about the execution.
+
+Note that possible equal signs in ``*arguments`` must be escaped
+with a backslash (e.g. ``name\=value``) to avoid them to be passed in
+as ``**configuration``.
+
+Examples:
+| ${result} = | Run Process | python | -c | print 'Hello, world!' |
+| Should Be Equal | ${result.stdout} | Hello, world! |
+| ${result} = | Run Process | ${command} | stderr=STDOUT | timeout=10s |
+| ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
+| ${result} = | Run Process | java -Dname\=value Example | shell=True | cwd=${EXAMPLE} |
+
+This keyword does not change the `active process`.
+
+``timeout`` and ``on_timeout`` arguments are new in Robot Framework
+2.8.4.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Send Signal To Process">
+<arguments>
+<arg>signal</arg>
+<arg>handle=None</arg>
+<arg>group=False</arg>
+</arguments>
+<doc>Sends the given ``signal`` to the specified process.
+
+If ``handle`` is not given, uses the current `active process`.
+
+Signal can be specified either as an integer as a signal name. In the
+latter case it is possible to give the name both with or without ``SIG``
+prefix, but names are case-sensitive. For example, all the examples
+below send signal ``INT (2)``:
+
+| Send Signal To Process | 2      |        | # Send to active process |
+| Send Signal To Process | INT    |        |                          |
+| Send Signal To Process | SIGINT | myproc | # Send to named process  |
+
+This keyword is only supported on Unix-like machines, not on Windows.
+What signals are supported depends on the system. For a list of
+existing signals on your system, see the Unix man pages related to
+signal handling (typically ``man signal`` or ``man 7 signal``).
+
+By default sends the signal only to the parent process, not to possible
+child processes started by it. Notice that when `running processes in
+shell`, the shell is the parent process and it depends on the system
+does the shell propagate the signal to the actual started process.
+
+To send the signal to the whole process group, ``group`` argument can
+be set to any true value (see `Boolean arguments`). This is not
+supported by Jython, however.
+
+New in Robot Framework 2.8.2. Support for ``group`` argument is new
+in Robot Framework 2.8.5.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Split Command Line">
+<arguments>
+<arg>args</arg>
+<arg>escaping=False</arg>
+</arguments>
+<doc>Splits command line string into a list of arguments.
+
+String is split from spaces, but argument surrounded in quotes may
+contain spaces in them. If ``escaping`` is given a true value, then
+backslash is treated as an escape character. It can escape unquoted
+spaces, quotes inside quotes, and so on, but it also requires using
+double backslashes when using Windows paths.
+
+Examples:
+| @{cmd} = | Split Command Line | --option "value with spaces" |
+| Should Be True | $cmd == ['--option', 'value with spaces'] |
+
+New in Robot Framework 2.9.2.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Start Process">
+<arguments>
+<arg>command</arg>
+<arg>*arguments</arg>
+<arg>**configuration</arg>
+</arguments>
+<doc>Starts a new process on background.
+
+See `Specifying command and arguments` and `Process configuration`
+for more information about the arguments, and `Run Process` keyword
+for related examples.
+
+Makes the started process new `active process`. Returns an identifier
+that can be used as a handle to activate the started process if needed.
+
+Starting from Robot Framework 2.8.5, processes are started so that
+they create a new process group. This allows sending signals to and
+terminating also possible child processes. This is not supported by
+Jython in general nor by Python versions prior to 2.7 on Windows.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Switch Process">
+<arguments>
+<arg>handle</arg>
+</arguments>
+<doc>Makes the specified process the current `active process`.
+
+The handle can be an identifier returned by `Start Process` or
+the ``alias`` given to it explicitly.
+
+Example:
+| Start Process  | prog1    | alias=process1 |
+| Start Process  | prog2    | alias=process2 |
+| # currently active process is process2 |
+| Switch Process | process1 |
+| # now active process is process1 |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Terminate All Processes">
+<arguments>
+<arg>kill=False</arg>
+</arguments>
+<doc>Terminates all still running processes started by this library.
+
+This keyword can be used in suite teardown or elsewhere to make
+sure that all processes are stopped,
+
+By default tries to terminate processes gracefully, but can be
+configured to forcefully kill them immediately. See `Terminate Process`
+that this keyword uses internally for more details.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Terminate Process">
+<arguments>
+<arg>handle=None</arg>
+<arg>kill=False</arg>
+</arguments>
+<doc>Stops the process gracefully or forcefully.
+
+If ``handle`` is not given, uses the current `active process`.
+
+By default first tries to stop the process gracefully. If the process
+does not stop in 30 seconds, or ``kill`` argument is given a true value,
+(see `Boolean arguments`) kills the process forcefully. Stops also all
+the child processes of the originally started process.
+
+Waits for the process to stop after terminating it. Returns a `result
+object` containing information about the execution similarly as `Wait
+For Process`.
+
+On Unix-like machines graceful termination is done using ``TERM (15)``
+signal and killing using ``KILL (9)``. Use `Send Signal To Process`
+instead if you just want to send either of these signals without
+waiting for the process to stop.
+
+On Windows graceful termination is done using ``CTRL_BREAK_EVENT``
+event and killing using Win32 API function ``TerminateProcess()``.
+
+Examples:
+| ${result} =                 | Terminate Process |     |
+| Should Be Equal As Integers | ${result.rc}      | -15 | # On Unixes |
+| Terminate Process           | myproc            | kill=true |
+
+Limitations:
+- Graceful termination is not supported on Windows by Jython nor by
+  Python versions prior to 2.7. Process is killed instead.
+- Stopping the whole process group is not supported by Jython at all
+  nor by Python versions prior to 2.7 on Windows.
+- On Windows forceful kill only stops the main process, not possible
+  child processes.
+
+Automatically killing the process if termination fails as well as
+returning a result object are new features in Robot Framework 2.8.2.
+Terminating also possible child processes, including using
+``CTRL_BREAK_EVENT`` on Windows, is new in Robot Framework 2.8.5.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait For Process">
+<arguments>
+<arg>handle=None</arg>
+<arg>timeout=None</arg>
+<arg>on_timeout=continue</arg>
+</arguments>
+<doc>Waits for the process to complete or to reach the given timeout.
+
+The process to wait for must have been started earlier with
+`Start Process`. If ``handle`` is not given, uses the current
+`active process`.
+
+``timeout`` defines the maximum time to wait for the process. It can be
+given in
+[http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format|
+various time formats] supported by Robot Framework, for example, ``42``,
+``42 s``, or ``1 minute 30 seconds``.
+
+``on_timeout`` defines what to do if the timeout occurs. Possible values
+and corresponding actions are explained in the table below. Notice
+that reaching the timeout never fails the test.
+
+| = Value = |               = Action =               |
+| continue  | The process is left running (default). |
+| terminate | The process is gracefully terminated.  |
+| kill      | The process is forcefully stopped.     |
+
+See `Terminate Process` keyword for more details how processes are
+terminated and killed.
+
+If the process ends before the timeout or it is terminated or killed,
+this keyword returns a `result object` containing information about
+the execution. If the process is left running, Python ``None`` is
+returned instead.
+
+Examples:
+| # Process ends cleanly      |                  |                  |
+| ${result} =                 | Wait For Process | example          |
+| Process Should Be Stopped   | example          |                  |
+| Should Be Equal As Integers | ${result.rc}     | 0                |
+| # Process does not end      |                  |                  |
+| ${result} =                 | Wait For Process | timeout=42 secs  |
+| Process Should Be Running   |                  |                  |
+| Should Be Equal             | ${result}        | ${NONE}          |
+| # Kill non-ending process   |                  |                  |
+| ${result} =                 | Wait For Process | timeout=1min 30s | on_timeout=kill |
+| Process Should Be Stopped   |                  |                  |
+| Should Be Equal As Integers | ${result.rc}     | -9               |
+
+``timeout`` and ``on_timeout`` are new in Robot Framework 2.8.2.</doc>
+<tags>
+</tags>
+</kw>
+</keywordspec>

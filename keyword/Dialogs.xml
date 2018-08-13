@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordspec name="Dialogs" type="library" format="ROBOT" generated="20180425 10:46:41">
+<version>3.0.3</version>
+<scope>global</scope>
+<namedargs>yes</namedargs>
+<doc>A test library providing dialogs for interacting with users.
+
+``Dialogs`` is Robot Framework's standard library that provides means
+for pausing the test execution and getting input from users. The
+dialogs are slightly different depending on whether tests are run on
+Python, IronPython or Jython but they provide the same functionality.
+
+Long lines in the provided messages are wrapped automatically since
+Robot Framework 2.8. If you want to wrap lines manually, you can add
+newlines using the ``\n`` character sequence.
+
+The library has a known limitation that it cannot be used with timeouts
+on Python. Support for IronPython was added in Robot Framework 2.9.2.</doc>
+<kw name="Execute Manual Step">
+<arguments>
+<arg>message</arg>
+<arg>default_error=</arg>
+</arguments>
+<doc>Pauses test execution until user sets the keyword status.
+
+User can press either ``PASS`` or ``FAIL`` button. In the latter case execution
+fails and an additional dialog is opened for defining the error message.
+
+``message`` is the instruction shown in the initial dialog and
+``default_error`` is the default value shown in the possible error message
+dialog.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Selection From User">
+<arguments>
+<arg>message</arg>
+<arg>*values</arg>
+</arguments>
+<doc>Pauses test execution and asks user to select a value.
+
+The selected value is returned. Pressing ``Cancel`` fails the keyword.
+
+``message`` is the instruction shown in the dialog and ``values`` are
+the options given to the user.
+
+Example:
+| ${username} = | Get Selection From User | Select user name | user1 | user2 | admin |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Value From User">
+<arguments>
+<arg>message</arg>
+<arg>default_value=</arg>
+<arg>hidden=False</arg>
+</arguments>
+<doc>Pauses test execution and asks user to input a value.
+
+Value typed by the user, or the possible default value, is returned.
+Returning an empty value is fine, but pressing ``Cancel`` fails the keyword.
+
+``message`` is the instruction shown in the dialog and ``default_value`` is
+the possible default value shown in the input field.
+
+If ``hidden`` is given a true value, the value typed by the user is hidden.
+``hidden`` is considered true if it is a non-empty string not equal to
+``false``, ``none`` or ``no``, case-insensitively. If it is not a string,
+its truth value is got directly using same
+[http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+as in Python].
+
+Example:
+| ${username} = | Get Value From User | Input user name | default    |
+| ${password} = | Get Value From User | Input password  | hidden=yes |
+
+Possibility to hide the typed in value is new in Robot Framework 2.8.4.
+Considering strings ``false`` and ``no`` to be false is new in RF 2.9
+and considering string ``none`` false is new in RF 3.0.3.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Pause Execution">
+<arguments>
+<arg>message=Test execution paused. Press OK to continue.</arg>
+</arguments>
+<doc>Pauses test execution until user clicks ``Ok`` button.
+
+``message`` is the message shown in the dialog.</doc>
+<tags>
+</tags>
+</kw>
+</keywordspec>

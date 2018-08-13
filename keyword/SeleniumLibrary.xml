@@ -1,0 +1,3138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordspec name="SeleniumLibrary" type="library" format="ROBOT" generated="20180425 10:46:44">
+<version>3.1.1</version>
+<scope>global</scope>
+<namedargs>yes</namedargs>
+<doc>SeleniumLibrary is a web testing library for Robot Framework.
+
+This document explains how to use keywords provided by SeleniumLibrary.
+For information about installation, support, and more, please visit the
+[https://github.com/robotframework/SeleniumLibrary|project pages].
+For more information about Robot Framework, see http://robotframework.org.
+
+SeleniumLibrary uses the Selenium WebDriver modules internally to
+control a web browser. See http://seleniumhq.org for more information
+about Selenium in general.
+
+== Table of contents ==
+
+- `Locating elements`
+- `Timeouts, waits and delays`
+- `Run-on-failure functionality`
+- `Boolean arguments`
+- `Importing`
+- `Shortcuts`
+- `Keywords`
+
+= Locating elements =
+
+All keywords in SeleniumLibrary that need to interact with an element
+on a web page take an argument typically named ``locator`` that specifies
+how to find the element. Most often the locator is given as a string
+using the locator syntax described below, but `using WebElements` is
+possible too.
+
+== Locator syntax ==
+
+SeleniumLibrary supports finding elements based on different strategies
+such as the element id, XPath expressions, or CSS selectors. The strategy
+can either be explicitly specified with a prefix or the strategy can be
+implicit.
+
+=== Default locator strategy ===
+
+By default locators are considered to use the keyword specific default
+locator strategy. All keywords support finding elements based on ``id``
+and ``name`` attributes, but some keywords support additional attributes
+or other values that make sense in their context. For example, `Click
+Link` supports the ``href`` attribute and the link text and addition
+to the normal ``id`` and ``name``.
+
+Examples:
+
+| `Click Element` | example | # Match based on ``id`` or ``name``.            |
+| `Click Link`    | example | # Match also based on link text and ``href``.   |
+| `Click Button`  | example | # Match based on ``id``, ``name`` or ``value``. |
+
+If a locator accidentally starts with a prefix recognized as `explicit
+locator strategy` or `implicit XPath strategy`, it is possible to use
+the explicit ``default`` prefix to enable the default strategy.
+
+Examples:
+
+| `Click Element` | name:foo         | # Find element with name ``foo``.               |
+| `Click Element` | default:name:foo | # Use default strategy with value ``name:foo``. |
+| `Click Element` | //foo            | # Find element using XPath ``//foo``.           |
+| `Click Element` | default: //foo   | # Use default strategy with value ``//foo``.    |
+
+=== Explicit locator strategy ===
+
+The explicit locator strategy is specified with a prefix using either
+syntax ``strategy:value`` or ``strategy=value``. The former syntax
+is preferred, because the latter is identical to Robot Framework's
+[http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#named-argument-syntax|
+named argument syntax] and that can cause problems. Spaces around
+the separator are ignored, so ``id:foo``, ``id: foo`` and ``id : foo``
+are all equivalent.
+
+Locator strategies that are supported by default are listed in the table
+below. In addition to them, it is possible to register `custom locators`.
+
+| = Strategy = |          = Match based on =         |         = Example =            |
+| id           | Element ``id``.                     | ``id:example``                 |
+| name         | ``name`` attribute.                 | ``name:example``               |
+| identifier   | Either ``id`` or ``name``.          | ``identifier:example``         |
+| class        | Element ``class``.                  | ``class:example``              |
+| tag          | Tag name.                           | ``tag:div``                    |
+| xpath        | XPath expression.                   | ``xpath://div[@id="example"]`` |
+| css          | CSS selector.                       | ``css:div#example``            |
+| dom          | DOM expression.                     | ``dom:document.images[5]``     |
+| link         | Exact text a link has.              | ``link:The example``           |
+| partial link | Partial link text.                  | ``partial link:he ex``         |
+| sizzle       | Sizzle selector provided by jQuery. | ``sizzle:div.example``         |
+| jquery       | Same as the above.                  | ``jquery:div.example``         |
+| default      | Keyword specific default behavior.  | ``default:example``            |
+
+See the `Default locator strategy` section below for more information
+about how the default strategy works. Using the explicit ``default``
+prefix is only necessary if the locator value itself accidentally
+matches some of the explicit strategies.
+
+Different locator strategies have different pros and cons. Using ids,
+either explicitly like ``id:foo`` or by using the `default locator
+strategy` simply like ``foo``, is recommended when possible, because
+the syntax is simple and locating elements by an id is fast for browsers.
+If an element does not have an id or the id is not stable, other
+solutions need to be used. If an element has a unique tag name or class,
+using ``tag``, ``class`` or ``css`` strategy like ``tag:h1``,
+``class:example`` or ``css:h1.example`` is often an easy solution. In
+more complex cases using XPath expressions is typically the best
+approach. They are very powerful but a downside is that they can also
+get complex.
+
+Examples:
+
+| `Click Element` | id:foo                      | # Element with id 'foo'. |
+| `Click Element` | css:div#foo h1              | # h1 element under div with id 'foo'. |
+| `Click Element` | xpath: //div[@id="foo"]//h1 | # Same as the above using XPath, not CSS. |
+| `Click Element` | xpath: //*[contains(text(), "example")] | # Element containing text 'example'. |
+
+*NOTE:*
+
+- The ``strategy:value`` syntax is only supported by SeleniumLibrary 3.0
+  and newer.
+- Using the ``sizzle`` strategy or its alias ``jquery`` requires that
+  the system under test contains the jQuery library.
+- Prior to SeleniumLibrary 3.0, table related keywords only supported
+  ``xpath``, ``css`` and ``sizzle/jquery`` strategies.
+
+=== Implicit XPath strategy ===
+
+If the locator starts with ``//`` or ``(//``, the locator is considered
+to be an XPath expression. In other words, using ``//div`` is equivalent
+to using explicit ``xpath://div``.
+
+Examples:
+
+| `Click Element` | //div[@id="foo"]//h1 |
+| `Click Element` | (//div)[2]           |
+
+The support for the ``(//`` prefix is new in SeleniumLibrary 3.0.
+
+== Using WebElements ==
+
+In addition to specifying a locator as a string, it is possible to use
+Selenium's WebElement objects. This requires first getting a WebElement,
+for example, by using the `Get WebElement` keyword.
+
+| ${elem} =       | `Get WebElement` | id:example |
+| `Click Element` | ${elem}          |            |
+
+== Custom locators ==
+
+If more complex lookups are required than what is provided through the
+default locators, custom lookup strategies can be created. Using custom
+locators is a two part process. First, create a keyword that returns
+a WebElement that should be acted on:
+
+| Custom Locator Strategy | [Arguments] | ${browser} | ${strategy} | ${tag} | ${constraints} |
+|   | ${element}= | Execute Javascript | return window.document.getElementById('${criteria}'); |
+|   | [Return] | ${element} |
+
+This keyword is a reimplementation of the basic functionality of the
+``id`` locator where ``${browser}`` is a reference to a WebDriver
+instance and ``${strategy}`` is name of the locator strategy. To use
+this locator it must first be registered by using the
+`Add Location Strategy` keyword:
+
+| `Add Location Strategy` | custom | Custom Locator Strategy |
+
+The first argument of `Add Location Strategy` specifies the name of
+the strategy and it must be unique. After registering the strategy,
+the usage is the same as with other locators:
+
+| `Click Element` | custom:example |
+
+See the `Add Location Strategy` keyword for more details.
+
+= Timeouts, waits and delays =
+
+This section discusses different ways how to wait for elements to
+appear on web pages and to slow down execution speed otherwise.
+It also explains the `time format` that can be used when setting various
+timeouts, waits and delays.
+
+== Timeout ==
+
+SeleniumLibrary contains various keywords that have an optional
+``timeout`` argument that specifies how long these keywords should
+wait for certain events or actions. These keywords include, for example,
+``Wait ...`` keywords and keywords related to alerts.
+
+The default timeout these keywords use can be set globally either by
+using the `Set Selenium Timeout` keyword or with the ``timeout`` argument
+when `importing` the library. See `time format` below for supported
+timeout syntax.
+
+== Implicit wait ==
+
+Implicit wait specifies the maximum time how long Selenium waits when
+searching for elements. It can be set by using the `Set Selenium Implicit
+Wait` keyword or with the ``implicit_wait`` argument when `importing`
+the library. See [http://seleniumhq.org/docs/04_webdriver_advanced.html|
+Selenium documentation] for more information about this functionality.
+
+See `time format` below for supported syntax.
+
+== Selenium speed ==
+
+Selenium execution speed can be slowed down globally by using `Set
+Selenium speed` keyword. This functionality is designed to be used for
+demonstrating or debugging purposes. Using it to make sure that elements
+appear on a page is not a good idea, and the above explained timeouts
+and waits should be used instead.
+
+See `time format` below for supported syntax.
+
+== Time format ==
+
+All timeouts and waits can be given as numbers considered seconds
+(e.g. ``0.5`` or ``42``) or in Robot Framework's time syntax
+(e.g. ``1.5 seconds`` or ``1 min 30 s``). For more information about
+the time syntax see the
+[http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format|Robot Framework User Guide].
+
+= Run-on-failure functionality =
+
+SeleniumLibrary has a handy feature that it can automatically execute
+a keyword if any of its own keywords fails. By default it uses the
+`Capture Page Screenshot` keyword, but this can be changed either by
+using the `Register Keyword To Run On Failure` keyword or with the
+``run_on_failure`` argument when `importing` the library. It is
+possible to use any keyword from any imported library or resource file.
+
+The run-on-failure functionality can be disabled by using a special
+value ``NOTHING`` or anything considered false (see `Boolean arguments`)
+such as ``NONE``.
+
+= Boolean arguments =
+
+Some keywords accept arguments that are handled as Boolean values true or
+false. If such an argument is given as a string, it is considered false if
+it is either empty or case-insensitively equal to ``false``, ``no`` or
+``none``. Other strings are considered true regardless their value, and
+other argument types are tested using same
+[https://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules as in Python].
+
+True examples:
+
+| `Set Screenshot Directory` | ${RESULTS} | persist=True    | # Strings are generally true.    |
+| `Set Screenshot Directory` | ${RESULTS} | persist=yes     | # Same as the above.             |
+| `Set Screenshot Directory` | ${RESULTS} | persist=${TRUE} | # Python True is true.           |
+| `Set Screenshot Directory` | ${RESULTS} | persist=${42}   | # Numbers other than 0 are true. |
+
+False examples:
+
+| `Set Screenshot Directory` | ${RESULTS} | persist=False    | # String false is false.        |
+| `Set Screenshot Directory` | ${RESULTS} | persist=no       | # Also string no is false.      |
+| `Set Screenshot Directory` | ${RESULTS} | persist=NONE     | # String NONE is false.         |
+| `Set Screenshot Directory` | ${RESULTS} | persist=${EMPTY} | # Empty string is false.        |
+| `Set Screenshot Directory` | ${RESULTS} | persist=${FALSE} | # Python False is false.        |
+| `Set Screenshot Directory` | ${RESULTS} | persist=${NONE}  | # Python None is false.         |
+
+Note that prior to SeleniumLibrary 3.0, all non-empty strings, including
+``false``, ``no`` and ``none``, were considered true.</doc>
+<init>
+<arguments>
+<arg>timeout=5.0</arg>
+<arg>implicit_wait=0.0</arg>
+<arg>run_on_failure=Capture Page Screenshot</arg>
+<arg>screenshot_root_directory=None</arg>
+</arguments>
+<doc>SeleniumLibrary can be imported with several optional arguments.
+
+- ``timeout``:
+  Default value for `timeouts` used with ``Wait ...`` keywords.
+- ``implicit_wait``:
+  Default value for `implicit wait` used when locating elements.
+- ``run_on_failure``:
+  Default action for the `run-on-failure functionality`.
+- ``screenshot_root_directory``:
+  Location where possible screenshots are created. If not given,
+  the directory where the log file is written is used.</doc>
+<tags>
+</tags>
+</init>
+<kw name="Add Cookie">
+<arguments>
+<arg>name</arg>
+<arg>value</arg>
+<arg>path=None</arg>
+<arg>domain=None</arg>
+<arg>secure=None</arg>
+<arg>expiry=None</arg>
+</arguments>
+<doc>Adds a cookie to your current session.
+
+``name`` and ``value`` are required, ``path``, ``domain``, ``secure``
+and ``expiry`` are optional.  Expiry supports the same formats as
+the [http://robotframework.org/robotframework/latest/libraries/DateTime.html|DateTime]
+library or an epoch time stamp.
+
+Example:
+| `Add Cookie` | foo | bar |                            |
+| `Add Cookie` | foo | bar | domain=example.com         |
+| `Add Cookie` | foo | bar | expiry=2027-09-28 16:21:35 | # Expiry as timestamp.     |
+| `Add Cookie` | foo | bar | expiry=1822137695          | # Expiry as epoch seconds. |
+
+Prior to SeleniumLibrary 3.0 setting expiry did not work.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Add Location Strategy">
+<arguments>
+<arg>strategy_name</arg>
+<arg>strategy_keyword</arg>
+<arg>persist=False</arg>
+</arguments>
+<doc>Adds a custom location strategy.
+
+See `Custom locators` for information how to create and use
+custom strategies. `Remove Location Strategy` can be used to
+remove a registered strategy.
+
+Location strategies are automatically removed after leaving the
+current scope by default. Setting ``persist`` to a true value (see
+`Boolean arguments`) will cause the location strategy to stay
+registered throughout the life of the test.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Alert Should Be Present">
+<arguments>
+<arg>text=</arg>
+<arg>action=ACCEPT</arg>
+<arg>timeout=None</arg>
+</arguments>
+<doc>Verifies that an alert is present and, by default, accepts it.
+
+Fails if no alert is present. If ``text`` is a non-empty string,
+then it is used to verify alert's message. The alert is accepted
+by default, but that behavior can be controlled by using the
+``action`` argument same way as with `Handle Alert`.
+
+``timeout`` specifies how long to wait for the alert to appear.
+If it is not given, the global default `timeout` is used instead.
+
+``action`` and ``timeout`` arguments are new in SeleniumLibrary 3.0.
+In earlier versions the alert was always accepted and timeout was
+hard coded to one second.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Alert Should Not Be Present">
+<arguments>
+<arg>action=ACCEPT</arg>
+<arg>timeout=0</arg>
+</arguments>
+<doc>Verifies that no alert is present.
+
+If the alert actually exists, the ``action`` argument determines
+how it should be handled. By default the alert is accepted, but
+it can be also dismissed or left open the same way as with the
+`Handle Alert` keyword.
+
+``timeout`` specifies how long to wait for the alert to appear.
+By default the alert is not waited at all, but a custom time can
+be given if alert may be delayed. See the `time format` section
+for information about the syntax.
+
+New in SeleniumLibrary 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Assign Id To Element">
+<arguments>
+<arg>locator</arg>
+<arg>id</arg>
+</arguments>
+<doc>Assigns temporary ``id`` to element specified by ``locator``.
+
+This is mainly useful if the locator is complicated and/or slow XPath
+expression and it is needed multiple times. Identifier expires when
+the page is reloaded.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+Example:
+| `Assign ID to Element` | //ul[@class='example' and ./li[contains(., 'Stuff')]] | my id |
+| `Page Should Contain Element` | my id |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Capture Page Screenshot">
+<arguments>
+<arg>filename=selenium-screenshot-{index}.png</arg>
+</arguments>
+<doc>Takes screenshot of the current page and embeds it into log file.
+
+``filename`` argument specifies the name of the file to write the
+screenshot into. The directory where screenshots are saved can be
+set when `importing` the library or by using the `Set Screenshot
+Directory` keyword. If the directory is not configured, screenshots
+are saved to the same directory where Robot Framework's log file is
+written.
+
+Starting from SeleniumLibrary 1.8, if ``filename`` contains marker
+``{index}``, it will be automatically replaced with unique running
+index preventing files to be overwritten. Indices start from 1,
+and how they are represented can be customized using Python's
+[https://docs.python.org/2/library/string.html#formatstrings|
+format string syntax].
+
+An absolute path to the created screenshot file is returned.
+
+Examples:
+| `Capture Page Screenshot` |                                        |
+| `File Should Exist`       | ${OUTPUTDIR}/selenium-screenshot-1.png |
+| ${path} =                 | `Capture Page Screenshot`              |
+| `File Should Exist`       | ${OUTPUTDIR}/selenium-screenshot-2.png |
+| `File Should Exist`       | ${path}                                |
+| `Capture Page Screenshot` | custom_name.png                        |
+| `File Should Exist`       | ${OUTPUTDIR}/custom_name.png           |
+| `Capture Page Screenshot` | custom_with_index_{index}.png          |
+| `File Should Exist`       | ${OUTPUTDIR}/custom_with_index_1.png   |
+| `Capture Page Screenshot` | formatted_index_{index:03}.png         |
+| `File Should Exist`       | ${OUTPUTDIR}/formatted_index_001.png   |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Checkbox Should Be Selected">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Verifies checkbox ``locator`` is selected/checked.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Checkbox Should Not Be Selected">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Verifies checkbox ``locator`` is not selected/checked.
+
+See the `Locating elements` section for details about the locator
+syntax..</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Choose Cancel On Next Confirmation">
+<arguments>
+</arguments>
+<doc>Deprecated. Use `Handle Alert` directly instead.
+
+In versions prior to SeleniumLibrary 3.0, the alert handling
+approach needed to be set separately before using the `Confirm
+Action` keyword. New `Handle Alert` keyword accepts the action how
+to handle the alert as a normal argument and should be used instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Choose File">
+<arguments>
+<arg>locator</arg>
+<arg>file_path</arg>
+</arguments>
+<doc>Inputs the ``file_path`` into file input field ``locator``.
+
+This keyword is most often used to input files into upload forms.
+The file specified with ``file_path`` must be available on machine
+where tests are executed.
+
+Example:
+| `Choose File` | my_upload_field | ${CURDIR}/trades.csv |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Choose Ok On Next Confirmation">
+<arguments>
+</arguments>
+<doc>Deprecated. Use `Handle Alert` directly instead.
+
+In versions prior to SeleniumLibrary 3.0, the alert handling
+approach needed to be set separately before using the `Confirm
+Action` keyword. New `Handle Alert` keyword accepts the action how
+to handle the alert as a normal argument and should be used instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Clear Element Text">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Clears the value of text entry element identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Click Button">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Clicks button identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, buttons are
+searched using ``id``, ``name`` and ``value``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Click Element">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Click element identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Click Element At Coordinates">
+<arguments>
+<arg>locator</arg>
+<arg>xoffset</arg>
+<arg>yoffset</arg>
+</arguments>
+<doc>Click element ``locator`` at ``xoffset/yoffset``.
+
+Cursor is moved and the center of the element and x/y coordinates are
+calculated from that point.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Click Image">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Clicks an image identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, images are searched
+using ``id``, ``name``, ``src`` and ``alt``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Click Link">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Clicks a link identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, links are searched
+using ``id``, ``name``, ``href`` and the link text.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Close All Browsers">
+<arguments>
+</arguments>
+<doc>Closes all open browsers and resets the browser cache.
+
+After this keyword new indexes returned from `Open Browser` keyword
+are reset to 1.
+
+This keyword should be used in test or suite teardown to make sure
+all browsers are closed.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Close Browser">
+<arguments>
+</arguments>
+<doc>Closes the current browser.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Close Window">
+<arguments>
+</arguments>
+<doc>Closes currently opened pop-up window.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Confirm Action">
+<arguments>
+</arguments>
+<doc>Deprecated. Use `Handle Alert` instead.
+
+By default accepts an alert, but this behavior can be altered
+with `Choose Cancel On Next Confirmation` and `Choose Ok On Next
+Confirmation` keywords. New `Handle Alert` keyword accepts the action
+how to handle the alert as a normal argument and should be used
+instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Create Webdriver">
+<arguments>
+<arg>driver_name</arg>
+<arg>alias=None</arg>
+<arg>kwargs={}</arg>
+<arg>**init_kwargs</arg>
+</arguments>
+<doc>Creates an instance of Selenium WebDriver.
+
+Like `Open Browser`, but allows passing arguments to the created
+WebDriver instance directly. This keyword should only be used if
+functionality provided by `Open Browser` is not adequate.
+
+``driver_name`` must be an WebDriver implementation name like Firefox,
+Chrome, Ie, Opera, Safari, PhantomJS, or Remote.
+
+The initialized WebDriver can be configured either with a Python
+dictionary ``kwargs`` or by using keyword arguments ``**init_kwargs``.
+These arguments are passed directly to WebDriver without any
+processing. See [https://seleniumhq.github.io/selenium/docs/api/py/api.html|
+Selenium API documentation] for details about the supported arguments.
+
+Examples:
+| # Use proxy with Firefox   |                |                                           |                         |
+| ${proxy}=                  | `Evaluate`     | sys.modules['selenium.webdriver'].Proxy() | sys, selenium.webdriver |
+| ${proxy.http_proxy}=       | `Set Variable` | localhost:8888                            |                         |
+| `Create Webdriver`         | Firefox        | proxy=${proxy}                            |                         |
+| # Use proxy with PhantomJS |                |                                           |                         |
+| ${service args}=           | `Create List`  | --proxy=192.168.132.104:8888              |                         |
+| `Create Webdriver`         | PhantomJS      | service_args=${service args}              |                         |
+
+Returns the index of this browser instance which can be used later to
+switch back to it. Index starts from 1 and is reset back to it when
+`Close All Browsers` keyword is used. See `Switch Browser` for an
+example.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Current Frame Contains">
+<arguments>
+<arg>text</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Deprecated. Use `Current Frame Should Contain` instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Current Frame Should Contain">
+<arguments>
+<arg>text</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that current frame contains ``text``.
+
+See `Page Should Contain` for explanation about the ``loglevel``
+argument.
+
+Prior to SeleniumLibrary 3.0 this keyword was named
+`Current Frame Contains`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Current Frame Should Not Contain">
+<arguments>
+<arg>text</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that current frame does not contains ``text``.
+
+See `Page Should Contain` for explanation about the ``loglevel``
+argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Delete All Cookies">
+<arguments>
+</arguments>
+<doc>Deletes all cookies.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Delete Cookie">
+<arguments>
+<arg>name</arg>
+</arguments>
+<doc>Deletes cookie matching ``name``.
+
+If the cookie is not found, nothing happens.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Dismiss Alert">
+<arguments>
+<arg>accept=True</arg>
+</arguments>
+<doc>Deprecated. Use `Handle Alert` instead.
+
+Contrary to its name, this keyword accepts the alert by default
+(i.e. presses ``Ok``). ``accept`` can be set to a false value
+to dismiss the alert (i.e. to press ``Cancel``).
+
+`Handle Alert` has better support for controlling should the alert
+be accepted, dismissed, or left open.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Double Click Element">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Double click element identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Drag And Drop">
+<arguments>
+<arg>locator</arg>
+<arg>target</arg>
+</arguments>
+<doc>Drags element identified by ``locator`` into ``target`` element.
+
+The ``locator`` argument is the locator of the dragged element
+and the ``target`` is the locator of the target. See the
+`Locating elements` section for details about the locator syntax.
+
+Example:
+| `Drag And Drop` | css:div#element | css:div.target |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Drag And Drop By Offset">
+<arguments>
+<arg>locator</arg>
+<arg>xoffset</arg>
+<arg>yoffset</arg>
+</arguments>
+<doc>Drags element identified with ``locator`` by ``xoffset/yoffset``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+Element will be moved by ``xoffset`` and ``yoffset``, each of which
+is a negative or positive number specifying the offset.
+
+Example:
+| `Drag And Drop By Offset` | myElem | 50 | -35 | # Move myElem 50px right and 35px down |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Be Disabled">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Verifies that element identified with ``locator`` is disabled.
+
+This keyword considers also elements that are read-only to be
+disabled.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Be Enabled">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Verifies that element identified with ``locator`` is enabled.
+
+This keyword considers also elements that are read-only to be
+disabled.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Be Focused">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Verifies that element identified with ``locator`` is focused.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+New in SeleniumLibrary 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Be Visible">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+</arguments>
+<doc>Verifies that the element identified by ``locator`` is visible.
+
+Herein, visible means that the element is logically visible, not
+optically visible in the current browser viewport. For example,
+an element that carries ``display:none`` is not logically visible,
+so using this keyword on that element would fail.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+The ``message`` argument can be used to override the default error
+message.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Contain">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>message=None</arg>
+<arg>ignore_case=False</arg>
+</arguments>
+<doc>Verifies that element ``locator`` contains text ``expected``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+The ``message`` argument can be used to override the default error
+message.
+
+The ``ignore_case`` argument can be set to True to compare case
+insensitive, default is False. New in SeleniumLibrary 3.1.
+
+``ignore_case`` argument new in SeleniumLibrary 3.1.
+
+Use `Element Text Should Be` if you want to match the exact text,
+not a substring.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Not Be Visible">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+</arguments>
+<doc>Verifies that the element identified by ``locator`` is NOT visible.
+
+Passes if element does not exists. See `Element Should Be Visible`
+for more information about visibility and supported arguments.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Should Not Contain">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>message=None</arg>
+<arg>ignore_case=False</arg>
+</arguments>
+<doc>Verifies that element ``locator`` does not contains text ``expected``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+The ``message`` argument can be used to override the default error
+message.
+
+The ``ignore_case`` argument can be set to True to compare case
+insensitive, default is False.
+
+``ignore_case`` argument new in SeleniumLibrary 3.1.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Text Should Be">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>message=None</arg>
+<arg>ignore_case=False</arg>
+</arguments>
+<doc>Verifies that element ``locator`` contains exact text ``expected``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+The ``message`` argument can be used to override the default error
+message.
+
+The ``ignore_case`` argument can be set to True to compare case
+insensitive, default is False.
+
+``ignore_case`` argument new in SeleniumLibrary 3.1.
+
+Use `Element Should Contain` if a substring match is desired.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Element Text Should Not Be">
+<arguments>
+<arg>locator</arg>
+<arg>not_expected</arg>
+<arg>message=None</arg>
+<arg>ignore_case=False</arg>
+</arguments>
+<doc>Verifies that element ``locator`` does not contain exact text ``not_expected``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+The ``message`` argument can be used to override the default error
+message.
+
+The ``ignore_case`` argument can be set to True to compare case
+insensitive, default is False.
+
+New in SeleniumLibrary 3.1.1</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Execute Async Javascript">
+<arguments>
+<arg>*code</arg>
+</arguments>
+<doc>Executes asynchronous JavaScript code.
+
+Similar to `Execute Javascript` except that scripts executed with
+this keyword must explicitly signal they are finished by invoking the
+provided callback. This callback is always injected into the executed
+function as the last argument.
+
+Scripts must complete within the script timeout or this keyword will
+fail. See the `Timeouts` section for more information.
+
+Examples:
+| `Execute Async JavaScript` | var callback = arguments[arguments.length - 1]; window.setTimeout(callback, 2000); |
+| `Execute Async JavaScript` | ${CURDIR}/async_js_to_execute.js |
+| ${result} = | `Execute Async JavaScript`                      |
+| ...         | var callback = arguments[arguments.length - 1]; |
+| ...         | function answer(){callback("text");};           |
+| ...         | window.setTimeout(answer, 2000);                |
+| `Should Be Equal` | ${result} | text |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Execute Javascript">
+<arguments>
+<arg>*code</arg>
+</arguments>
+<doc>Executes the given JavaScript code.
+
+``code`` may contain multiple lines of code and may be divided into
+multiple cells in the test data. In that case, the parts are
+concatenated together without adding spaces.
+
+If ``code`` is an absolute path to an existing file, the JavaScript
+to execute will be read from that file. Forward slashes work as
+a path separator on all operating systems.
+
+The JavaScript executes in the context of the currently selected
+frame or window as the body of an anonymous function. Use ``window``
+to refer to the window of your application and ``document`` to refer
+to the document object of the current frame or window, e.g.
+``document.getElementById('example')``.
+
+This keyword returns whatever the executed JavaScript code returns.
+Return values are converted to the appropriate Python types.
+
+Examples:
+| `Execute JavaScript` | window.myFunc('arg1', 'arg2') |
+| `Execute JavaScript` | ${CURDIR}/js_to_execute.js    |
+| ${sum} =             | `Execute JavaScript` | return 1 + 1; |
+| `Should Be Equal`    | ${sum}               | ${2}          |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Focus">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Deprecated. Use `Set Focus To Element` instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Frame Should Contain">
+<arguments>
+<arg>locator</arg>
+<arg>text</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that frame identified by ``locator`` contains ``text``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+See `Page Should Contain` for explanation about the ``loglevel``
+argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Alert Message">
+<arguments>
+<arg>dismiss=True</arg>
+</arguments>
+<doc>Deprecated. Use `Handle Alert` instead.
+
+Returns the message the alert has. Dismisses the alert by default
+(i.e. presses ``Cancel``) and setting ``dismiss`` to false leaves
+the alert open. There is no support to accept the alert (i.e. to
+press ``Ok``).
+
+`Handle Alert` has better support for controlling should the alert
+be accepted, dismissed, or left open.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get All Links">
+<arguments>
+</arguments>
+<doc>Returns a list containing ids of all links found in current page.
+
+If a link has no id, an empty string will be in the list instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Cookie">
+<arguments>
+<arg>name</arg>
+</arguments>
+<doc>Returns information of cookie with ``name`` as an object.
+
+If no cookie is found with ``name``, keyword fails. The cookie object
+contains details about the cookie. Attributes available in the object
+are documented in the table below.
+
+| = Attribute = |             = Explanation =                                |
+| name          | The name of a cookie.                                      |
+| value         | Value of the cookie.                                       |
+| path          | Indicates a URL path, for example ``/``.                   |
+| domain        | The domain the cookie is visible to.                       |
+| secure        | When true, cookie is only used with HTTPS connections.     |
+| httpOnly      | When true, cookie is not accessible via JavaScript.        |
+| expiry        | Python datetime object indicating when the cookie expires. |
+
+See the
+[https://w3c.github.io/webdriver/webdriver-spec.html#cookies|WebDriver specification]
+for details about the cookie information.
+Notice that ``expiry`` is specified as a
+[https://docs.python.org/3/library/datetime.html#datetime.datetime|datetime object],
+not as seconds since Unix Epoch like WebDriver natively does.
+
+Example:
+| `Add Cookie`      | foo             | bar |
+| ${cookie} =       | `Get Cookie`    | foo |
+| `Should Be Equal` | ${cookie.name}  | bar |
+| `Should Be Equal` | ${cookie.value} | foo |
+| `Should Be True`  | ${cookie.expiry.year} &gt; 2017 |
+
+New in SeleniumLibrary 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Cookie Value">
+<arguments>
+<arg>name</arg>
+</arguments>
+<doc>Deprecated. Use `Get Cookie` instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Cookies">
+<arguments>
+</arguments>
+<doc>Returns all cookies of the current page.
+
+The cookie information is returned as a single string in format
+``name1=value1; name2=value2; name3=value3``. It can be used,
+for example, for logging purposes or in headers when sending
+HTTP requests.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Element Attribute">
+<arguments>
+<arg>locator</arg>
+<arg>attribute=None</arg>
+</arguments>
+<doc>Returns value of ``attribute`` from element ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+Example:
+| ${id}= | `Get Element Attribute` | css:h1 | id |
+
+Passing attribute name as part of the ``locator`` is deprecated
+since SeleniumLibrary 3.0. The explicit ``attribute`` argument
+should be used instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Element Count">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns number of elements matching ``locator``.
+
+If you wish to assert the number of matching elements, use
+`Page Should Contain Element` with ``limit`` argument. Keyword will
+always return an integer.
+
+Example:
+| ${count} =       | `Get Element Count` | name:div_name  |
+| `Should Be True` | ${count} &gt; 2        |                |
+
+New in SeleniumLibrary 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Element Size">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns width and height of element identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+Both width and height are returned as integers.
+
+Example:
+| ${width} | ${height} = | `Get Element Size` | css:div#container |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Horizontal Position">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns horizontal position of element identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+The position is returned in pixels off the left side of the page,
+as an integer.
+
+See also `Get Vertical Position`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get List Items">
+<arguments>
+<arg>locator</arg>
+<arg>values=False</arg>
+</arguments>
+<doc>Returns all labels or values of selection list ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+Returns visible labels by default, but values can be returned by
+setting the ``values`` argument to a true value (see `Boolean
+arguments`).
+
+Example:
+| ${labels} = | `Get List Items` | mylist              |             |
+| ${values} = | `Get List Items` | css:#example select | values=True |
+
+Support to return values is new in SeleniumLibrary 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Location">
+<arguments>
+</arguments>
+<doc>Returns the current browser URL.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Locations">
+<arguments>
+</arguments>
+<doc>Returns and logs URLs of all known browser windows.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Matching Xpath Count">
+<arguments>
+<arg>xpath</arg>
+<arg>return_str=True</arg>
+</arguments>
+<doc>Deprecated. Use `Get Element Count` instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Selected List Label">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns label of selected option from selection list ``locator``.
+
+If there are multiple selected options, label of the first option
+is returned.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Selected List Labels">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns labels of selected options from selection list ``locator``.
+
+Starting from SeleniumLibrary 3.0, returns an empty list if there
+are no selections. In earlier versions this caused an error.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Selected List Value">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns value of selected option from selection list ``locator``.
+
+If there are multiple selected options, value of the first option
+is returned.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Selected List Values">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns values of selected options from selection list ``locator``.
+
+Starting from SeleniumLibrary 3.0, returns an empty list if there
+are no selections. In earlier versions this caused an error.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Selenium Implicit Wait">
+<arguments>
+</arguments>
+<doc>Gets the implicit wait value used by Selenium.
+
+The value is returned as a human readable string like ``1 second``.
+
+See the `Implicit wait` section above for more information.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Selenium Speed">
+<arguments>
+</arguments>
+<doc>Gets the delay that is waited after each Selenium command.
+
+The value is returned as a human readable string like ``1 second``.
+
+See the `Selenium Speed` section above for more information.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Selenium Timeout">
+<arguments>
+</arguments>
+<doc>Gets the timeout that is used by various keywords.
+
+The value is returned as a human readable string like ``1 second``.
+
+See the `Timeout` section above for more information.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Source">
+<arguments>
+</arguments>
+<doc>Returns the entire HTML source of the current page or frame.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Table Cell">
+<arguments>
+<arg>locator</arg>
+<arg>row</arg>
+<arg>column</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Returns contents of table cell.
+
+The table is located using the ``locator`` argument and its cell
+found using ``row`` and ``column``. See the `Locating elements`
+section for details about the locator syntax.
+
+Both row and column indexes start from 1, and header and footer
+rows are included in the count. It is possible to refer to rows
+and columns from the end by using negative indexes so that -1
+is the last row/column, -2 is the second last, and so on.
+
+All ``&lt;th&gt;`` and ``&lt;td&gt;`` elements anywhere in the table are
+considered to be cells.
+
+See `Page Should Contain` for explanation about the ``loglevel``
+argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Text">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns the text value of element identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Title">
+<arguments>
+</arguments>
+<doc>Returns the title of current page.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Value">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns the value attribute of element identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Vertical Position">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns vertical position of element identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+The position is returned in pixels off the top of the page,
+as an integer.
+
+See also `Get Horizontal Position`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get WebElement">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns the first WebElement matching the given ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get WebElements">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Returns list of WebElement objects matching the ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+Starting from SeleniumLibrary 3.0, the keyword returns an empty
+list if there are no matching elements. In previous releases the
+keyword failed in this case.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Window Handles">
+<arguments>
+</arguments>
+<doc>Return all current window handles as a list.
+
+Can be used as a list of windows to exclude with `Select Window`.
+
+Prior to SeleniumLibrary 3.0, this keyword was named `List Windows`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Window Identifiers">
+<arguments>
+</arguments>
+<doc>Returns and logs id attributes of all known browser windows.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Window Names">
+<arguments>
+</arguments>
+<doc>Returns and logs names of all known browser windows.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Window Position">
+<arguments>
+</arguments>
+<doc>Returns current window position.
+
+Position is relative to the top left corner of the screen. Returned
+values are integers. See also `Set Window Position`.
+
+Example:
+| ${x} | ${y}= | `Get Window Position` |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Window Size">
+<arguments>
+</arguments>
+<doc>Returns current window width and height as integers.
+
+See also `Set Window Size`.
+
+Example:
+| ${width} | ${height}= | `Get Window Size` |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Window Titles">
+<arguments>
+</arguments>
+<doc>Returns and logs titles of all known browser windows.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Go Back">
+<arguments>
+</arguments>
+<doc>Simulates the user clicking the back button on their browser.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Go To">
+<arguments>
+<arg>url</arg>
+</arguments>
+<doc>Navigates the active browser instance to the provided ``url``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Handle Alert">
+<arguments>
+<arg>action=ACCEPT</arg>
+<arg>timeout=None</arg>
+</arguments>
+<doc>Handles the current alert and returns its message.
+
+By default the alert is accepted, but this can be controlled
+with the ``action`` argument that supports the following
+case-insensitive values:
+
+- ``ACCEPT``: Accept the alert i.e. press ``Ok``. Default.
+- ``DISMISS``: Dismiss the alert i.e. press ``Cancel``.
+- ``LEAVE``: Leave the alert open.
+
+The ``timeout`` argument specifies how long to wait for the alert
+to appear. If it is not given, the global default `timeout` is used
+instead.
+
+Examples:
+| Handle Alert |                |       | # Accept alert.  |
+| Handle Alert | action=DISMISS |       | # Dismiss alert. |
+| Handle Alert | timeout=10 s   |       | # Use custom timeout and accept alert.  |
+| Handle Alert | DISMISS        | 1 min | # Use custom timeout and dismiss alert. |
+| ${message} = | Handle Alert   |       | # Accept alert and get its message.     |
+| ${message} = | Handle Alert   | LEAVE | # Leave alert open and get its message. |
+
+New in SeleniumLibrary 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Input Password">
+<arguments>
+<arg>locator</arg>
+<arg>password</arg>
+</arguments>
+<doc>Types the given password into text field identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+Difference compared to `Input Text` is that this keyword does not
+log the given password on the INFO level. Notice that if you use
+the keyword like
+
+| Input Password | password_field | password |
+
+the password is shown as a normal keyword argument. A way to avoid
+that is using variables like
+
+| Input Password | password_field | ${PASSWORD} |
+
+Notice also that SeleniumLibrary logs all the communication with
+browser drivers using the DEBUG level, and the actual password can
+be seen there. Additionally Robot Framework logs all arguments using
+the TRACE level. Tests must thus not be executed using level below
+INFO if password should not be logged in any format.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Input Text">
+<arguments>
+<arg>locator</arg>
+<arg>text</arg>
+</arguments>
+<doc>Types the given ``text`` into text field identified by ``locator``.
+
+Use `Input Password` if you do not want the given ``text`` to be
+logged.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Input Text Into Alert">
+<arguments>
+<arg>text</arg>
+<arg>action=ACCEPT</arg>
+<arg>timeout=None</arg>
+</arguments>
+<doc>Types the given ``text`` into an input field in an alert.
+
+The alert is accepted by default, but that behavior can be controlled
+by using the ``action`` argument same way as with `Handle Alert`.
+
+``timeout`` specifies how long to wait for the alert to appear.
+If it is not given, the global default `timeout` is used instead.
+
+New in SeleniumLibrary 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Input Text Into Prompt">
+<arguments>
+<arg>text</arg>
+</arguments>
+<doc>Deprecated. Use `Input Text Into Alert` instead.
+
+Types the given ``text`` into an input field in an alert.
+Leaves the alert open.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="List Selection Should Be">
+<arguments>
+<arg>locator</arg>
+<arg>*expected</arg>
+</arguments>
+<doc>Verifies selection list ``locator`` has ``expected`` options selected.
+
+It is possible to give expected options both as visible labels and
+as values. Starting from SeleniumLibrary 3.0, mixing labels and
+values is not possible. Order of the selected options is not
+validated.
+
+If no expected options are given, validates that the list has
+no selections. A more explicit alternative is using `List Should
+Have No Selections`.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+Examples:
+| `List Selection Should Be` | gender    | Female          |        |
+| `List Selection Should Be` | interests | Test Automation | Python |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="List Should Have No Selections">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Verifies selection list ``locator`` has no options selected.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="List Windows">
+<arguments>
+</arguments>
+<doc>Deprecated. Use `Get Window Handles` instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Location Should Be">
+<arguments>
+<arg>url</arg>
+</arguments>
+<doc>Verifies that current URL is exactly ``url``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Location Should Contain">
+<arguments>
+<arg>expected</arg>
+</arguments>
+<doc>Verifies that current URL contains ``expected``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Locator Should Match X Times">
+<arguments>
+<arg>locator</arg>
+<arg>x</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Deprecated, use `Page Should Contain Element` with ``limit`` argument instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Log Location">
+<arguments>
+</arguments>
+<doc>Logs and returns the current URL.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Log Source">
+<arguments>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Logs and returns the HTML source of the current page or frame.
+
+The ``loglevel`` argument defines the used log level. Valid log
+levels are ``WARN``, ``INFO`` (default), ``DEBUG``, and ``NONE``
+(no logging).</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Log Title">
+<arguments>
+</arguments>
+<doc>Logs and returns the title of current page.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Maximize Browser Window">
+<arguments>
+</arguments>
+<doc>Maximizes current browser window.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Mouse Down">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Simulates pressing the left mouse button on the element ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+The element is pressed without releasing the mouse button.
+
+See also the more specific keywords `Mouse Down On Image` and
+`Mouse Down On Link`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Mouse Down On Image">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Simulates a mouse down event on an image identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, images are searched
+using ``id``, ``name``, ``src`` and ``alt``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Mouse Down On Link">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Simulates a mouse down event on a link identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, links are searched
+using ``id``, ``name``, ``href`` and the link text.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Mouse Out">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Simulates moving mouse away from the element ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Mouse Over">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Simulates hovering mouse over the element ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Mouse Up">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Simulates releasing the left mouse button on the element ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Open Browser">
+<arguments>
+<arg>url</arg>
+<arg>browser=firefox</arg>
+<arg>alias=None</arg>
+<arg>remote_url=False</arg>
+<arg>desired_capabilities=None</arg>
+<arg>ff_profile_dir=None</arg>
+</arguments>
+<doc>Opens a new browser instance to the given ``url``.
+
+The ``browser`` argument specifies which browser to use, and the
+supported browser are listed in the table below. The browser names
+are case-insensitive and some browsers have multiple supported names.
+
+|    = Browser =    |        = Name(s) =       |
+| Firefox           | firefox, ff              |
+| Google Chrome     | googlechrome, chrome, gc |
+| Headless Firefox  | headlessfirefox          |
+| Headless Chrome   | headlesschrome           |
+| Internet Explorer | internetexplorer, ie     |
+| Edge              | edge                     |
+| Safari            | safari                   |
+| Opera             | opera                    |
+| Android           | android                  |
+| Iphone            | iphone                   |
+| PhantomJS         | phantomjs                |
+| HTMLUnit          | htmlunit                 |
+| HTMLUnit with Javascript | htmlunitwithjs    |
+
+To be able to actually use one of these browsers, you need to have
+a matching Selenium browser driver available. See the
+[https://github.com/robotframework/SeleniumLibrary#browser-drivers|
+project documentation] for more details. Headless Firefox and
+Headless Chrome are new additions in SeleniumLibrary 3.1.0
+and require Selenium 3.8.0 or newer.
+
+Optional ``alias`` is an alias given for this browser instance and
+it can be used for switching between browsers. An alternative
+approach for switching is using an index returned by this keyword.
+These indices start from 1, are incremented when new browsers are
+opened, and reset back to 1 when `Close All Browsers` is called.
+See `Switch Browser` for more information and examples.
+
+Optional ``remote_url`` is the URL for a
+[https://github.com/SeleniumHQ/selenium/wiki/Grid2|Selenium Grid].
+
+Optional ``desired_capabilities`` can be used to configure, for example,
+logging preferences for a browser or a browser and operating system
+when using [http://saucelabs.com|Sauce Labs]. Desired capabilities can
+be given either as a Python dictionary or as a string in format
+``key1:value1,key2:value2``.
+[https://github.com/SeleniumHQ/selenium/wiki/DesiredCapabilities|
+Selenium documentation] lists possible capabilities that can be
+enabled.
+
+Optional ``ff_profile_dir`` is the path to the Firefox profile
+directory if you wish to overwrite the default profile Selenium
+uses. Notice that prior to SeleniumLibrary 3.0, the library
+contained its own profile that was used by default.
+
+Examples:
+| `Open Browser` | http://example.com | Chrome  |
+| `Open Browser` | http://example.com | Firefox | alias=Firefox |
+| `Open Browser` | http://example.com | Edge    | remote_url=http://127.0.0.1:4444/wd/hub |
+
+If the provided configuration options are not enough, it is possible
+to use `Create Webdriver` to customize browser initialization even
+more.
+
+Applying ``desired_capabilities`` argument also for local browser is
+new in SeleniumLibrary 3.1.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Open Context Menu">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Opens context menu on element identified by ``locator``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Contain">
+<arguments>
+<arg>text</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that current page contains ``text``.
+
+If this keyword fails, it automatically logs the page source
+using the log level specified with the optional ``loglevel``
+argument. Valid log levels are ``DEBUG``, ``INFO`` (default),
+``WARN``, and ``NONE``. If the log level is ``NONE`` or below
+the current active log level the source will not be logged.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Contain Button">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies button ``locator`` is found from current page.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, buttons are
+searched using ``id``, ``name`` and ``value``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Contain Checkbox">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies checkbox ``locator`` is found from current page.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Contain Element">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+<arg>limit=None</arg>
+</arguments>
+<doc>Verifies that element ``locator`` is found on the current page.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+The ``message`` argument can be used to override the default error
+message.
+
+The ``limit`` argument can used to define how many elements the
+page should contain. When ``limit`` is ``None`` (default) page can
+contain one or more elements. When limit is a number, page must
+contain same number of elements.
+
+See `Page Should Contain` for explanation about the ``loglevel``
+argument.
+
+Examples assumes that locator matches to two elements.
+| `Page Should Contain Element` | div_name | limit=1    | # Keyword fails.                  |
+| `Page Should Contain Element` | div_name | limit=2    | # Keyword passes.                 |
+| `Page Should Contain Element` | div_name | limit=none | # None is considered one or more. |
+| `Page Should Contain Element` | div_name |            | # Same as above.                  |
+
+The ``limit`` argument is new in SeleniumLibrary 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Contain Image">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies image identified by ``locator`` is found from current page.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, images are searched
+using ``id``, ``name``, ``src`` and ``alt``.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Contain Link">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies link identified by ``locator`` is found from current page.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, links are searched
+using ``id``, ``name``, ``href`` and the link text.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Contain List">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies selection list ``locator`` is found from current page.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Contain Radio Button">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies radio button ``locator`` is found from current page.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, radio buttons are
+searched using ``id``, ``name`` and ``value``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Contain Textfield">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies text field ``locator`` is found from current page.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Not Contain">
+<arguments>
+<arg>text</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies the current page does not contain ``text``.
+
+See `Page Should Contain` for explanation about the ``loglevel``
+argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Not Contain Button">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies button ``locator`` is not found from current page.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, buttons are
+searched using ``id``, ``name`` and ``value``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Not Contain Checkbox">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies checkbox ``locator`` is not found from current page.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Not Contain Element">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that element ``locator`` is found on the current page.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+See `Page Should Contain` for explanation about ``message`` and
+``loglevel`` arguments.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Not Contain Image">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies image identified by ``locator`` is found from current page.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, images are searched
+using ``id``, ``name``, ``src`` and ``alt``.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Not Contain Link">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies link identified by ``locator`` is not found from current page.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, links are searched
+using ``id``, ``name``, ``href`` and the link text.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Not Contain List">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies selection list ``locator`` is not found from current page.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Not Contain Radio Button">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies radio button ``locator`` is not found from current page.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.
+
+See the `Locating elements` section for details about the locator
+syntax. When using the default locator strategy, radio buttons are
+searched using ``id``, ``name`` and ``value``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Page Should Not Contain Textfield">
+<arguments>
+<arg>locator</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies text field ``locator`` is not found from current page.
+
+See `Page Should Contain Element` for explanation about ``message``
+and ``loglevel`` arguments.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Press Key">
+<arguments>
+<arg>locator</arg>
+<arg>key</arg>
+</arguments>
+<doc>Simulates user pressing key on element identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+``key`` is either a single character, a string, or a numerical ASCII
+code of the key lead by '\\'.
+
+Examples:
+| `Press Key` | text_field   | q     |
+| `Press Key` | text_field   | abcde |
+| `Press Key` | login_button | \\13  | # ASCII code for enter key |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Radio Button Should Be Set To">
+<arguments>
+<arg>group_name</arg>
+<arg>value</arg>
+</arguments>
+<doc>Verifies radio button group ``group_name`` is set to ``value``.
+
+``group_name`` is the ``name`` of the radio button group.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Radio Button Should Not Be Selected">
+<arguments>
+<arg>group_name</arg>
+</arguments>
+<doc>Verifies radio button group ``group_name`` has no selection.
+
+``group_name`` is the ``name`` of the radio button group.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Register Keyword To Run On Failure">
+<arguments>
+<arg>keyword</arg>
+</arguments>
+<doc>Sets the keyword to execute when a SeleniumLibrary keyword fails.
+
+``keyword`` is the name of a keyword that will be executed if a
+SeleniumLibrary keyword fails. It is possible to use any available
+keyword, including user keywords or keywords from other libraries,
+but the keyword must not take any arguments.
+
+The initial keyword to use is set when `importing` the library, and
+the keyword that is used by default is `Capture Page Screenshot`.
+Taking a screenshot when something failed is a very useful
+feature, but notice that it can slow down the execution.
+
+It is possible to use string ``NOTHING`` or ``NONE``,
+case-insensitively, as well as Python ``None`` to disable this
+feature altogether.
+
+This keyword returns the name of the previously registered
+failure keyword or Python ``None`` if this functionality was
+previously disabled. The return value can be always used to
+restore the original value later.
+
+Example:
+| `Register Keyword To Run On Failure`  | Log Source |
+| ${previous kw}= | `Register Keyword To Run On Failure`  | NONE |
+| `Register Keyword To Run On Failure`  | ${previous kw} |
+
+Changes in SeleniumLibrary 3.0:
+- Possible to use string ``NONE`` or Python ``None`` to disable the
+  functionality.
+- Return Python ``None`` when the functionality was disabled earlier.
+  In previous versions special value ``No Keyword`` was returned and
+  it could not be used to restore the original state.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Reload Page">
+<arguments>
+</arguments>
+<doc>Simulates user reloading page.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Remove Location Strategy">
+<arguments>
+<arg>strategy_name</arg>
+</arguments>
+<doc>Removes a previously added custom location strategy.
+
+See `Custom locators` for information how to create and use
+custom strategies.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Select All From List">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Selects all options from multi-selection list ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Select Checkbox">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Selects checkbox identified by ``locator``.
+
+Does nothing if checkbox is already selected.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Select Frame">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Sets frame identified by ``locator`` as the current frame.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+Works both with frames and iframes. Use `Unselect Frame` to cancel
+the frame selection and return to the main frame.
+
+Example:
+| `Select Frame`   | top-frame | # Select frame with id or name 'top-frame'   |
+| `Click Link`     | example   | # Click link 'example' in the selected frame |
+| `Unselect Frame` |           | # Back to main frame.                        |
+| `Select Frame`   | //iframe[@name='xxx'] | # Select frame using xpath       |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Select From List">
+<arguments>
+<arg>locator</arg>
+<arg>*options</arg>
+</arguments>
+<doc>Deprecated. Use `Select From List By Label/Value/Index` instead.
+
+This keyword selects options based on labels or values, which makes
+it very complicated and slow. It has been deprecated in
+SeleniumLibrary 3.0, and dedicated keywords `Select From List By
+Label`, `Select From List By Value` and `Select From List By Index`
+should be used instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Select From List By Index">
+<arguments>
+<arg>locator</arg>
+<arg>*indexes</arg>
+</arguments>
+<doc>Selects options from selection list ``locator`` by ``indexes``.
+
+Indexes of list options start from 0.
+
+If more than one option is given for a single-selection list,
+the last value will be selected. With multi-selection lists all
+specified options are selected, but possible old selections are
+not cleared.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Select From List By Label">
+<arguments>
+<arg>locator</arg>
+<arg>*labels</arg>
+</arguments>
+<doc>Selects options from selection list ``locator`` by ``labels``.
+
+If more than one option is given for a single-selection list,
+the last value will be selected. With multi-selection lists all
+specified options are selected, but possible old selections are
+not cleared.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Select From List By Value">
+<arguments>
+<arg>locator</arg>
+<arg>*values</arg>
+</arguments>
+<doc>Selects options from selection list ``locator`` by ``values``.
+
+If more than one option is given for a single-selection list,
+the last value will be selected. With multi-selection lists all
+specified options are selected, but possible old selections are
+not cleared.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Select Radio Button">
+<arguments>
+<arg>group_name</arg>
+<arg>value</arg>
+</arguments>
+<doc>Sets radio button group ``group_name`` to ``value``.
+
+The radio button to be selected is located by two arguments:
+- ``group_name`` is the name of the radio button group.
+- ``value`` is the ``id`` or ``value`` attribute of the actual
+  radio button.
+
+Examples:
+| `Select Radio Button` | size    | XL    |
+| `Select Radio Button` | contact | email |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Select Window">
+<arguments>
+<arg>locator=MAIN</arg>
+</arguments>
+<doc>Selects browser window matching ``locator``.
+
+If the window is found, all subsequent commands use the selected
+window, until this keyword is used again. If the window is not
+found, this keyword fails. The previous window handle is returned,
+and can be used to return back to it later.
+
+Notice that in this context _window_ means a pop-up window opened
+when doing something on an existing window. It is not possible to
+select windows opened with `Open Browser`, `Switch Browser` must
+be used instead. Notice also that alerts should be handled with
+`Handle Alert` or other alert related keywords.
+
+The ``locator`` can be specified using different strategies somewhat
+similarly as when `locating elements` on pages.
+
+- By default the ``locator`` is matched against window handle, name,
+  title, and URL. Matching is done in that order and the the first
+  matching window is selected.
+
+- The ``locator`` can specify an explicit strategy by using format
+  ``strategy:value`` (recommended) or ``strategy=value``. Supported
+  strategies are ``name``, ``title`` and ``url``, which match windows
+  using name, title, and URL, respectively. Additionally, ``default``
+  can be used to explicitly use the default strategy explained above.
+
+- If the ``locator`` is ``NEW`` (case-insensitive), the latest
+  opened window is selected. It is an error if this is the same
+  as the current window.
+
+- If the ``locator`` is ``MAIN`` (default, case-insensitive),
+  the main window is selected.
+
+- If the ``locator`` is ``CURRENT`` (case-insensitive), nothing is
+  done. This effectively just returns the current window handle.
+
+- If the ``locator`` is not a string, it is expected to be a list
+  of window handles _to exclude_. Such a list of excluded windows
+  can be get from `Get Window Handles` prior to doing an action that
+  opens a new window.
+
+Example:
+| `Click Link`      | popup1      |      | # Open new window |
+| `Select Window`   | example     |      | # Select window using default strategy |
+| `Title Should Be` | Pop-up 1    |      |
+| `Click Button`    | popup2      |      | # Open another window |
+| ${handle} = | `Select Window`   | NEW  | # Select latest opened window |
+| `Title Should Be` | Pop-up 2    |      |
+| `Select Window`   | ${handle}   |      | # Select window using handle |
+| `Title Should Be` | Pop-up 1    |      |
+| `Select Window`   | MAIN        |      | # Select the main window |
+| `Title Should Be` | Main        |      |
+| ${excludes} = | `Get Window Handles` | | # Get list of current windows |
+| `Click Link`      | popup3      |      | # Open one more window |
+| `Select Window`   | ${excludes} |      | # Select window using excludes |
+| `Title Should Be` | Pop-up 3    |      |
+
+*NOTE:*
+
+- The ``strategy:value`` syntax is only supported by SeleniumLibrary
+  3.0 and newer.
+- Earlier versions supported aliases ``None``, ``null`` and the
+  empty string for selecting the main window, and alias ``self``
+  for selecting the current window. These aliases were deprecated
+  in SeleniumLibrary 3.0.
+- Prior to SeleniumLibrary 3.0 matching windows by name, title
+  and URL was case-insensitive.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Browser Implicit Wait">
+<arguments>
+<arg>value</arg>
+</arguments>
+<doc>Sets the implicit wait value used by Selenium.
+
+Same as `Set Selenium Implicit Wait` but only affects the current
+browser.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Focus To Element">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Sets focus to element identified by ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+Prior to SeleniumLibrary 3.0 this keyword was named `Focus`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Screenshot Directory">
+<arguments>
+<arg>path</arg>
+<arg>persist=DEPRECATED</arg>
+</arguments>
+<doc>Sets the directory for captured screenshots.
+
+``path`` argument specifies the absolute path to a directory where
+the screenshots should be written to. If the directory does not
+exist, it will be created. The directory can also be set when
+`importing` the library. If it is not configured anywhere,
+screenshots are saved to the same directory where Robot Framework's
+log file is written.
+
+``persist`` argument is deprecated and has no effect.
+
+The previous value is returned and can be used to restore
+the original value later if needed.
+
+Deprecating ``persist`` and returning the previous value are new
+in SeleniumLibrary 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Selenium Implicit Wait">
+<arguments>
+<arg>value</arg>
+</arguments>
+<doc>Sets the implicit wait value used by Selenium.
+
+The value can be given as a number that is considered to be
+seconds or as a human readable string like ``1 second``.
+The previous value is returned and can be used to restore
+the original value later if needed.
+
+This keyword sets the implicit wait for all opened browsers.
+Use `Set Browser Implicit Wait` to set it only to the current
+browser.
+
+See the `Implicit wait` section above for more information.
+
+Example:
+| ${orig wait} = | `Set Selenium Implicit Wait` | 10 seconds |
+| `Perform AJAX call that is slow` |
+| `Set Selenium Implicit Wait` | ${orig wait} |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Selenium Speed">
+<arguments>
+<arg>value</arg>
+</arguments>
+<doc>Sets the delay that is waited after each Selenium command.
+
+The value can be given as a number that is considered to be
+seconds or as a human readable string like ``1 second``.
+The previous value is returned and can be used to restore
+the original value later if needed.
+
+See the `Selenium Speed` section above for more information.
+
+Example:
+| `Set Selenium Speed` | 0.5 seconds |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Selenium Timeout">
+<arguments>
+<arg>value</arg>
+</arguments>
+<doc>Sets the timeout that is used by various keywords.
+
+The value can be given as a number that is considered to be
+seconds or as a human readable string like ``1 second``.
+The previous value is returned and can be used to restore
+the original value later if needed.
+
+See the `Timeout` section above for more information.
+
+Example:
+| ${orig timeout} = | `Set Selenium Timeout` | 15 seconds |
+| `Open page that loads slowly` |
+| `Set Selenium Timeout` | ${orig timeout} |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Window Position">
+<arguments>
+<arg>x</arg>
+<arg>y</arg>
+</arguments>
+<doc>Sets window position using ``x`` and ``y`` coordinates.
+
+The position is relative to the top left corner of the screen,
+but some browsers exclude possible task bar set by the operating
+system from the calculation. The actual position may thus be
+different with different browsers.
+
+Values can be given using strings containing numbers or by using
+actual numbers. See also `Get Window Position`.
+
+Example:
+| `Set Window Position` | 100 | 200 |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Window Size">
+<arguments>
+<arg>width</arg>
+<arg>height</arg>
+</arguments>
+<doc>Sets current windows size to given ``width`` and ``height``.
+
+Values can be given using strings containing numbers or by using
+actual numbers. See also `Get Window Size`.
+
+Browsers have a limit how small they can be set. Trying to set them
+smaller will cause the actual size to be bigger than the requested
+size.
+
+Example:
+| `Set Window Size` | 800 | 600 |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Simulate">
+<arguments>
+<arg>locator</arg>
+<arg>event</arg>
+</arguments>
+<doc>Deprecated. Use `Simulate Event` instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Simulate Event">
+<arguments>
+<arg>locator</arg>
+<arg>event</arg>
+</arguments>
+<doc>Simulates ``event`` on element identified by ``locator``.
+
+This keyword is useful if element has ``OnEvent`` handler that
+needs to be explicitly invoked.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+Prior to SeleniumLibrary 3.0 this keyword was named `Simulate`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Submit Form">
+<arguments>
+<arg>locator=None</arg>
+</arguments>
+<doc>Submits a form identified by ``locator``.
+
+If ``locator`` is not given, first form on the page is submitted.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Switch Browser">
+<arguments>
+<arg>index_or_alias</arg>
+</arguments>
+<doc>Switches between active browsers using ``index_or_alias``.
+
+Indices are returned by the `Open Browser` keyword and aliases can
+be given to it explicitly. Indices start from 1.
+
+Example:
+| `Open Browser`        | http://google.com | ff       |
+| `Location Should Be`  | http://google.com |          |
+| `Open Browser`        | http://yahoo.com  | ie       | alias=second |
+| `Location Should Be`  | http://yahoo.com  |          |
+| `Switch Browser`      | 1                 | # index  |
+| `Page Should Contain` | I'm feeling lucky |          |
+| `Switch Browser`      | second            | # alias  |
+| `Page Should Contain` | More Yahoo!       |          |
+| `Close All Browsers`  |                   |          |
+
+Above example expects that there was no other open browsers when
+opening the first one because it used index ``1`` when switching to
+it later. If you are not sure about that, you can store the index
+into a variable as below.
+
+| ${index} =         | `Open Browser` | http://google.com |
+| # Do something ... |                |                   |
+| `Switch Browser`   | ${index}       |                   |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Table Cell Should Contain">
+<arguments>
+<arg>locator</arg>
+<arg>row</arg>
+<arg>column</arg>
+<arg>expected</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies table cell contains text ``expected``.
+
+See `Get Table Cell` that this keyword uses internally for
+explanation about accepted arguments.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Table Column Should Contain">
+<arguments>
+<arg>locator</arg>
+<arg>column</arg>
+<arg>expected</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies table column contains text ``expected``.
+
+The table is located using the ``locator`` argument and its column
+found using ``column``. See the `Locating elements` section for
+details about the locator syntax.
+
+Column indexes start from 1. It is possible to refer to columns
+from the end by using negative indexes so that -1 is the last column,
+-2 is the second last, and so on.
+
+If a table contains cells that span multiple columns, those merged
+cells count as a single column.
+
+See `Page Should Contain Element` for explanation about the
+``loglevel`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Table Footer Should Contain">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies table footer contains text ``expected``.
+
+Any ``&lt;td&gt;`` element inside ``&lt;tfoot&gt;`` element is considered to
+be part of the footer.
+
+The table is located using the ``locator`` argument. See the
+`Locating elements` section for details about the locator syntax.
+
+See `Page Should Contain Element` for explanation about the
+``loglevel`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Table Header Should Contain">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies table header contains text ``expected``.
+
+Any ``&lt;th&gt;`` element anywhere in the table is considered to be
+part of the header.
+
+The table is located using the ``locator`` argument. See the
+`Locating elements` section for details about the locator syntax.
+
+See `Page Should Contain Element` for explanation about the
+``loglevel`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Table Row Should Contain">
+<arguments>
+<arg>locator</arg>
+<arg>row</arg>
+<arg>expected</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies that table row contains text ``expected``.
+
+The table is located using the ``locator`` argument and its column
+found using ``column``. See the `Locating elements` section for
+details about the locator syntax.
+
+Row indexes start from 1. It is possible to refer to rows
+from the end by using negative indexes so that -1 is the last row,
+-2 is the second last, and so on.
+
+If a table contains cells that span multiple rows, a match
+only occurs for the uppermost row of those merged cells.
+
+See `Page Should Contain Element` for explanation about the
+``loglevel`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Table Should Contain">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Verifies table contains text ``expected``.
+
+The table is located using the ``locator`` argument. See the
+`Locating elements` section for details about the locator syntax.
+
+See `Page Should Contain Element` for explanation about the
+``loglevel`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Textarea Should Contain">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>message=None</arg>
+</arguments>
+<doc>Verifies text area ``locator`` contains text ``expected``.
+
+``message`` can be used to override default error message.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Textarea Value Should Be">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>message=None</arg>
+</arguments>
+<doc>Verifies text area ``locator`` has exactly text ``expected``.
+
+``message`` can be used to override default error message.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Textfield Should Contain">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>message=None</arg>
+</arguments>
+<doc>Verifies text field ``locator`` contains text ``expected``.
+
+``message`` can be used to override the default error message.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Textfield Value Should Be">
+<arguments>
+<arg>locator</arg>
+<arg>expected</arg>
+<arg>message=None</arg>
+</arguments>
+<doc>Verifies text field ``locator`` has exactly text ``expected``.
+
+``message`` can be used to override default error message.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Title Should Be">
+<arguments>
+<arg>title</arg>
+<arg>message=None</arg>
+</arguments>
+<doc>Verifies that current page title equals ``title``.
+
+The ``message`` argument can be used to override the default error
+message.
+
+``message`` argument is new in SeleniumLibrary 3.1.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Unselect All From List">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Unselects all options from multi-selection list ``locator``.
+
+See the `Locating elements` section for details about the locator
+syntax.
+
+New in SeleniumLibrary 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Unselect Checkbox">
+<arguments>
+<arg>locator</arg>
+</arguments>
+<doc>Removes selection of checkbox identified by ``locator``.
+
+Does nothing if the checkbox is not selected.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Unselect Frame">
+<arguments>
+</arguments>
+<doc>Sets the main frame as the current frame.
+
+In practice cancels the previous `Select Frame` call.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Unselect From List">
+<arguments>
+<arg>locator</arg>
+<arg>*items</arg>
+</arguments>
+<doc>Deprecated. Use `Unselect From List By Label/Value/Index` instead.
+
+This keyword unselects options based on labels or values, which makes
+it very complicated and slow. It has been deprecated in
+SeleniumLibrary 3.0, and dedicated keywords `Unselect From List By
+Label`, `Unselect From List By Value` and `Unselect From List By
+Index` should be used instead.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Unselect From List By Index">
+<arguments>
+<arg>locator</arg>
+<arg>*indexes</arg>
+</arguments>
+<doc>Unselects options from selection list ``locator`` by ``indexes``.
+
+Indexes of list options start from 0. This keyword works only with
+multi-selection lists.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Unselect From List By Label">
+<arguments>
+<arg>locator</arg>
+<arg>*labels</arg>
+</arguments>
+<doc>Unselects options from selection list ``locator`` by ``labels``.
+
+This keyword works only with multi-selection lists.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Unselect From List By Value">
+<arguments>
+<arg>locator</arg>
+<arg>*values</arg>
+</arguments>
+<doc>Unselects options from selection list ``locator`` by ``values``.
+
+This keyword works only with multi-selection lists.
+
+See the `Locating elements` section for details about the locator
+syntax.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait For Condition">
+<arguments>
+<arg>condition</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until ``condition`` is true or ``timeout`` expires.
+
+The condition can be arbitrary JavaScript expression but it
+must return a value to be evaluated. See `Execute JavaScript` for
+information about accessing content on pages.
+
+Fails if the timeout expires before the condition becomes true. See
+the `Timeouts` section for more information about using timeouts
+and their default value.
+
+``error`` can be used to override the default error message.
+
+Examples:
+| `Wait For Condition` | return document.title == "New Title" |
+| `Wait For Condition` | return jQuery.active == 0            |
+| `Wait For Condition` | style = document.querySelector('h1').style; return style.background == "red" &amp;&amp; style.color == "white" |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Element Contains">
+<arguments>
+<arg>locator</arg>
+<arg>text</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until element ``locator`` contains ``text``.
+
+Fails if ``timeout`` expires before the text appears. See
+the `Timeouts` section for more information about using timeouts and
+their default value and the `Locating elements` section for details
+about the locator syntax.
+
+``error`` can be used to override the default error message.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Element Does Not Contain">
+<arguments>
+<arg>locator</arg>
+<arg>text</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until element ``locator`` does not contain ``text``.
+
+Fails if ``timeout`` expires before the text disappears. See
+the `Timeouts` section for more information about using timeouts and
+their default value and the `Locating elements` section for details
+about the locator syntax.
+
+``error`` can be used to override the default error message.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Element Is Enabled">
+<arguments>
+<arg>locator</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until element ``locator`` is enabled.
+
+Element is considered enabled if it is not disabled nor read-only.
+
+Fails if ``timeout`` expires before the element is enabled. See
+the `Timeouts` section for more information about using timeouts and
+their default value and the `Locating elements` section for details
+about the locator syntax.
+
+``error`` can be used to override the default error message.
+
+Considering read-only elements to be disabled is a new feature
+in SeleniumLibrary 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Element Is Not Visible">
+<arguments>
+<arg>locator</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until element ``locator`` is not visible.
+
+Fails if ``timeout`` expires before the element is not visible. See
+the `Timeouts` section for more information about using timeouts and
+their default value and the `Locating elements` section for details
+about the locator syntax.
+
+``error`` can be used to override the default error message.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Element Is Visible">
+<arguments>
+<arg>locator</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until element ``locator`` is visible.
+
+Fails if ``timeout`` expires before the element is visible. See
+the `Timeouts` section for more information about using timeouts and
+their default value and the `Locating elements` section for details
+about the locator syntax.
+
+``error`` can be used to override the default error message.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Page Contains">
+<arguments>
+<arg>text</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until ``text`` appears on current page.
+
+Fails if ``timeout`` expires before the text appears. See
+the `Timeouts` section for more information about using timeouts
+and their default value.
+
+``error`` can be used to override the default error message.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Page Contains Element">
+<arguments>
+<arg>locator</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until element ``locator`` appears on current page.
+
+Fails if ``timeout`` expires before the element appears. See
+the `Timeouts` section for more information about using timeouts and
+their default value and the `Locating elements` section for details
+about the locator syntax.
+
+``error`` can be used to override the default error message.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Page Does Not Contain">
+<arguments>
+<arg>text</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until ``text`` disappears from current page.
+
+Fails if ``timeout`` expires before the text disappears. See
+the `Timeouts` section for more information about using timeouts
+and their default value.
+
+``error`` can be used to override the default error message.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Page Does Not Contain Element">
+<arguments>
+<arg>locator</arg>
+<arg>timeout=None</arg>
+<arg>error=None</arg>
+</arguments>
+<doc>Waits until element ``locator`` disappears from current page.
+
+Fails if ``timeout`` expires before the element disappears. See
+the `Timeouts` section for more information about using timeouts and
+their default value and the `Locating elements` section for details
+about the locator syntax.
+
+``error`` can be used to override the default error message.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Xpath Should Match X Times">
+<arguments>
+<arg>xpath</arg>
+<arg>x</arg>
+<arg>message=None</arg>
+<arg>loglevel=INFO</arg>
+</arguments>
+<doc>Deprecated, use `Page Should Contain Element` with ``limit`` argument instead.</doc>
+<tags>
+</tags>
+</kw>
+</keywordspec>

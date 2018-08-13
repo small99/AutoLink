@@ -1,0 +1,1152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordspec name="OperatingSystem" type="library" format="ROBOT" generated="20180425 10:46:41">
+<version>3.0.3</version>
+<scope>global</scope>
+<namedargs>yes</namedargs>
+<doc>A test library providing keywords for OS related tasks.
+
+``OperatingSystem`` is Robot Framework's standard library that
+enables various operating system related tasks to be performed in
+the system where Robot Framework is running. It can, among other
+things, execute commands (e.g. `Run`), create and remove files and
+directories (e.g. `Create File`, `Remove Directory`), check
+whether files or directories exists or contain something
+(e.g. `File Should Exist`, `Directory Should Be Empty`) and
+manipulate environment variables (e.g. `Set Environment Variable`).
+
+== Table of contents ==
+
+- `Path separators`
+- `Pattern matching`
+- `Tilde expansion`
+- `Boolean arguments`
+- `Example`
+- `Shortcuts`
+- `Keywords`
+
+= Path separators =
+
+Because Robot Framework uses the backslash (``\``) as an escape character
+in the test data, using a literal backslash requires duplicating it like
+in ``c:\\path\\file.txt``. That can be inconvenient especially with
+longer Windows paths, and thus all keywords expecting paths as arguments
+convert forward slashes to backslashes automatically on Windows. This also
+means that paths like ``${CURDIR}/path/file.txt`` are operating system
+independent.
+
+Notice that the automatic path separator conversion does not work if
+the path is only a part of an argument like with `Run` and `Start Process`
+keywords. In these cases the built-in variable ``${/}`` that contains
+``\`` or ``/``, depending on the operating system, can be used instead.
+
+= Pattern matching =
+
+Some keywords allow their arguments to be specified as _glob patterns_
+where:
+| ``*``        | matches anything, even an empty string |
+| ``?``        | matches any single character |
+| ``[chars]``  | matches any character inside square brackets (e.g. ``[abc]`` matches either ``a``, ``b`` or ``c``) |
+| ``[!chars]`` | matches any character not inside square brackets |
+
+Unless otherwise noted, matching is case-insensitive on
+case-insensitive operating systems such as Windows. Pattern
+matching is implemented using
+[http://docs.python.org/library/fnmatch.html|fnmatch module].
+
+Starting from Robot Framework 2.9.1, globbing is not done if the given path
+matches an existing file even if it would contain a glob pattern.
+
+= Tilde expansion =
+
+Paths beginning with ``~`` or ``~username`` are expanded to the current or
+specified user's home directory, respectively. The resulting path is
+operating system dependent, but typically e.g. ``~/robot`` is expanded to
+``C:\Users\&lt;user&gt;\robot`` on Windows and ``/home/&lt;user&gt;/robot`` on
+Unixes.
+
+Tilde expansion is a new feature in Robot Framework 2.8. The ``~username``
+form does not work on Jython
+
+= Boolean arguments =
+
+Some keywords accept arguments that are handled as Boolean values true or
+false. If such an argument is given as a string, it is considered false if
+it is either an empty string or case-insensitively equal to ``false``,
+``none`` or ``no``. Other strings are considered true regardless
+their value, and other argument types are tested using the same
+[http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+as in Python].
+
+True examples:
+| `Remove Directory` | ${path} | recursive=True    | # Strings are generally true.    |
+| `Remove Directory` | ${path} | recursive=yes     | # Same as the above.             |
+| `Remove Directory` | ${path} | recursive=${TRUE} | # Python ``True`` is true.       |
+| `Remove Directory` | ${path} | recursive=${42}   | # Numbers other than 0 are true. |
+
+False examples:
+| `Remove Directory` | ${path} | recursive=False    | # String ``false`` is false.   |
+| `Remove Directory` | ${path} | recursive=no       | # Also string ``no`` is false. |
+| `Remove Directory` | ${path} | recursive=${EMPTY} | # Empty string is false.       |
+| `Remove Directory` | ${path} | recursive=${FALSE} | # Python ``False`` is false.   |
+
+Prior to Robot Framework 2.9, all non-empty strings, including ``false``
+and ``no``, were considered true. Considering ``none`` false is new in
+Robot Framework 3.0.3.
+
+= Example =
+
+|  =Setting=  |     =Value=     |
+| Library     | OperatingSystem |
+
+| =Variable=  |       =Value=         |
+| ${PATH}     | ${CURDIR}/example.txt |
+
+| =Test Case= |     =Action=      | =Argument= |    =Argument=        |
+| Example     | Create File       | ${PATH}    | Some text            |
+|             | File Should Exist | ${PATH}    |                      |
+|             | Copy File         | ${PATH}    | ~/file.txt           |
+|             | ${output} =       | Run | ${TEMPDIR}${/}script.py arg |</doc>
+<kw name="Append To Environment Variable">
+<arguments>
+<arg>name</arg>
+<arg>*values</arg>
+<arg>**config</arg>
+</arguments>
+<doc>Appends given ``values`` to environment variable ``name``.
+
+If the environment variable already exists, values are added after it,
+and otherwise a new environment variable is created.
+
+Values are, by default, joined together using the operating system
+path separator (``;`` on Windows, ``:`` elsewhere). This can be changed
+by giving a separator after the values like ``separator=value``. No
+other configuration parameters are accepted.
+
+Examples (assuming ``NAME`` and ``NAME2`` do not exist initially):
+| Append To Environment Variable | NAME     | first  |       |
+| Should Be Equal                | %{NAME}  | first  |       |
+| Append To Environment Variable | NAME     | second | third |
+| Should Be Equal                | %{NAME}  | first${:}second${:}third |
+| Append To Environment Variable | NAME2    | first  | separator=-     |
+| Should Be Equal                | %{NAME2} | first  |                 |
+| Append To Environment Variable | NAME2    | second | separator=-     |
+| Should Be Equal                | %{NAME2} | first-second             |
+
+New in Robot Framework 2.8.4.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Append To File">
+<arguments>
+<arg>path</arg>
+<arg>content</arg>
+<arg>encoding=UTF-8</arg>
+</arguments>
+<doc>Appends the given content to the specified file.
+
+If the file does not exists, this keyword works exactly the same
+way as `Create File`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Copy Directory">
+<arguments>
+<arg>source</arg>
+<arg>destination</arg>
+</arguments>
+<doc>Copies the source directory into the destination.
+
+If the destination exists, the source is copied under it. Otherwise
+the destination directory and the possible missing intermediate
+directories are created.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Copy File">
+<arguments>
+<arg>source</arg>
+<arg>destination</arg>
+</arguments>
+<doc>Copies the source file into the destination.
+
+Source must be an existing file. Starting from Robot Framework 2.8.4,
+it can be given as a glob pattern (see `Pattern matching`) that matches
+exactly one file. How the destination is interpreted is explained below.
+
+1) If the destination is an existing file, the source file is copied
+over it.
+
+2) If the destination is an existing directory, the source file is
+copied into it. A possible file with the same name as the source is
+overwritten.
+
+3) If the destination does not exist and it ends with a path
+separator (``/`` or ``\``), it is considered a directory. That
+directory is created and a source file copied into it.
+Possible missing intermediate directories are also created.
+
+4) If the destination does not exist and it does not end with a path
+separator, it is considered a file. If the path to the file does not
+exist, it is created.
+
+The resulting destination path is returned since Robot Framework 2.9.2.
+
+See also `Copy Files`, `Move File`, and `Move Files`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Copy Files">
+<arguments>
+<arg>*sources_and_destination</arg>
+</arguments>
+<doc>Copies specified files to the target directory.
+
+Source files can be given as exact paths and as glob patterns (see
+`Pattern matching`). At least one source must be given, but it is
+not an error if it is a pattern that does not match anything.
+
+Last argument must be the destination directory. If the destination
+does not exist, it will be created.
+
+Examples:
+| Copy Files | ${dir}/file1.txt  | ${dir}/file2.txt | ${dir2} |
+| Copy Files | ${dir}/file-*.txt | ${dir2}          |         |
+
+See also `Copy File`, `Move File`, and `Move Files`.
+
+New in Robot Framework 2.8.4.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Count Directories In Directory">
+<arguments>
+<arg>path</arg>
+<arg>pattern=None</arg>
+</arguments>
+<doc>Wrapper for `Count Items In Directory` returning only directory count.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Count Files In Directory">
+<arguments>
+<arg>path</arg>
+<arg>pattern=None</arg>
+</arguments>
+<doc>Wrapper for `Count Items In Directory` returning only file count.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Count Items In Directory">
+<arguments>
+<arg>path</arg>
+<arg>pattern=None</arg>
+</arguments>
+<doc>Returns and logs the number of all items in the given directory.
+
+The argument ``pattern`` has the same semantics as with `List Directory`
+keyword. The count is returned as an integer, so it must be checked e.g.
+with the built-in keyword `Should Be Equal As Integers`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Create Binary File">
+<arguments>
+<arg>path</arg>
+<arg>content</arg>
+</arguments>
+<doc>Creates a binary file with the given content.
+
+If content is given as a Unicode string, it is first converted to bytes
+character by character. All characters with ordinal below 256 can be
+used and are converted to bytes with same values. Using characters
+with higher ordinal is an error.
+
+Byte strings, and possible other types, are written to the file as is.
+
+If the directory for the file does not exist, it is created, along
+with missing intermediate directories.
+
+Examples:
+| Create Binary File | ${dir}/example.png | ${image content}     |
+| Create Binary File | ${path}            | \x01\x00\xe4\x00 |
+
+Use `Create File` if you want to create a text file using a certain
+encoding. `File Should Not Exist` can be used to avoid overwriting
+existing files.
+
+New in Robot Framework 2.8.5.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Create Directory">
+<arguments>
+<arg>path</arg>
+</arguments>
+<doc>Creates the specified directory.
+
+Also possible intermediate directories are created. Passes if the
+directory already exists, but fails if the path exists and is not
+a directory.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Create File">
+<arguments>
+<arg>path</arg>
+<arg>content=</arg>
+<arg>encoding=UTF-8</arg>
+</arguments>
+<doc>Creates a file with the given content and encoding.
+
+If the directory for the file does not exist, it is created, along
+with missing intermediate directories.
+
+See `Get File` for more information about possible ``encoding`` values,
+including special values ``SYSTEM`` and ``CONSOLE``.
+
+Examples:
+| Create File | ${dir}/example.txt | Hello, world!      |         |
+| Create File | ${path}            | Hyv\xe4 esimerkki | Latin-1 |
+| Create File | /tmp/foo.txt       | ${content}         | SYSTEM  |
+
+Use `Append To File` if you want to append to an existing file
+and `Create Binary File` if you need to write bytes without encoding.
+`File Should Not Exist` can be used to avoid overwriting existing
+files.
+
+The support for ``SYSTEM`` and ``CONSOLE`` encodings is new in Robot
+Framework 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Directory Should Be Empty">
+<arguments>
+<arg>path</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails unless the specified directory is empty.
+
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Directory Should Exist">
+<arguments>
+<arg>path</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails unless the given path points to an existing directory.
+
+The path can be given as an exact path or as a glob pattern.
+The pattern matching syntax is explained in `introduction`.
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Directory Should Not Be Empty">
+<arguments>
+<arg>path</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if the specified directory is empty.
+
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Directory Should Not Exist">
+<arguments>
+<arg>path</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if the given path points to an existing file.
+
+The path can be given as an exact path or as a glob pattern.
+The pattern matching syntax is explained in `introduction`.
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Empty Directory">
+<arguments>
+<arg>path</arg>
+</arguments>
+<doc>Deletes all the content from the given directory.
+
+Deletes both files and sub-directories, but the specified directory
+itself if not removed. Use `Remove Directory` if you want to remove
+the whole directory.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Environment Variable Should Be Set">
+<arguments>
+<arg>name</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if the specified environment variable is not set.
+
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Environment Variable Should Not Be Set">
+<arguments>
+<arg>name</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if the specified environment variable is set.
+
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="File Should Be Empty">
+<arguments>
+<arg>path</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails unless the specified file is empty.
+
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="File Should Exist">
+<arguments>
+<arg>path</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails unless the given ``path`` points to an existing file.
+
+The path can be given as an exact path or as a glob pattern.
+The pattern matching syntax is explained in `introduction`.
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="File Should Not Be Empty">
+<arguments>
+<arg>path</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if the specified directory is empty.
+
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="File Should Not Exist">
+<arguments>
+<arg>path</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if the given path points to an existing file.
+
+The path can be given as an exact path or as a glob pattern.
+The pattern matching syntax is explained in `introduction`.
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Binary File">
+<arguments>
+<arg>path</arg>
+</arguments>
+<doc>Returns the contents of a specified file.
+
+This keyword reads the specified file and returns the contents as is.
+See also `Get File`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Environment Variable">
+<arguments>
+<arg>name</arg>
+<arg>default=None</arg>
+</arguments>
+<doc>Returns the value of an environment variable with the given name.
+
+If no such environment variable is set, returns the default value, if
+given. Otherwise fails the test case.
+
+Starting from Robot Framework 2.7, returned variables are automatically
+decoded to Unicode using the system encoding.
+
+Note that you can also access environment variables directly using
+the variable syntax ``%{ENV_VAR_NAME}``.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Environment Variables">
+<arguments>
+</arguments>
+<doc>Returns currently available environment variables as a dictionary.
+
+Both keys and values are decoded to Unicode using the system encoding.
+Altering the returned dictionary has no effect on the actual environment
+variables.
+
+New in Robot Framework 2.7.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get File">
+<arguments>
+<arg>path</arg>
+<arg>encoding=UTF-8</arg>
+<arg>encoding_errors=strict</arg>
+</arguments>
+<doc>Returns the contents of a specified file.
+
+This keyword reads the specified file and returns the contents.
+Line breaks in content are converted to platform independent form.
+See also `Get Binary File`.
+
+``encoding`` defines the encoding of the file. The default value is
+``UTF-8``, which means that UTF-8 and ASCII encoded files are read
+correctly. In addition to the encodings supported by the underlying
+Python implementation, the following special encoding values can be
+used:
+
+- ``SYSTEM``: Use the default system encoding.
+- ``CONSOLE``: Use the console encoding. Outside Windows this is same
+  as the system encoding.
+
+``encoding_errors`` argument controls what to do if decoding some bytes
+fails. All values accepted by ``decode`` method in Python are valid, but
+in practice the following values are most useful:
+
+- ``strict``: Fail if characters cannot be decoded (default).
+- ``ignore``: Ignore characters that cannot be decoded.
+- ``replace``: Replace characters that cannot be decoded with
+  a replacement character.
+
+``encoding_errors`` argument was added in Robot Framework 2.8.5 and the
+support for ``SYSTEM`` and ``CONSOLE`` encodings in Robot Framework 3.0.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get File Size">
+<arguments>
+<arg>path</arg>
+</arguments>
+<doc>Returns and logs file size as an integer in bytes.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Get Modified Time">
+<arguments>
+<arg>path</arg>
+<arg>format=timestamp</arg>
+</arguments>
+<doc>Returns the last modification time of a file or directory.
+
+How time is returned is determined based on the given ``format``
+string as follows. Note that all checks are case-insensitive.
+Returned time is also automatically logged.
+
+1) If ``format`` contains the word ``epoch``, the time is returned
+   in seconds after the UNIX epoch. The return value is always
+   an integer.
+
+2) If ``format`` contains any of the words ``year``, ``month``,
+   ``day``, ``hour``, ``min`` or ``sec``, only the selected parts are
+   returned. The order of the returned parts is always the one
+   in the previous sentence and the order of the words in
+   ``format`` is not significant. The parts are returned as
+   zero-padded strings (e.g. May -&gt; ``05``).
+
+3) Otherwise, and by default, the time is returned as a
+   timestamp string in the format ``2006-02-24 15:08:31``.
+
+Examples (when the modified time of ``${CURDIR}`` is
+2006-03-29 15:06:21):
+| ${time} = | Get Modified Time | ${CURDIR} |
+| ${secs} = | Get Modified Time | ${CURDIR} | epoch |
+| ${year} = | Get Modified Time | ${CURDIR} | return year |
+| ${y} | ${d} = | Get Modified Time | ${CURDIR} | year,day |
+| @{time} = | Get Modified Time | ${CURDIR} | year,month,day,hour,min,sec |
+=&gt;
+- ${time} = '2006-03-29 15:06:21'
+- ${secs} = 1143637581
+- ${year} = '2006'
+- ${y} = '2006' &amp; ${d} = '29'
+- @{time} = ['2006', '03', '29', '15', '06', '21']</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Grep File">
+<arguments>
+<arg>path</arg>
+<arg>pattern</arg>
+<arg>encoding=UTF-8</arg>
+<arg>encoding_errors=strict</arg>
+</arguments>
+<doc>Returns the lines of the specified file that match the ``pattern``.
+
+This keyword reads a file from the file system using the defined
+``path``, ``encoding`` and ``encoding_errors`` similarly as `Get File`.
+A difference is that only the lines that match the given ``pattern`` are
+returned. Lines are returned as a single string catenated back together
+with newlines and the number of matched lines is automatically logged.
+Possible trailing newline is never returned.
+
+A line matches if it contains the ``pattern`` anywhere in it and
+it *does not need to match the pattern fully*. The pattern
+matching syntax is explained in `introduction`, and in this
+case matching is case-sensitive.
+
+Examples:
+| ${errors} = | Grep File | /var/log/myapp.log | ERROR |
+| ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc??d ex*ple |
+
+If more complex pattern matching is needed, it is possible to use
+`Get File` in combination with String library keywords like `Get
+Lines Matching Regexp`.
+
+``encoding_errors`` argument is new in Robot Framework 2.8.5.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Join Path">
+<arguments>
+<arg>base</arg>
+<arg>*parts</arg>
+</arguments>
+<doc>Joins the given path part(s) to the given base path.
+
+The path separator (``/`` or ``\``) is inserted when needed and
+the possible absolute paths handled as expected. The resulted
+path is also normalized.
+
+Examples:
+| ${path} = | Join Path | my        | path  |
+| ${p2} =   | Join Path | my/       | path/ |
+| ${p3} =   | Join Path | my        | path  | my | file.txt |
+| ${p4} =   | Join Path | my        | /path |
+| ${p5} =   | Join Path | /my/path/ | ..    | path2 |
+=&gt;
+- ${path} = 'my/path'
+- ${p2} = 'my/path'
+- ${p3} = 'my/path/my/file.txt'
+- ${p4} = '/path'
+- ${p5} = '/my/path2'</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Join Paths">
+<arguments>
+<arg>base</arg>
+<arg>*paths</arg>
+</arguments>
+<doc>Joins given paths with base and returns resulted paths.
+
+See `Join Path` for more information.
+
+Examples:
+| @{p1} = | Join Paths | base     | example       | other |          |
+| @{p2} = | Join Paths | /my/base | /example      | other |          |
+| @{p3} = | Join Paths | my/base  | example/path/ | other | one/more |
+=&gt;
+- @{p1} = ['base/example', 'base/other']
+- @{p2} = ['/example', '/my/base/other']
+- @{p3} = ['my/base/example/path', 'my/base/other', 'my/base/one/more']</doc>
+<tags>
+</tags>
+</kw>
+<kw name="List Directories In Directory">
+<arguments>
+<arg>path</arg>
+<arg>pattern=None</arg>
+<arg>absolute=False</arg>
+</arguments>
+<doc>Wrapper for `List Directory` that returns only directories.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="List Directory">
+<arguments>
+<arg>path</arg>
+<arg>pattern=None</arg>
+<arg>absolute=False</arg>
+</arguments>
+<doc>Returns and logs items in a directory, optionally filtered with ``pattern``.
+
+File and directory names are returned in case-sensitive alphabetical
+order, e.g. ``['A Name', 'Second', 'a lower case name', 'one more']``.
+Implicit directories ``.`` and ``..`` are not returned. The returned
+items are automatically logged.
+
+File and directory names are returned relative to the given path
+(e.g. ``'file.txt'``) by default. If you want them be returned in
+absolute format (e.g. ``'/home/robot/file.txt'``), give the ``absolute``
+argument a true value (see `Boolean arguments`).
+
+If ``pattern`` is given, only items matching it are returned. The pattern
+matching syntax is explained in `introduction`, and in this case
+matching is case-sensitive.
+
+Examples (using also other `List Directory` variants):
+| @{items} = | List Directory           | ${TEMPDIR} |
+| @{files} = | List Files In Directory  | /tmp | *.txt | absolute |
+| ${count} = | Count Files In Directory | ${CURDIR} | ??? |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="List Files In Directory">
+<arguments>
+<arg>path</arg>
+<arg>pattern=None</arg>
+<arg>absolute=False</arg>
+</arguments>
+<doc>Wrapper for `List Directory` that returns only files.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Log Environment Variables">
+<arguments>
+<arg>level=INFO</arg>
+</arguments>
+<doc>Logs all environment variables using the given log level.
+
+Environment variables are also returned the same way as with
+`Get Environment Variables` keyword.
+
+New in Robot Framework 2.7.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Log File">
+<arguments>
+<arg>path</arg>
+<arg>encoding=UTF-8</arg>
+<arg>encoding_errors=strict</arg>
+</arguments>
+<doc>Wrapper for `Get File` that also logs the returned file.
+
+The file is logged with the INFO level. If you want something else,
+just use `Get File` and the built-in keyword `Log` with the desired
+level.
+
+See `Get File` for more information about ``encoding`` and
+``encoding_errors`` arguments.
+
+``encoding_errors`` argument is new in Robot Framework 2.8.5.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Move Directory">
+<arguments>
+<arg>source</arg>
+<arg>destination</arg>
+</arguments>
+<doc>Moves the source directory into a destination.
+
+Uses `Copy Directory` keyword internally, and ``source`` and
+``destination`` arguments have exactly same semantics as with
+that keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Move File">
+<arguments>
+<arg>source</arg>
+<arg>destination</arg>
+</arguments>
+<doc>Moves the source file into the destination.
+
+Arguments have exactly same semantics as with `Copy File` keyword.
+Destination file path is returned since Robot Framework 2.9.2.
+
+If the source and destination are on the same filesystem, rename
+operation is used. Otherwise file is copied to the destination
+filesystem and then removed from the original filesystem.
+
+See also `Move Files`, `Copy File`, and `Copy Files`.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Move Files">
+<arguments>
+<arg>*sources_and_destination</arg>
+</arguments>
+<doc>Moves specified files to the target directory.
+
+Arguments have exactly same semantics as with `Copy Files` keyword.
+
+See also `Move File`, `Copy File`, and `Copy Files`.
+
+New in Robot Framework 2.8.4.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Normalize Path">
+<arguments>
+<arg>path</arg>
+</arguments>
+<doc>Normalizes the given path.
+
+Examples:
+| ${path} = | Normalize Path | abc        |
+| ${p2} =   | Normalize Path | abc/       |
+| ${p3} =   | Normalize Path | abc/../def |
+| ${p4} =   | Normalize Path | abc/./def  |
+| ${p5} =   | Normalize Path | abc//def   |
+=&gt;
+- ${path} = 'abc'
+- ${p2} = 'abc'
+- ${p3} = 'def'
+- ${p4} = 'abc/def'
+- ${p5} = 'abc/def'</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Remove Directory">
+<arguments>
+<arg>path</arg>
+<arg>recursive=False</arg>
+</arguments>
+<doc>Removes the directory pointed to by the given ``path``.
+
+If the second argument ``recursive`` is given a true value (see
+`Boolean arguments`), the directory is removed recursively. Otherwise
+removing fails if the directory is not empty.
+
+If the directory pointed to by the ``path`` does not exist, the keyword
+passes, but it fails, if the ``path`` points to a file.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Remove Environment Variable">
+<arguments>
+<arg>*names</arg>
+</arguments>
+<doc>Deletes the specified environment variable.
+
+Does nothing if the environment variable is not set.
+
+Starting from Robot Framework 2.7, it is possible to remove multiple
+variables by passing them to this keyword as separate arguments.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Remove File">
+<arguments>
+<arg>path</arg>
+</arguments>
+<doc>Removes a file with the given path.
+
+Passes if the file does not exist, but fails if the path does
+not point to a regular file (e.g. it points to a directory).
+
+The path can be given as an exact path or as a glob pattern.
+The pattern matching syntax is explained in `introduction`.
+If the path is a pattern, all files matching it are removed.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Remove Files">
+<arguments>
+<arg>*paths</arg>
+</arguments>
+<doc>Uses `Remove File` to remove multiple files one-by-one.
+
+Example:
+| Remove Files | ${TEMPDIR}${/}foo.txt | ${TEMPDIR}${/}bar.txt | ${TEMPDIR}${/}zap.txt |</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Run">
+<arguments>
+<arg>command</arg>
+</arguments>
+<doc>Runs the given command in the system and returns the output.
+
+The execution status of the command *is not checked* by this
+keyword, and it must be done separately based on the returned
+output. If the execution return code is needed, either `Run
+And Return RC` or `Run And Return RC And Output` can be used.
+
+The standard error stream is automatically redirected to the standard
+output stream by adding ``2&gt;&amp;1`` after the executed command. This
+automatic redirection is done only when the executed command does not
+contain additional output redirections. You can thus freely forward
+the standard error somewhere else, for example, like
+``my_command 2&gt;stderr.txt``.
+
+The returned output contains everything written into the standard
+output or error streams by the command (unless either of them
+is redirected explicitly). Many commands add an extra newline
+(``\n``) after the output to make it easier to read in the
+console. To ease processing the returned output, this possible
+trailing newline is stripped by this keyword.
+
+Examples:
+| ${output} =        | Run       | ls -lhF /tmp |
+| Log                | ${output} |
+| ${result} =        | Run       | ${CURDIR}${/}tester.py arg1 arg2 |
+| Should Not Contain | ${result} | FAIL |
+| ${stdout} =        | Run       | /opt/script.sh 2&gt;/tmp/stderr.txt |
+| Should Be Equal    | ${stdout} | TEST PASSED |
+| File Should Be Empty | /tmp/stderr.txt |
+
+*TIP:* `Run Process` keyword provided by the
+[http://robotframework.org/robotframework/latest/libraries/Process.html|
+Process library] supports better process configuration and is generally
+recommended as a replacement for this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Run And Return Rc">
+<arguments>
+<arg>command</arg>
+</arguments>
+<doc>Runs the given command in the system and returns the return code.
+
+The return code (RC) is returned as a positive integer in
+range from 0 to 255 as returned by the executed command. On
+some operating systems (notable Windows) original return codes
+can be something else, but this keyword always maps them to
+the 0-255 range. Since the RC is an integer, it must be
+checked e.g. with the keyword `Should Be Equal As Integers`
+instead of `Should Be Equal` (both are built-in keywords).
+
+Examples:
+| ${rc} = | Run and Return RC | ${CURDIR}${/}script.py arg |
+| Should Be Equal As Integers | ${rc} | 0 |
+| ${rc} = | Run and Return RC | /path/to/example.rb arg1 arg2 |
+| Should Be True | 0 &lt; ${rc} &lt; 42 |
+
+See `Run` and `Run And Return RC And Output` if you need to get the
+output of the executed command.
+
+*TIP:* `Run Process` keyword provided by the
+[http://robotframework.org/robotframework/latest/libraries/Process.html|
+Process library] supports better process configuration and is generally
+recommended as a replacement for this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Run And Return Rc And Output">
+<arguments>
+<arg>command</arg>
+</arguments>
+<doc>Runs the given command in the system and returns the RC and output.
+
+The return code (RC) is returned similarly as with `Run And Return RC`
+and the output similarly as with `Run`.
+
+Examples:
+| ${rc} | ${output} =  | Run and Return RC and Output | ${CURDIR}${/}mytool |
+| Should Be Equal As Integers | ${rc}    | 0    |
+| Should Not Contain   | ${output}       | FAIL |
+| ${rc} | ${stdout} =  | Run and Return RC and Output | /opt/script.sh 2&gt;/tmp/stderr.txt |
+| Should Be True       | ${rc} &gt; 42      |
+| Should Be Equal      | ${stdout}       | TEST PASSED |
+| File Should Be Empty | /tmp/stderr.txt |
+
+*TIP:* `Run Process` keyword provided by the
+[http://robotframework.org/robotframework/latest/libraries/Process.html|
+Process library] supports better process configuration and is generally
+recommended as a replacement for this keyword.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Environment Variable">
+<arguments>
+<arg>name</arg>
+<arg>value</arg>
+</arguments>
+<doc>Sets an environment variable to a specified value.
+
+Values are converted to strings automatically. Starting from Robot
+Framework 2.7, set variables are automatically encoded using the system
+encoding.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Set Modified Time">
+<arguments>
+<arg>path</arg>
+<arg>mtime</arg>
+</arguments>
+<doc>Sets the file modification and access times.
+
+Changes the modification and access times of the given file to
+the value determined by ``mtime``. The time can be given in
+different formats described below. Note that all checks
+involving strings are case-insensitive. Modified time can only
+be set to regular files.
+
+1) If ``mtime`` is a number, or a string that can be converted
+   to a number, it is interpreted as seconds since the UNIX
+   epoch (1970-01-01 00:00:00 UTC). This documentation was
+   originally written about 1177654467 seconds after the epoch.
+
+2) If ``mtime`` is a timestamp, that time will be used. Valid
+   timestamp formats are ``YYYY-MM-DD hh:mm:ss`` and
+   ``YYYYMMDD hhmmss``.
+
+3) If ``mtime`` is equal to ``NOW``, the current local time is used.
+   This time is got using Python's ``time.time()`` function.
+
+4) If ``mtime`` is equal to ``UTC``, the current time in
+   [http://en.wikipedia.org/wiki/Coordinated_Universal_Time|UTC]
+   is used. This time is got using ``time.time() + time.altzone``
+   in Python.
+
+5) If ``mtime`` is in the format like ``NOW - 1 day`` or ``UTC + 1
+   hour 30 min``, the current local/UTC time plus/minus the time
+   specified with the time string is used. The time string format
+   is described in an appendix of Robot Framework User Guide.
+
+Examples:
+| Set Modified Time | /path/file | 1177654467         | # Time given as epoch seconds |
+| Set Modified Time | /path/file | 2007-04-27 9:14:27 | # Time given as a timestamp   |
+| Set Modified Time | /path/file | NOW                | # The local time of execution |
+| Set Modified Time | /path/file | NOW - 1 day        | # 1 day subtracted from the local time |
+| Set Modified Time | /path/file | UTC + 1h 2min 3s   | # 1h 2min 3s added to the UTC time |
+
+Support for UTC time is a new feature in Robot Framework 2.7.5.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Should Exist">
+<arguments>
+<arg>path</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails unless the given path (file or directory) exists.
+
+The path can be given as an exact path or as a glob pattern.
+The pattern matching syntax is explained in `introduction`.
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Should Not Exist">
+<arguments>
+<arg>path</arg>
+<arg>msg=None</arg>
+</arguments>
+<doc>Fails if the given path (file or directory) exists.
+
+The path can be given as an exact path or as a glob pattern.
+The pattern matching syntax is explained in `introduction`.
+The default error message can be overridden with the ``msg`` argument.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Split Extension">
+<arguments>
+<arg>path</arg>
+</arguments>
+<doc>Splits the extension from the given path.
+
+The given path is first normalized (e.g. possible trailing
+path separators removed, special directories ``..`` and ``.``
+removed). The base path and extension are returned as separate
+components so that the dot used as an extension separator is
+removed. If the path contains no extension, an empty string is
+returned for it. Possible leading and trailing dots in the file
+name are never considered to be extension separators.
+
+Examples:
+| ${path} | ${ext} = | Split Extension | file.extension    |
+| ${p2}   | ${e2} =  | Split Extension | path/file.ext     |
+| ${p3}   | ${e3} =  | Split Extension | path/file         |
+| ${p4}   | ${e4} =  | Split Extension | p1/../p2/file.ext |
+| ${p5}   | ${e5} =  | Split Extension | path/.file.ext    |
+| ${p6}   | ${e6} =  | Split Extension | path/.file        |
+=&gt;
+- ${path} = 'file' &amp; ${ext} = 'extension'
+- ${p2} = 'path/file' &amp; ${e2} = 'ext'
+- ${p3} = 'path/file' &amp; ${e3} = ''
+- ${p4} = 'p2/file' &amp; ${e4} = 'ext'
+- ${p5} = 'path/.file' &amp; ${e5} = 'ext'
+- ${p6} = 'path/.file' &amp; ${e6} = ''</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Split Path">
+<arguments>
+<arg>path</arg>
+</arguments>
+<doc>Splits the given path from the last path separator (``/`` or ``\``).
+
+The given path is first normalized (e.g. a possible trailing
+path separator is removed, special directories ``..`` and ``.``
+removed). The parts that are split are returned as separate
+components.
+
+Examples:
+| ${path1} | ${dir} =  | Split Path | abc/def         |
+| ${path2} | ${file} = | Split Path | abc/def/ghi.txt |
+| ${path3} | ${d2}  =  | Split Path | abc/../def/ghi/ |
+=&gt;
+- ${path1} = 'abc' &amp; ${dir} = 'def'
+- ${path2} = 'abc/def' &amp; ${file} = 'ghi.txt'
+- ${path3} = 'def' &amp; ${d2} = 'ghi'</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Touch">
+<arguments>
+<arg>path</arg>
+</arguments>
+<doc>Emulates the UNIX touch command.
+
+Creates a file, if it does not exist. Otherwise changes its access and
+modification times to the current time.
+
+Fails if used with the directories or the parent directory of the given
+file does not exist.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Created">
+<arguments>
+<arg>path</arg>
+<arg>timeout=1 minute</arg>
+</arguments>
+<doc>Waits until the given file or directory is created.
+
+The path can be given as an exact path or as a glob pattern.
+The pattern matching syntax is explained in `introduction`.
+If the path is a pattern, the keyword returns when an item matching
+it is created.
+
+The optional ``timeout`` can be used to control the maximum time of
+waiting. The timeout is given as a timeout string, e.g. in a format
+``15 seconds``, ``1min 10s`` or just ``10``. The time string format is
+described in an appendix of Robot Framework User Guide.
+
+If the timeout is negative, the keyword is never timed-out. The keyword
+returns immediately, if the path already exists.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Wait Until Removed">
+<arguments>
+<arg>path</arg>
+<arg>timeout=1 minute</arg>
+</arguments>
+<doc>Waits until the given file or directory is removed.
+
+The path can be given as an exact path or as a glob pattern.
+The pattern matching syntax is explained in `introduction`.
+If the path is a pattern, the keyword waits until all matching
+items are removed.
+
+The optional ``timeout`` can be used to control the maximum time of
+waiting. The timeout is given as a timeout string, e.g. in a format
+``15 seconds``, ``1min 10s`` or just ``10``. The time string format is
+described in an appendix of Robot Framework User Guide.
+
+If the timeout is negative, the keyword is never timed-out. The keyword
+returns immediately, if the path does not exist in the first place.</doc>
+<tags>
+</tags>
+</kw>
+</keywordspec>
