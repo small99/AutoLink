@@ -9,3 +9,9 @@ https://github.com/mozilla/geckodriver/releases/
 
 3. IE的驱动IEdriver下载地址   
 http://www.nuget.org/packages/Selenium.WebDriver.IEDriver/
+
+
+或去官方下载：
+
+https://docs.seleniumhq.org/download/
+
