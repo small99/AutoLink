@@ -30,7 +30,7 @@ http://ip:8000
 
 - -p指定AutoLink服务启动时的端口
 
-默认账号: AutoLink
+默认账号: AutoLink  
 默认密码: 123456
 
 5. 下载selenium webdriver对应的浏览器驱动放在driver目录即可
