@@ -144,6 +144,7 @@ class TaskList(Resource):
 
 def get_task_list(app, username, project):
     job_path = app.config["AUTO_HOME"] + "/jobs/%s/%s" % (username, project)
+    next_build = 0
     if exists_path(job_path):
         next_build = get_next_build_number(job_path)
         if next_build != 0:
@@ -292,7 +293,7 @@ def get_last_fail(job_path):
 
 
 def get_next_build_number(job_path):
-    next_build_number = 0
+    next_build_number = 1
     next_path = job_path + "/nextBuildNumber"
     if exists_path(next_path):
         f = codecs.open(next_path, "r", "utf-8")
