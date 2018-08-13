@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>AutoLink - 开源优测自动化测试集成解决方案</title>
+
+        <meta name="keywords" content="AutoLink, 开源优测, 苦叶子, web ide"/>
+        <meta name="description" content="A Web-based IDE for Auto Testing using Auto Open Source Testing Framework, do your development anytime, anywhere."/>
+        <meta name="author" content="苦叶子">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/easyui/themes/icon.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/easyui/themes/bootstrap/easyui.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/lib/codemirror.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/addon/hint/show-hint.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/theme/dracula.css') }}">
+        <!--<link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/addon/fold/foldgutter.css') }}">-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/auto.css') }}">
+
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+    </head>
+    <body class="easyui-layout">
+
+
+        <div data-options="region:'center'">
+            <textarea id="code_editor" name="code_editor"></textarea>
+        </div>
+        <div data-options="region:'east',split:true" title="关键字" style="width:200px;">
+            <ul id="keyword_list" class="easyui-tree" data-options="
+                    url:'/api/v1/keyword?category=robot',
+                    method:'get',
+                    animate:true,
+                    onDblClick: onKwDblClick
+                    ">
+            </ul>
+        </div>
+
+
+        <script src="{{ url_for('static', filename='lib/easyui/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/easyui/jquery.easyui.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/lib/codemirror.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/mode/robot/robot.js') }}"></script>
+        <!--<script src="{{ url_for('static', filename='lib/CodeMirror/mode/textile/textile.js') }}"></script>>-->
+
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/display/placeholder.js') }}"></script>
+        <!--
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/foldcode.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/foldgutter.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/brace-fold.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/xml-fold.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/indent-fold.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/markdown-fold.js') }}"></script>-->
+        <script src="{{ url_for('static', filename='lib/CodeMirror//addon/hint/show-hint.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror//addon/hint/anyword-hint.js') }}"></script>
+        <!--<script src="{{ url_for('static', filename='lib/CodeMirror//addon/hint/robot-hint.js') }}"></script>-->
+        <!-- 自定义js库 -->
+        <script type="text/javascript" src="{{ url_for('static', filename='js/auto.js') }}"></script>
+
+        <SCRIPT type="text/javascript">
+            $(document).ready(function(){
+                /*CodeMirror.commands.autocomplete = function(cm) {
+                  cm.showHint({hint: CodeMirror.hint.anyword});
+                }*/
+                var path = "/{{ project }}/{{ suite }}/{{ case }}";
+                editor = CodeMirror.fromTextArea(document.getElementById("code_editor"), {
+                    mode: 'robot',
+                    lineNumbers: true,
+                    lineWrapping: true,
+                    styleActiveLine: true,
+                    styleSelectedText: true,
+                    theme: "dracula",
+                    indentUnit:4,
+                    extraKeys: {
+                        "Ctrl": "autocomplete"
+                    }
+                    //keyMap: "sublime",
+                    //foldGutter: true,
+                    //highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true},
+                    //gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+                });
+                editor.on("change", function(cm, event)
+                {
+                    var data = {
+                            "method": "save",
+                            "path": path,
+                            "data": editor.getValue()
+                        };
+
+                    do_ajax("post", "/api/v1/case/", data, do_nop);
+
+                });
+                editor.markText({line: 6, ch: 26}, {line: 6, ch: 42}, {className: "styled-background"});
+
+                do_ajax("get", "/api/v1/case/", {"path": path}, do_init);
+                //editor.setValue("*** Settings ***\n\n\n*** Variables ***\n\n\n*** Test Cases ***\n\n\n*** Keywords ***\n\n");
+            });
+
+            function onKwDblClick(node) {
+                var category = node.attributes.category;
+                if(category == "keyword"){
+                    editor.replaceSelection(node.attributes.keyword + node.attributes.params);
+                }
+            }
+
+            function newTab(cm){
+                /*if (cm.somethingSelected()) {
+                    cm.indentSelection('add');
+                } else {
+                    cm.replaceSelection(cm.getOption) ? "\t" : Array(cm.getOption("indentUnit") + 1).join(" "), "end", "+input");
+                }*/
+            }
+        </SCRIPT>
+    </body>
+</html>

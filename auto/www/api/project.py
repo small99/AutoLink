@@ -1,0 +1,241 @@
+# -*- coding: utf-8 -*-
+
+__author__ = "苦叶子"
+
+"""
+
+公众号: 开源优测
+
+Email: lymking@foxmail.com
+
+"""
+
+from flask import current_app, session
+from flask_restful import Resource, reqparse
+import json
+import os
+import codecs
+
+from utils.file import list_dir, mk_dirs, exists_path, rename_file, remove_dir, get_splitext
+
+
+class Project(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('method', type=str)
+        self.parser.add_argument('name', type=str)
+        self.parser.add_argument('new_name', type=str)
+        self.parser.add_argument('description', type=str)
+        self.parser.add_argument('enable', type=str, defaul="否")
+        self.parser.add_argument('cron', type=str, default="* * * * * ?")
+        self.parser.add_argument('boolean', type=str, default="启用")
+        self.app = current_app._get_current_object()
+
+    def get(self):
+        args = self.parser.parse_args()
+
+    def post(self):
+        args = self.parser.parse_args()
+
+        method = args["method"].lower()
+        if method == "create":
+            result = self.__create(args)
+        elif method == "edit":
+            result = self.__edit(args)
+        elif method == "delete":
+            result = self.__delete(args)
+
+        return result, 201
+
+    def __create(self, args):
+        result = {"status": "success", "msg": "创建项目成功"}
+
+        user_path = self.app.config["AUTO_HOME"] + "/workspace/%s/%s" % (session["username"], args["name"])
+        if not exists_path(user_path):
+            mk_dirs(user_path)
+
+            create_project(
+                self.app,
+                session["username"],
+                {
+                    "name": args["name"],
+                    "description": args["description"],
+                    "boolean": args["boolean"],
+                    "enable": args["enable"],
+                    "cron": args["cron"]
+                }
+            )
+        else:
+            result["status"] = "fail"
+            result["msg"] = "项目名称重复，创建失败"
+
+        return result
+
+    def __edit(self, args):
+        result = {"status": "success", "msg": "项目重命名成功"}
+        old_name = self.app.config["AUTO_HOME"] + "/workspace/%s/%s" % (session["username"], args["name"])
+        new_name = self.app.config["AUTO_HOME"] + "/workspace/%s/%s" % (session["username"], args["new_name"])
+
+        if rename_file(old_name, new_name):
+            edit_project(
+                self.app,
+                session["username"],
+                args["name"],
+                {
+                    "name": args["new_name"],
+                    "description": args["description"],
+                    "boolean": args["boolean"],
+                    "enable": args["enable"],
+                    "cron": args["cron"]
+                })
+        else:
+            result["status"] = "fail"
+            result["msg"] = "项目重命名失败，名称重复"
+
+        return result
+
+    def __delete(self, args):
+        result = {"status": "success", "msg": "项目删除成功"}
+        user_path = self.app.config["AUTO_HOME"] + "/workspace/%s/%s" % (session["username"], args["name"])
+        if exists_path(user_path):
+            remove_dir(user_path)
+
+            remove_project(self.app, session['username'], args['name'])
+        else:
+            result["status"] = "fail"
+            result["msg"] = "删除失败，不存在的项目"
+
+        return result
+
+
+class ProjectList(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('name', type=str)
+        self.app = current_app._get_current_object()
+
+    def get(self):
+        #args = self.parser.parse_args()
+        projects = get_project_list(self.app, session['username'])
+        children = []
+        for p in projects:
+            detail = get_project_detail(self.app, session['username'], p["name"])
+            children.append({
+                "text": p["name"],
+                "iconCls": "icon-project",
+                "attributes": {
+                    "name": p["name"],
+                    "description": p["description"],
+                    "category": "project",
+                    "boolean": p["boolean"]
+                },
+                "children": detail
+            })
+
+        return [{
+            "text": session['username'],
+            "iconCls": "icon-workspace",
+            "attributes": {
+                "category": "root"
+            },
+            "children": children}]
+
+
+def create_project(app, username, project):
+    user_path = app.config["AUTO_HOME"] + "/users/" + username
+    if os.path.exists(user_path):
+        config = json.load(codecs.open(user_path + '/config.json', 'r', 'utf-8'))
+        config["data"].append(project)
+        json.dump(config, codecs.open(user_path + '/config.json', 'w', 'utf-8'))
+
+
+def edit_project(app, username, old_name, new_project):
+    user_path = app.config["AUTO_HOME"] + "/users/" + username
+    if os.path.exists(user_path):
+        config = json.load(codecs.open(user_path + '/config.json', 'r', 'utf-8'))
+        index = 0
+        for p in config["data"]:
+            if p["name"] == old_name:
+                config["data"][index]["name"] = new_project["name"]
+                config["data"][index]["description"] = new_project["description"]
+                config["data"][index]["boolean"] = new_project["boolean"]
+                break
+            index += 1
+
+    json.dump(config, codecs.open(user_path + '/config.json', 'w', 'utf-8'))
+
+
+def remove_project(app, username, name):
+    user_path = app.config["AUTO_HOME"] + "/users/" + username
+    if os.path.exists(user_path):
+        config = json.load(codecs.open(user_path + '/config.json', 'r', 'utf-8'))
+        index = 0
+        for p in config["data"]:
+            if p["name"] == name:
+                del config["data"][index]
+                break
+            index += 1
+
+    json.dump(config, codecs.open(user_path + '/config.json', 'w', 'utf-8'))
+
+
+def get_project_list(app, username):
+    user_path = app.config["AUTO_HOME"] + "/users/" + username
+    if os.path.exists(user_path):
+        config = json.load(codecs.open(user_path + '/config.json', 'r', 'utf-8'))
+        data = config['data']
+
+        return data
+
+    return []
+
+
+def get_project_detail(app, username, p_name):
+    path = app.config["AUTO_HOME"] + "/workspace/" + username + "/" + p_name
+
+    projects = []
+    # raw_suites = list_dir(path)
+    # suites = sorted(raw_suites, key=lambda x: os.stat(path + "/" + x).st_ctime)
+    suites = list_dir(path)
+    if len(suites) > 1:
+        suites.sort()
+    for d in suites:
+        children = []
+        # cases = sorted(list_dir(path + "/" + d), key=lambda x: os.stat(path + "/" + d + "/" + x).st_ctime)
+        cases = list_dir(path + "/" + d)
+        if len(cases) > 1:
+            cases.sort()
+        for t in cases:
+            text = get_splitext(t)
+            if text[1] == ".robot":
+                icons = "icon-robot"
+            elif text[1] == ".txt":
+                icons = "icon-resource"
+            else:
+                icons = "icon-file-default"
+
+            children.append({
+                "text": t,
+                "iconCls": icons,
+                "attributes": {
+                    "name": text[0],
+                    "category": "case",
+                    "splitext": text[1]
+                }
+            })
+        if len(children) == 0:
+            icons = "icon-suite"
+        else:
+            icons = "icon-suite-open"
+        projects.append({
+            "text": d,
+            "iconCls": icons,
+            "attributes": {
+                "name": d,
+                "category": "suite"
+            },
+            "children": children
+        })
+
+    return projects
+

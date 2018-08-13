@@ -1,0 +1,117 @@
+.icon-editor{
+	background:url('../img/editor.png') no-repeat center center;
+}
+
+.icon-expand{
+	background:url('../img/expand.png') no-repeat center center;
+}
+
+.icon-collapse{
+	background:url('../img/collapse.png') no-repeat center center;
+}
+
+.icon-logout{
+	background:url('../img/logout.png') no-repeat center center;
+}
+
+.icon-workspace{
+	background:url('../img/workspace.png') no-repeat center center;
+}
+
+.icon-suite{
+	background:url('../img/suite.png') no-repeat center center;
+}
+
+.icon-suite-open{
+	background:url('../img/suite.open.png') no-repeat center center;
+}
+
+.icon-project{
+    background:url('../img/project.png') no-repeat center center;
+}
+
+.icon-robot{
+    background:url('../img/robot.png') no-repeat center center;
+}
+
+.icon-resource{
+    background:url('../img/resource.png') no-repeat center center;
+}
+
+.icon-file-default{
+    background:url('../img/file.default.png') no-repeat center center;
+}
+
+
+.icon-remove{
+    background:url('../img/delete.png') no-repeat center center;
+}
+
+.icon-debug{
+    background:url('../img/bug.png') no-repeat center center;
+}
+
+.icon-run{
+    background:url('../img/run.png') no-repeat center center;
+}
+
+.icon-task-list{
+    background:url('../img/task.list.png') no-repeat center center;
+}
+
+.icon-task{
+    background:url('../img/task.png') no-repeat center center;
+}
+
+.icon-keyword-list{
+    background:url('../img/keyword.list.png') no-repeat center center;
+}
+
+.icon-keyword{
+    background:url('../img/keyword.png') no-repeat center center;
+}
+
+.icon-refresh{
+    background:url('../img/refresh.png') no-repeat center center;
+}
+
+.icon-stop{
+    background:url('../img/stop.png') no-repeat center center;
+}
+
+.icon-edit{
+    background:url('../img/edit.png') no-repeat center center;
+}
+
+.icon-user{
+    background:url('../img/user.png') no-repeat center center;
+}
+
+.CodeMirror {
+    border: 1px solid #eee;
+    height: auto;
+}
+
+.CodeMirror-selected  {
+    background-color: green !important;
+}
+
+.CodeMirror-selectedtext {
+    color: white;
+}
+
+.styled-background {
+    background-color: #ff7;
+}
+
+.CodeMirror-empty {
+    outline: 1px solid #c22;
+}
+
+.CodeMirror-empty.CodeMirror-focused {
+    outline: none;
+}
+
+.CodeMirror pre.CodeMirror-placeholder {
+    color: #999;
+}

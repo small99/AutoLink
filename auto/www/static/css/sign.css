@@ -1,0 +1,201 @@
+/*
+ * Copyright (c) 2014-2018, b3log.org & hacpai.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.wrapper {
+    margin: 0 auto;
+    width: 980px;
+}
+
+.header .logo {
+    float: left;
+    height: 32px;
+    margin-top: 3px;
+}
+
+.header {
+    margin: 8px 0;
+}
+
+.header li {
+    float: left;
+    margin-left: 25px;
+}
+
+.header a {
+    display: block;
+    font-weight: bold;
+    padding: 5px 0;
+    color: #333;
+    line-height: 30px;
+    text-decoration: none;
+}
+
+.header a:hover {
+    color: #4183C4;
+}
+
+.content {
+    border-top: 1px solid #A4A4A4;
+    border-bottom: 1px solid #919191;
+    background-color: #202021;
+    height: 632px;
+    padding-top: 222px;
+}
+
+.content h2 {
+    color: #FFF;
+    font-size: 70px;
+    margin: 0 0 60px;
+}
+
+.content h3 {
+    color: #4183c4;
+    font-size: 21px;
+}
+
+.content .form {
+    width: 320px;
+    margin-top: -18px;
+    position: relative;
+}
+
+.content .form input {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    width: 100%;
+    background-color: #fafafa; 
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075) inset;
+    color: #333;
+    min-height: 34px;
+    outline: medium none;
+    vertical-align: middle;
+    font-size: 16px;
+    border: 1px solid #FFF;
+    padding: 10px;
+    margin-top: 20px;
+}
+
+.content .form input:focus {
+    background-color: #FFF;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075) inset, 0 0 12px rgba(255, 255, 255, 0.75);
+}
+
+.btn {
+    width: 100%;
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+    background-color: #60b044;
+    background-image: linear-gradient(#8add6d, #60b044);
+    border: 1px solid #5ca941;
+    padding: 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #569e3d;
+    background-image: linear-gradient(#79d858, #569e3d);
+    border-color: #4a993e;
+}
+
+.btn.btn-white,
+.btn.btn-red {
+    color: #333;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.9);
+    background-color: #eee;
+    background-image: linear-gradient(#fcfcfc, #eee);
+    border-color: #d5d5d5;
+}
+
+.btn.btn-red {
+    color: #9d0000;
+}
+
+.btn.btn-white:hover {
+    color: #333;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.9);
+    background-color: #ddd;
+    background-image: linear-gradient(#eee, #ddd);
+    border-color: #ccc;
+}
+
+.btn.btn-red:hover {
+    background-color: #b33630;
+    background-image: linear-gradient(#dc5f59, #b33630);
+    background-repeat: repeat-x;
+    border-color: #cd504a;
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+#msg {
+    background-color: #fcdede;
+    border: 1px solid #d2b2b2;
+    padding: 15px;
+    font-size: 14px;
+    color: #911;
+    position: absolute;
+    width: 100%;
+    top: -48px;
+}
+
+.footer {
+    line-height: 30px;
+    color: #777;
+    font-size: 12px;
+    text-align: center;
+    position: relative;
+}
+
+.footer a {
+    text-decoration: none;
+    color: #4183c4;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.footer .github-btns {
+    height: 25px;
+    position: absolute;
+    top: 5px;
+    right: 0;
+}
+
+/* start sign up */
+.dir {
+    color: #4183c4;
+    font-size: 18px;
+    word-wrap: break-word;
+    margin-top: 20px;
+}
+
+#dir {
+    color: #999; 
+    font-size: 13px;
+}
+
+.form.sign-up {
+    margin-top: -108px;
+}
+
+#loginBtn,
+#signUpBtn {
+    margin-top: 20px;
+    font-size: 16px;
+}
+/* end sign up */

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>AutoLink - 开源优测自动化测试集成解决方案</title>
+
+        <meta name="keywords" content="AutoLink, 开源优测, 苦叶子, web ide"/>
+        <meta name="description" content="A Web-based IDE for Auto Testing using Auto Open Source Testing Framework, do your development anytime, anywhere."/>
+        <meta name="author" content="苦叶子">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/easyui/themes/icon.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/easyui/themes/bootstrap/easyui.css') }}">
+
+        <!--<link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/addon/fold/foldgutter.css') }}">-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/auto.css') }}">
+
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+    </head>
+    <body class="easyui-layout">
+
+
+        <div data-options="region:'center'">
+           <img src="/view_img?path=/{{ project }}/{{ suite }}/{{ case }}">
+        </div>
+        <script src="{{ url_for('static', filename='lib/easyui/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/easyui/jquery.easyui.min.js') }}"></script>
+
+        <!-- 自定义js库 -->
+        <script type="text/javascript" src="{{ url_for('static', filename='js/auto.js') }}"></script>
+    </body>
+</html>

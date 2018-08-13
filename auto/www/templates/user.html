@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>AutoLink - 开源优测自动化测试集成解决方案</title>
+
+        <meta name="keywords" content="AutoLink, 开源优测, 苦叶子, web ide"/>
+        <meta name="description" content="A Web-based IDE for Auto Testing using Auto Open Source Testing Framework, do your development anytime, anywhere."/>
+        <meta name="author" content="苦叶子">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/easyui/themes/icon.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/easyui/themes/bootstrap/easyui.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/lib/codemirror.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/addon/hint/show-hint.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/theme/dracula.css') }}">
+        <!--<link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/addon/fold/foldgutter.css') }}">-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/auto.css') }}">
+
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+        <style type="text/css">
+            .lines-no .datagrid-body td{
+                border-right:1px dotted transparent;
+                border-bottom:1px dotted transparent;
+            }
+        </style>
+    </head>
+    <body class="easyui-layout" style="padding:10">
+
+        <div data-options="region:'center'" style="padding: 5px 5px 5px 5px">
+            <table id="user_list" class="easyui-datagrid" style="width:100%;height:auto;"
+                    data-options="singleSelect:true,
+                        fitColumns:true,
+                        url:'/api/v1/user/',
+                        method:'get',
+                        toolbar: toolbar"
+                    >
+                <thead>
+                    <tr>
+                        <th data-options="field:'name',align:'center' , halign: 'center'">用户名</th>
+                        <th data-options="field:'fullname',align:'center' , halign: 'center'">昵称</th>
+                        <th data-options="field:'email',align:'center' , halign: 'center'">Email</th>
+                        <th data-options="field:'category',align:'center' , halign: 'center'">类型</th>
+                        <!--<th data-options="field:'duration'">持续时间</th>-->
+                        <!--<th data-options="field:'cron'">cron表达式</th>
+                        <th data-options="field:'boolean'"></th>-->
+                    </tr>
+                </thead>
+            </table>
+            <!-- create user -->
+            <div id="create_user" class="easyui-window" title="创建用户"
+                 data-options="modal:true,closed:true,minimizable:false,maximizable:false,collapsible:false"
+                 style="width:320px;height:270px;padding:10px;">
+                <form id="create_user_ff" method="post">
+                    <div style="margin-bottom:10px">
+                        <input class="easyui-textbox" id="fullname" name="fullname" label="昵称" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                    <div style="margin-bottom:10px">
+                        <input class="easyui-textbox" id="username" name="username" label="用户名" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                    <div style="margin-bottom:10px">
+                        <input class="easyui-textbox" id="email" name="email" label="邮件" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input class="easyui-textbox" id="password" name="password" label="密码" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                </form>
+                <div style="text-align:right;padding:5px 0">
+                    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="close_win('create_user')" style="width:60px">取消</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="create_user('create_user', 'create_user_ff')" style="width:60px">创建</a>
+                </div>
+            </div>
+            <!-- end -->
+            <!-- edit user -->
+            <div id="edit_user" class="easyui-window" title="编辑用户"
+                 data-options="modal:true,closed:true,minimizable:false,maximizable:false,collapsible:false"
+                 style="width:320px;height:300px;padding:10px;">
+                <form id="edit_user_ff" method="post">
+                    <div style="margin-bottom:10px">
+                        <input class="easyui-textbox" id="fullname" name="fullname" label="昵称" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                    <div style="margin-bottom:10px">
+                        <input class="easyui-textbox" id="username" name="username" label="用户名" labelPosition="left" style="width:100%" data-options="required:true" readonly>
+                    </div>
+                    <div style="margin-bottom:10px">
+                        <input class="easyui-textbox" id="email" name="email" label="邮件" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                    <div style="margin-bottom:10px">
+                        <input class="easyui-textbox" id="password" name="password" label="原密码" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                    <div style="margin-bottom:15px">
+                        <input class="easyui-textbox" id="new_password" name="new_password" label="新密码" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                </form>
+                <div style="text-align:right;padding:5px 0">
+                    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="close_win('edit_user')" style="width:60px">取消</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="edit_user('edit_user', 'edit_user_ff')" style="width:60px">保存</a>
+                </div>
+            </div>
+            <!-- end -->
+        </div>
+
+
+        <script src="{{ url_for('static', filename='lib/easyui/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/easyui/jquery.easyui.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/lib/codemirror.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/mode/robot/robot.js') }}"></script>
+        <!--<script src="{{ url_for('static', filename='lib/CodeMirror/mode/textile/textile.js') }}"></script>>-->
+
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/display/placeholder.js') }}"></script>
+        <!--
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/foldcode.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/foldgutter.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/brace-fold.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/xml-fold.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/indent-fold.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/markdown-fold.js') }}"></script>-->
+        <script src="{{ url_for('static', filename='lib/CodeMirror//addon/hint/show-hint.js') }}"></script>
+        <!--<script src="{{ url_for('static', filename='lib/CodeMirror//addon/hint/anyword-hint.js') }}"></script>-->
+        <!-- 自定义js库 -->
+        <script type="text/javascript" src="{{ url_for('static', filename='js/auto.js') }}"></script>
+        <SCRIPT type="text/javascript">
+            $(document).ready(function(){
+               //$('#user_list').datagrid('getPanel').removeClass('lines-both lines-no lines-right lines-bottom').addClass('lines-no');
+            });
+            var toolbar = [
+                {
+                    text:'刷新',
+                    iconCls:'icon-refresh',
+                    handler:function(){
+                        $("#user_list").datagrid('reload');
+                    }
+			    }, '-',
+			    {
+			        text:'新增',
+                    iconCls:'icon-expand',
+                    handler:function(){
+                        manage_user("create_user", "create_user_ff", "create");
+                        /*var data ={"method": "run", "category": "project", "project": "{{ project }}" };
+                        do_ajax('post',
+                            '/api/v1/task/',
+                            data,
+                            do_msg);
+
+                        $("#user_list").datagrid('reload');
+                        */
+                    }
+			    }, '-',
+			    {
+			        text:'编辑',
+                    iconCls:'icon-edit',
+                    handler:function(){
+                        var row = $('#user_list').datagrid('getSelected');
+                        if(row){
+                            $("#edit_user_ff input#fullname").textbox("setValue", row.fullname);
+                            $("#edit_user_ff input#username").textbox("setValue", row.name);
+                            $("#edit_user_ff input#email").textbox("setValue", row.email);
+                            open_win('edit_user');
+                        }
+                        else{
+                            show_msg("提示信息", "请选择要编辑的项目");
+                        }
+                    }
+			    }, '-',
+			    {
+			        text:'删除',
+                    iconCls:'icon-remove',
+                    handler:function(){
+                        var row = $('#user_list').datagrid('getSelected');
+                        if(row){
+                            $.messager.confirm('提示信息', '确定删除该用户?', function(r){
+                                if (r){
+                                    var data ={"method": "delete", "username": "{0}".lym_format(row.name) };
+                                    do_ajax('post',
+                                        '/api/v1/user/',
+                                        data,
+                                        do_msg);
+
+                                    $("#user_list").datagrid('reload');
+                                }
+                            });
+                        }
+                    }
+			    }
+			 ];
+        </SCRIPT>
+    </body>
+</html>
