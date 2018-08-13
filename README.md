@@ -64,6 +64,6 @@ http://ip:8000
 
 AutoLink Web IDE编辑模式截图欣赏
 
-![index](./auto/www/static/img/index.jpeg)
+![index](./auto/www/static/img/index.png)
 
 ![dashboard](./auto/www/static/img/dashboard.png)
