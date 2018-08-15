@@ -27,7 +27,7 @@ class Project(Resource):
         self.parser.add_argument('new_name', type=str)
         self.parser.add_argument('description', type=str)
         self.parser.add_argument('enable', type=str, default="否")
-        self.parser.add_argument('cron', type=str, default="* * * * * ?")
+        self.parser.add_argument('cron', type=str, default="* * * * * *")
         self.parser.add_argument('boolean', type=str, default="启用")
         self.app = current_app._get_current_object()
 
