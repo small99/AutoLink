@@ -1,12 +1,7 @@
 *** Settings ***
 Library    SeleniumLibrary
+Resource   ../001_资源集/元素对象.txt
 
-
-*** Variables ***
-${BROWSER}    Chrome
-${HOME}    http://www.baidu.com
-${SEARCH_WORD}    开源优测
-${kw_id}	kw
 
 *** Test Cases ***
 搜索1
@@ -27,5 +22,4 @@ ${kw_id}	kw
     Input Text    id=${kw_id}    ${SEARCH_WORD}
     Sleep	5s
     Close All Browsers
-    
     
