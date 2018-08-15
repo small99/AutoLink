@@ -68,7 +68,13 @@ function do_msg(data){
 
 function do_init(data){
     if(data.data == ""){
-        editor.setValue("*** Settings ***\n\n\n*** Variables ***\n\n\n*** Test Cases ***\n\n\n*** Keywords ***\n\n");
+        //editor.setValue("*** Settings ***\n\n\n*** Variables ***\n\n\n*** Test Cases ***\n\n\n*** Keywords ***\n\n");
+        if(data.ext==".txt"){
+            editor.setValue("*** Settings ***\n\n\n*** Variables ***\n\n\n");
+        }
+        else if(data.ext ==".robot"){
+            editor.setValue("*** Settings ***\n\n\n*** Variables ***\n\n\n*** Test Cases ***\n\n\n*** Keywords ***\n\n");
+        }
     }
     else{
         editor.setValue(data.data);
