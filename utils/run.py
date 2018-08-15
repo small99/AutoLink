@@ -132,7 +132,7 @@ class RobotRun(threading.Thread):
     def run(self):
         #lock = threading.Lock()
 
-        self.lock.acquire()
+        # self.lock.acquire()
         if not exists_path(self.output):
             mk_dirs(self.output)
 
@@ -149,7 +149,7 @@ class RobotRun(threading.Thread):
         # Report and xUnit files can be generated based on the result object.
         ResultWriter(self.result).write_results(report=output + '/report.html', log=output + '/log.html')
 
-        self.lock.release()
+        # self.lock.release()
 
         # Generating log files requires processing the earlier generated output XML.
         # ResultWriter(self.output + '/output.xml').write_results()
