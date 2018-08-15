@@ -14,7 +14,7 @@ from flask import current_app, session, request, send_file
 from flask_restful import Resource, reqparse
 import werkzeug
 
-from utils.file import exists_path, rename_file, make_nod, remove_file, write_file, read_file
+from utils.file import exists_path, rename_file, make_nod, remove_file, write_file, read_file, get_splitext
 
 
 class Case(Resource):
@@ -34,6 +34,9 @@ class Case(Resource):
     def get(self):
         args = self.parser.parse_args()
         result = {"status": "success", "msg": "读取文件成功"}
+
+        ext = get_splitext(args["path"])
+        result["ext"] = ext[1]
 
         path = self.app.config["AUTO_HOME"] + "/workspace/%s%s" % (session["username"], args["path"])
         data = read_file(path)
