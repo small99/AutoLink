@@ -20,7 +20,7 @@ USER_KEYS = {
     "http": ["BuiltIn", "Collections", "DateTime", "String", "RequestsLibrary"],
     "all": ["BuiltIn", "Collections", "DateTime",
             "OperatingSystem", "Process", "String", "Screenshot", "Telnet",
-            "AppiumLibrary", "RequestsLibrary", "SeleniumLibrary"
+            "AppiumLibrary", "RequestsLibrary", "SeleniumLibrary", "SSHLibrary", "DatabaseLibrary"
             ]
 }
 

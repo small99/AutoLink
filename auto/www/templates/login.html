@@ -50,5 +50,22 @@
         <script src="{{ url_for('static', filename='lib/easyui/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/easyui/jquery.easyui.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/auto.js') }}"></script>
+        <script>
+            $(function () {
+                $("body").keydown(function(event) {
+                    if (event.keyCode == "13") {//keyCode=13是回车键
+                        if($("#username").val() == ""){
+                            $("#username").focus();
+                        }
+                        else if($("#password").val() == ""){
+                            $("#password").focus();
+                        }
+                        else{
+                            do_login('login_fm');
+                        }
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

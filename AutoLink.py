@@ -10,6 +10,7 @@ Email: lymking@foxmail.com
 
 """
 import os
+import sys
 
 from flask_script import Manager
 
@@ -17,7 +18,10 @@ from auto.www.app import create_app, load_all_task
 from auto.settings import HEADER
 from utils.help import check_version
 
-os.environ["PATH"] = os.environ["PATH"] + ";" + os.getcwd() + "/driver"
+if sys.platform.startswith("linux"):
+    os.environ["PATH"] = os.environ["PATH"] + ":" + os.getcwd() + "/driver"
+else:
+    os.environ["PATH"] = os.environ["PATH"] + ";" + os.getcwd() + "/driver"
 
 print(HEADER)
 

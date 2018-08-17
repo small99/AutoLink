@@ -24,6 +24,7 @@
         <div data-options="region:'north',border:true" style="padding:0;height:60px;">
             <div class="easyui-panel" style="padding:0">
                 <a href="https://github.com/small99" target="_blank" class="easyui-linkbutton" data-options="plain:true"><img src="{{ url_for('static', filename='img/logo.min.png') }}" alt="开源优测" style="padding-top:8px;"/></a>
+                <a href="#" onclick="do_logout('{{ username }}');" class="easyui-linkbutton" data-options="iconCls:'icon-logout'" style="float:right;margin-top:10px;margin-right:10px;">注销</a>
                 <!--<a href="#" class="easyui-menubutton" data-options="plain:true">源码</a>
                 <a href="#" class="easyui-menubutton" data-options="plain:true">运行</a>
                 <a href="#" class="easyui-menubutton" data-options="plain:true">工具</a>
