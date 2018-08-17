@@ -14,3 +14,5 @@ robotframework==3.0.3
 robotframework-appiumlibrary==1.4.6
 robotframework-requests==0.4.7
 robotframework-seleniumlibrary==3.1.1
+robotframework-sshlibrary==3.1.1
+robotframework-databaselibrary==1.0.1
