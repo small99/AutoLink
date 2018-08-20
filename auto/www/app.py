@@ -31,6 +31,9 @@ def load_all_task(app):
         users = list_dir(user_path)
         for user in users:
             if os.path.exists(user_path + user):
+                if not os.path.exists(user_path + user + '/config.json'):
+                    continue
+                    
                 conf = json.load(codecs.open(user_path + user + '/config.json', 'r', 'utf-8'))
                 data = conf['data']
                 # 遍历项目
