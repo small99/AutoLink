@@ -43,7 +43,7 @@ def parser_robot_keyword_list():
             # 关键字参数
             params = ""
             for arg in kw.iter("arg"):
-                params += "\t" + arg.text
+                params += "\t[" + arg.text + "]"
             params += "\n"
 
             # 使用说明
