@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.0.3 (Python 3.6.4 on darwin)" generated="20180815 11:51:22.939">
+<suite id="s1" name="标准项目组织结构 Demo" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo">
+<suite id="s1-s1" name="002 用例集" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/002_用例集">
+<suite id="s1-s1-s1" name="001 Xxx流程" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/002_用例集/001_xxx流程.robot">
+<test id="s1-s1-s1-t1" name="搜索1">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<status status="PASS" starttime="20180815 11:51:23.073" endtime="20180815 11:51:25.639"></status>
+</kw>
+<kw name="Input Text" library="SeleniumLibrary">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=${kw_id}</arg>
+<arg>${SEARCH_WORD}</arg>
+</arguments>
+<status status="PASS" starttime="20180815 11:51:25.640" endtime="20180815 11:51:25.778"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5s</arg>
+</arguments>
+<status status="PASS" starttime="20180815 11:51:25.778" endtime="20180815 11:51:30.780"></status>
+</kw>
+<kw name="Close All Browsers" library="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="PASS" starttime="20180815 11:51:30.780" endtime="20180815 11:51:30.854"></status>
+</kw>
+<status status="PASS" starttime="20180815 11:51:23.072" endtime="20180815 11:51:30.855" critical="yes"></status>
+</test>
+<test id="s1-s1-s1-t2" name="搜索2">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<status status="PASS" starttime="20180815 11:51:30.859" endtime="20180815 11:51:33.497"></status>
+</kw>
+<kw name="Input Text" library="SeleniumLibrary">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=${kw_id}</arg>
+<arg>${SEARCH_WORD}</arg>
+</arguments>
+<status status="PASS" starttime="20180815 11:51:33.497" endtime="20180815 11:51:33.636"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5s</arg>
+</arguments>
+<status status="PASS" starttime="20180815 11:51:33.636" endtime="20180815 11:51:38.638"></status>
+</kw>
+<kw name="Close All Browsers" library="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="PASS" starttime="20180815 11:51:38.638" endtime="20180815 11:51:38.709"></status>
+</kw>
+<status status="PASS" starttime="20180815 11:51:30.858" endtime="20180815 11:51:38.710" critical="yes"></status>
+</test>
+<test id="s1-s1-s1-t3" name="搜索3">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<errors>
+</errors>
+</robot>

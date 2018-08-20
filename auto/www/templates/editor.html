@@ -37,7 +37,9 @@
         <script src="{{ url_for('static', filename='lib/easyui/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/easyui/jquery.easyui.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/codemirror/lib/codemirror.js') }}"></script>
-        <script src="{{ url_for('static', filename='lib/codemirror/mode/robot/robot.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/highlight.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/autocomplete.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/codemirror/mode/robot/robot_v1.js') }}"></script>
         <!--<script src="{{ url_for('static', filename='lib/codemirror/mode/textile/textile.js') }}"></script>>-->
 
         <script src="{{ url_for('static', filename='lib/codemirror/addon/display/placeholder.js') }}"></script>

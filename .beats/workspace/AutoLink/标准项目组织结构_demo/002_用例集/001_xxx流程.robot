@@ -15,5 +15,7 @@ Resource   ../001_资源集/元素对象.txt
     Open Browser    ${HOME}    ${BROWSER}
     Input Text    id=${kw_id}    ${SEARCH_WORD}
     Sleep	5s
-    Close All Browsers    
+    Close All Browsers   
+    Call Stored Procedure
+   	
     
