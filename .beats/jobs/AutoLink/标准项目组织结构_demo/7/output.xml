@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.0.3 (Python 3.6.4 on darwin)" generated="20180815 11:53:54.534">
+<suite id="s1" name="标准项目组织结构 Demo" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo">
+<suite id="s1-s1" name="002 用例集" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/002_用例集">
+<suite id="s1-s1-s1" name="001 Xxx流程" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/002_用例集/001_xxx流程.robot">
+<test id="s1-s1-s1-t1" name="搜索1">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<errors>
+</errors>
+</robot>

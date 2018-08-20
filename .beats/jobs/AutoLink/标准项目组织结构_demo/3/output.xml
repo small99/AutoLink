@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.0.3 (Python 3.6.4 on darwin)" generated="20180815 11:41:46.387">
+<suite id="s1" name="标准项目组织结构 Demo" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo">
+<suite id="s1-s1" name="002 用例集" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/002_用例集">
+<suite id="s1-s1-s1" name="001 Xxx流程" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/002_用例集/001_xxx流程.robot">
+<test id="s1-s1-s1-t1" name="搜索1">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<msg timestamp="20180815 11:41:46.556" level="FAIL">Variable '${HOME}' not found.</msg>
+<status status="FAIL" starttime="20180815 11:41:46.556" endtime="20180815 11:41:46.556"></status>
+</kw>
+<status status="FAIL" starttime="20180815 11:41:46.555" endtime="20180815 11:41:46.557" critical="yes">Variable '${HOME}' not found.</status>
+</test>
+<test id="s1-s1-s1-t2" name="搜索2">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<msg timestamp="20180815 11:41:46.559" level="FAIL">Variable '${HOME}' not found.</msg>
+<status status="FAIL" starttime="20180815 11:41:46.558" endtime="20180815 11:41:46.559"></status>
+</kw>
+<status status="FAIL" starttime="20180815 11:41:46.558" endtime="20180815 11:41:46.559" critical="yes">Variable '${HOME}' not found.</status>
+</test>
+<test id="s1-s1-s1-t3" name="搜索3">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<msg timestamp="20180815 11:41:46.561" level="FAIL">Variable '${HOME}' not found.</msg>
+<status status="FAIL" starttime="20180815 11:41:46.561" endtime="20180815 11:41:46.561"></status>
+</kw>
+<status status="FAIL" starttime="20180815 11:41:46.560" endtime="20180815 11:41:46.562" critical="yes">Variable '${HOME}' not found.</status>
+</test>
+<status status="FAIL" starttime="20180815 11:41:46.423" endtime="20180815 11:41:46.562"></status>
+</suite>
+<status status="FAIL" starttime="20180815 11:41:46.421" endtime="20180815 11:41:46.565"></status>
+</suite>
+<suite id="s1-s2" name="003 用例集" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/003_用例集">
+<suite id="s1-s2-s1" name="001 Xxx流程" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/003_用例集/001_xxx流程.robot">
+<test id="s1-s2-s1-t1" name="搜索1">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<msg timestamp="20180815 11:41:46.576" level="FAIL">Variable '${HOME}' not found.</msg>
+<status status="FAIL" starttime="20180815 11:41:46.575" endtime="20180815 11:41:46.576"></status>
+</kw>
+<status status="FAIL" starttime="20180815 11:41:46.574" endtime="20180815 11:41:46.577" critical="yes">Variable '${HOME}' not found.</status>
+</test>
+<test id="s1-s2-s1-t2" name="搜索2">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<msg timestamp="20180815 11:41:46.582" level="FAIL">Variable '${HOME}' not found.</msg>
+<status status="FAIL" starttime="20180815 11:41:46.581" endtime="20180815 11:41:46.582"></status>
+</kw>
+<status status="FAIL" starttime="20180815 11:41:46.581" endtime="20180815 11:41:46.582" critical="yes">Variable '${HOME}' not found.</status>
+</test>
+<test id="s1-s2-s1-t3" name="搜索3">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<msg timestamp="20180815 11:41:46.584" level="FAIL">Variable '${HOME}' not found.</msg>
+<status status="FAIL" starttime="20180815 11:41:46.583" endtime="20180815 11:41:46.584"></status>
+</kw>
+<status status="FAIL" starttime="20180815 11:41:46.583" endtime="20180815 11:41:46.584" critical="yes">Variable '${HOME}' not found.</status>
+</test>
+<status status="FAIL" starttime="20180815 11:41:46.570" endtime="20180815 11:41:46.585"></status>
+</suite>
+<status status="FAIL" starttime="20180815 11:41:46.567" endtime="20180815 11:41:46.588"></status>
+</suite>
+<status status="FAIL" starttime="20180815 11:41:46.389" endtime="20180815 11:41:46.591"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="6">Critical Tests</stat>
+<stat pass="0" fail="6">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="0" fail="6" id="s1" name="标准项目组织结构 Demo">标准项目组织结构 Demo</stat>
+<stat pass="0" fail="3" id="s1-s1" name="002 用例集">标准项目组织结构 Demo.002 用例集</stat>
+<stat pass="0" fail="3" id="s1-s1-s1" name="001 Xxx流程">标准项目组织结构 Demo.002 用例集.001 Xxx流程</stat>
+<stat pass="0" fail="3" id="s1-s2" name="003 用例集">标准项目组织结构 Demo.003 用例集</stat>
+<stat pass="0" fail="3" id="s1-s2-s1" name="001 Xxx流程">标准项目组织结构 Demo.003 用例集.001 Xxx流程</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20180815 11:41:46.551" level="ERROR">Error in file '/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/002_用例集/001_xxx流程.robot': Resource file '../001_自由集/元素对象.txt' does not exist.</msg>
+<msg timestamp="20180815 11:41:46.572" level="ERROR">Error in file '/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/003_用例集/001_xxx流程.robot': Resource file '../001_自由集/元素对象.txt' does not exist.</msg>
+</errors>
+</robot>

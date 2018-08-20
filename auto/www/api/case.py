@@ -10,7 +10,9 @@ Email: lymking@foxmail.com
 
 """
 
-from flask import current_app, session, request, send_file
+import os
+from urllib.parse import quote
+from flask import current_app, session, request, send_file, make_response
 from flask_restful import Resource, reqparse
 import werkzeug
 
@@ -160,4 +162,13 @@ class ManageFile(Resource):
     def __download(self, args):
         user_path = self.app.config["AUTO_HOME"] + "/workspace/%s" % session['username'] + args["path"]
 
-        return send_file(user_path, mimetype='application/octet-stream', as_attachment=True)
+        response = make_response(send_file(user_path))
+        basename = os.path.basename(user_path)
+        response.headers["Content-Disposition"] = \
+            "attachment;" \
+            "filename*=UTF-8''{utf_filename}".format(
+                utf_filename=quote(basename.encode('utf-8'))
+            )
+        return response
+
+        #return send_file(user_path, mimetype='application/octet-stream', as_attachment=True)

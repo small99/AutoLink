@@ -11,6 +11,7 @@ Email: lymking@foxmail.com
 """
 
 import os
+import codecs
 import xml.etree.ElementTree as ET
 
 
@@ -42,7 +43,7 @@ def parser_robot_keyword_list():
             # 关键字参数
             params = ""
             for arg in kw.iter("arg"):
-                params += "\t" + arg.text
+                params += "\t[" + arg.text + "]"
             params += "\n"
 
             # 使用说明
@@ -112,6 +113,50 @@ def parser_with_args(doc_dir):
         print("rf_" + name + "_args = [" + ",".join(keyword_list) + "];")
 
 
+def generate_high_light(doc_dir):
+    ff = codecs.open(os.getcwd() + "/auto/www/static/js/highlight.js", "w", "utf-8")
+    keyword_list = []
+    for k in USER_KEYS["all"]:
+        path = doc_dir + "/%s.xml" % k
+        tree = ET.parse(path)
+        root = tree.getroot()
+        name = root.attrib["name"]
+
+        for kw in root.iter("kw"):
+            # 关键字
+            keyword_list.append("'" + kw.attrib["name"] + "'")
+    kewords = "var high_light=" + "[" + ",".join(keyword_list) + "];"
+    ff.write(kewords)
+    ff.close()
+
+
+def generate_auto_complete(doc_dir):
+    ff = codecs.open(os.getcwd() + "/auto/www/static/js/autocomplete.js", "w", "utf-8")
+    keyword_list = []
+    for k in USER_KEYS["all"]:
+        path = doc_dir + "/%s.xml" % k
+        tree = ET.parse(path)
+        root = tree.getroot()
+        name = root.attrib["name"]
+
+        for kw in root.iter("kw"):
+            # 关键字
+            word = "'" + kw.attrib["name"]
+
+            # 关键字参数
+            for arg in kw.iter("arg"):
+                word += "\t[" + arg.text + "]"
+
+            word += "'"
+
+            keyword_list.append(word)
+
+    kewords = "var auto_complete=" + "[" + ",".join(keyword_list) + "];"
+    ff.write(kewords)
+    ff.close()
+
+
 if __name__ == "__main__":
-    doc_dir = "/Users/lyy/Documents/AutoLine/doc"
-    parser_with_args(doc_dir)
+    path = os.getcwd() + "/keyword"
+    generate_high_light(path)
+    generate_auto_complete(path)

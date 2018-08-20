@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.0.3 (Python 3.6.4 on darwin)" generated="20180813 16:47:33.678">
+<suite id="s1" name="标准项目组织结构 Demo" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo">
+<suite id="s1-s1" name="001 用例集" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/001_用例集">
+<suite id="s1-s1-s1" name="001 Xxx流程" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/001_用例集/001_xxx流程.robot">
+<test id="s1-s1-s1-t1" name="搜索1">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:47:33.847" endtime="20180813 16:47:36.504"></status>
+</kw>
+<kw name="Input Text" library="SeleniumLibrary">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=${kw_id}</arg>
+<arg>${SEARCH_WORD}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:47:36.505" endtime="20180813 16:47:36.648"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5s</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:47:36.648" endtime="20180813 16:47:41.649"></status>
+</kw>
+<kw name="Close All Browsers" library="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="PASS" starttime="20180813 16:47:41.650" endtime="20180813 16:47:41.721"></status>
+</kw>
+<status status="PASS" starttime="20180813 16:47:33.845" endtime="20180813 16:47:41.722" critical="yes"></status>
+</test>
+<test id="s1-s1-s1-t2" name="搜索2">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:47:41.725" endtime="20180813 16:47:45.184"></status>
+</kw>
+<kw name="Input Text" library="SeleniumLibrary">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=${kw_id}</arg>
+<arg>${SEARCH_WORD}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:47:45.185" endtime="20180813 16:47:45.335"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5s</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:47:45.336" endtime="20180813 16:47:50.337"></status>
+</kw>
+<kw name="Close All Browsers" library="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="PASS" starttime="20180813 16:47:50.337" endtime="20180813 16:47:50.409"></status>
+</kw>
+<status status="PASS" starttime="20180813 16:47:41.724" endtime="20180813 16:47:50.409" critical="yes"></status>
+</test>
+<test id="s1-s1-s1-t3" name="搜索3">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:47:50.412" endtime="20180813 16:47:53.062"></status>
+</kw>
+<kw name="Input Text" library="SeleniumLibrary">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=${kw_id}</arg>
+<arg>${SEARCH_WORD}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:47:53.063" endtime="20180813 16:47:53.208"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5s</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:47:53.209" endtime="20180813 16:47:58.210"></status>
+</kw>
+<kw name="Close All Browsers" library="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="PASS" starttime="20180813 16:47:58.210" endtime="20180813 16:47:58.285"></status>
+</kw>
+<status status="PASS" starttime="20180813 16:47:50.411" endtime="20180813 16:47:58.285" critical="yes"></status>
+</test>
+<status status="PASS" starttime="20180813 16:47:33.713" endtime="20180813 16:47:58.288"></status>
+</suite>
+<status status="PASS" starttime="20180813 16:47:33.710" endtime="20180813 16:47:58.303"></status>
+</suite>
+<suite id="s1-s2" name="002 用例集" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/002_用例集">
+<suite id="s1-s2-s1" name="001 Xxx流程" source="/Users/lyy/Documents/AutoLink/.beats/workspace/AutoLink/标准项目组织结构_demo/002_用例集/001_xxx流程.robot">
+<test id="s1-s2-s1-t1" name="搜索1">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:47:58.324" endtime="20180813 16:48:00.896"></status>
+</kw>
+<kw name="Input Text" library="SeleniumLibrary">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=${kw_id}</arg>
+<arg>${SEARCH_WORD}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:48:00.896" endtime="20180813 16:48:01.039"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5s</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:48:01.039" endtime="20180813 16:48:06.041"></status>
+</kw>
+<kw name="Close All Browsers" library="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="PASS" starttime="20180813 16:48:06.041" endtime="20180813 16:48:06.114"></status>
+</kw>
+<status status="PASS" starttime="20180813 16:47:58.324" endtime="20180813 16:48:06.115" critical="yes"></status>
+</test>
+<test id="s1-s2-s1-t2" name="搜索2">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:48:06.117" endtime="20180813 16:48:08.725"></status>
+</kw>
+<kw name="Input Text" library="SeleniumLibrary">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=${kw_id}</arg>
+<arg>${SEARCH_WORD}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:48:08.726" endtime="20180813 16:48:08.879"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5s</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:48:08.879" endtime="20180813 16:48:13.880"></status>
+</kw>
+<kw name="Close All Browsers" library="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="PASS" starttime="20180813 16:48:13.881" endtime="20180813 16:48:13.952"></status>
+</kw>
+<status status="PASS" starttime="20180813 16:48:06.116" endtime="20180813 16:48:13.953" critical="yes"></status>
+</test>
+<test id="s1-s2-s1-t3" name="搜索3">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the given ``url``.</doc>
+<arguments>
+<arg>${HOME}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:48:13.956" endtime="20180813 16:48:17.373"></status>
+</kw>
+<kw name="Input Text" library="SeleniumLibrary">
+<doc>Types the given ``text`` into text field identified by ``locator``.</doc>
+<arguments>
+<arg>id=${kw_id}</arg>
+<arg>${SEARCH_WORD}</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:48:17.374" endtime="20180813 16:48:17.520"></status>
+</kw>
+<kw name="Sleep" library="BuiltIn">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5s</arg>
+</arguments>
+<status status="PASS" starttime="20180813 16:48:17.520" endtime="20180813 16:48:22.521"></status>
+</kw>
+<kw name="Close All Browsers" library="SeleniumLibrary">
+<doc>Closes all open browsers and resets the browser cache.</doc>
+<status status="PASS" starttime="20180813 16:48:22.521" endtime="20180813 16:48:22.595"></status>
+</kw>
+<status status="PASS" starttime="20180813 16:48:13.955" endtime="20180813 16:48:22.595" critical="yes"></status>
+</test>
+<status status="PASS" starttime="20180813 16:47:58.315" endtime="20180813 16:48:22.599"></status>
+</suite>
+<status status="PASS" starttime="20180813 16:47:58.310" endtime="20180813 16:48:22.613"></status>
+</suite>
+<status status="PASS" starttime="20180813 16:47:33.681" endtime="20180813 16:48:22.625"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="6" fail="0">Critical Tests</stat>
+<stat pass="6" fail="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="6" fail="0" id="s1" name="标准项目组织结构 Demo">标准项目组织结构 Demo</stat>
+<stat pass="3" fail="0" id="s1-s1" name="001 用例集">标准项目组织结构 Demo.001 用例集</stat>
+<stat pass="3" fail="0" id="s1-s1-s1" name="001 Xxx流程">标准项目组织结构 Demo.001 用例集.001 Xxx流程</stat>
+<stat pass="3" fail="0" id="s1-s2" name="002 用例集">标准项目组织结构 Demo.002 用例集</stat>
+<stat pass="3" fail="0" id="s1-s2-s1" name="001 Xxx流程">标准项目组织结构 Demo.002 用例集.001 Xxx流程</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

@@ -37,7 +37,9 @@
         <script src="{{ url_for('static', filename='lib/easyui/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/easyui/jquery.easyui.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/codemirror/lib/codemirror.js') }}"></script>
-        <script src="{{ url_for('static', filename='lib/codemirror/mode/robot/robot.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/highlight.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/autocomplete.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/codemirror/mode/robot/robot_v1.js') }}"></script>
         <!--<script src="{{ url_for('static', filename='lib/codemirror/mode/textile/textile.js') }}"></script>>-->
 
         <script src="{{ url_for('static', filename='lib/codemirror/addon/display/placeholder.js') }}"></script>
@@ -49,16 +51,17 @@
         <script src="{{ url_for('static', filename='lib/codemirror/addon/fold/indent-fold.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/codemirror/addon/fold/markdown-fold.js') }}"></script>-->
         <script src="{{ url_for('static', filename='lib/codemirror//addon/hint/show-hint.js') }}"></script>
-        <script src="{{ url_for('static', filename='lib/codemirror//addon/hint/anyword-hint.js') }}"></script>
-        <!--<script src="{{ url_for('static', filename='lib/codemirror//addon/hint/robot-hint.js') }}"></script>-->
+        <!--<script src="{{ url_for('static', filename='lib/codemirror//addon/hint/anyword-hint.js') }}"></script>-->
+        <script src="{{ url_for('static', filename='lib/codemirror//addon/hint/robot-hint.js') }}"></script>
         <!-- 自定义js库 -->
         <script type="text/javascript" src="{{ url_for('static', filename='js/auto.js') }}"></script>
 
         <SCRIPT type="text/javascript">
             $(document).ready(function(){
-                /*CodeMirror.commands.autocomplete = function(cm) {
+                CodeMirror.commands.autocomplete = function(cm) {
                   cm.showHint({hint: CodeMirror.hint.anyword});
-                }*/
+
+                }
                 var path = "/{{ project }}/{{ suite }}/{{ case }}";
                 editor = CodeMirror.fromTextArea(document.getElementById("code_editor"), {
                     mode: 'robot',
@@ -68,6 +71,7 @@
                     styleSelectedText: true,
                     theme: "dracula",
                     indentUnit:4,
+                    completeSingle: false,
                     extraKeys: {
                         "Ctrl": "autocomplete"
                     }
@@ -78,6 +82,7 @@
                 });
                 editor.on("change", function(cm, event)
                 {
+
                     var data = {
                             "method": "save",
                             "path": path,
@@ -86,6 +91,10 @@
 
                     do_ajax("post", "/api/v1/case/", data, do_nop);
 
+                });
+                editor.on("keypress", function(cm, event)
+                {
+                    cm.showHint({hint: CodeMirror.hint.robotScript});
                 });
                 editor.markText({line: 6, ch: 26}, {line: 6, ch: 42}, {className: "styled-background"});
 
