@@ -142,7 +142,7 @@ class RobotRun(threading.Thread):
 
         self.setName(output)
 
-        self.result = self.suite.run(output_directory=output, output=output + "/output.xml", log_level="DEBUG")
+        self.result = self.suite.run(output_directory=output, output=output + "/output.xml", log_level="TRACE")
 
         self.reset_last_status(index)
 
