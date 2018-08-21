@@ -9,6 +9,13 @@
 ### 采用AutoLink创建HTTP接口测试用例
 - 在正式编写用例之前，对用例结构进行规划是必不可少的步骤；
 - AutoLink中支持2种格式的文件：```txt```和```robot```，用于实现数据与用例分离；
-- Demo示例采用AutoLink的api作为被测接口，采用excel简单梳理了auth和ueser接口的功能，如下：（图片还在家里的电脑上）
+- Demo示例采用AutoLink的api作为被测接口，采用excel简单梳理了auth和ueser接口的功能，如下:
+
+![接口功能梳理](./img/AutoLink_api_tests_demo_xls.png)
 - Demo示例的组织结构如下：
+
  ![demo组织结构](./img/http_tests_demo.png)
+
+ ### HTTP接口测试用例demo路径
+
+ - [AutoLink_api_tests_demo](../.beats/workspace/AutoLink/AutoLink_api_tests_demo)

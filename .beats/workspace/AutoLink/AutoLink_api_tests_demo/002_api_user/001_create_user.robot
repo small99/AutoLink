@@ -1,33 +1,26 @@
 *** Settings ***
-Resource	../000_resources/所有用例公用变量和关键字.txt
+Resource	./000_public_user_resources.txt
 
 Test Teardown	Delete All Sessions
 
 *** Variables ***
 ${method}    create
+${success_msg}    创建用户成功
+${fail_msg}    用户名称重复，创建失败
 
 
 *** Test Cases ***
 Create User Success
-    Create User    testchen    testchen11    123456    123@33.com
+    ${result}=    Create User Session   testchen    testchen_new    123456    123@33.com
+    Dictionary Should Contain Value		${result}    ${success_msg}
 
-Get User List
-    Create Session for User
+Create User Fail
+    ${result}=    Create User Session    testchen    testchen11    123456    123@33.com
+    Dictionary Should Contain Value		${result}    ${fail_msg}
 
-
-*** Keywords ***
-Create User
-    [Arguments]    ${fullname}    ${username}    ${password}    ${email}
-    Create Session    ${ALIAS}        ${BASE_URL}
-    ${data}=    Create Dictionary    method=${method}    fullname=${fullname}    username=${username}    password=${password}    email=${email}
-    ${headers}=    Create Dictionary    Content-Type=application/x-www-form-urlencoded
-    ${resp}=    Post Request    ${ALIAS}    ${USER_PATH}    data=${data}     headers=${headers}
-    Should Be Equal As Strings      ${resp.status_code}     201
-    
-Create Session for User
-    Create Session    ${ALIAS}        ${BASE_URL}
-    ${resp}=    Get Request    ${ALIAS}    ${USER_PATH}
-    Should Be Equal As Strings      ${resp.status_code}     200
+ 
+         
+     
    
     
    
