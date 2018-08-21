@@ -2,13 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ab43467d-ad90-46a2-99ca-651bd4d7e6ad" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.beats/jobs/AutoLink/标准项目组织结构_demo/lastFail" beforeDir="false" afterPath="$PROJECT_DIR$/.beats/jobs/AutoLink/标准项目组织结构_demo/lastFail" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.beats/jobs/AutoLink/标准项目组织结构_demo/nextBuildNumber" beforeDir="false" afterPath="$PROJECT_DIR$/.beats/jobs/AutoLink/标准项目组织结构_demo/nextBuildNumber" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.beats/users/AutoLink/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.beats/users/AutoLink/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.beats/workspace/AutoLink/标准项目组织结构_demo/001_资源集/元素对象.txt" beforeDir="false" afterPath="$PROJECT_DIR$/.beats/workspace/AutoLink/标准项目组织结构_demo/001_资源集/元素对象.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.beats/workspace/AutoLink/标准项目组织结构_demo/002_用例集/001_xxx流程.robot" beforeDir="false" afterPath="$PROJECT_DIR$/.beats/workspace/AutoLink/标准项目组织结构_demo/002_用例集/001_xxx流程.robot" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.beats/workspace/AutoLink/标准项目组织结构_demo/003_用例集/001_xxx流程.robot" beforeDir="false" afterPath="$PROJECT_DIR$/.beats/workspace/AutoLink/标准项目组织结构_demo/003_用例集/001_xxx流程.robot" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -70,7 +63,7 @@
         <entry file="file://$PROJECT_DIR$/.beats/workspace/AutoLink/AutoLink_api_tests_demo/002_api_user/001_create_user.robot">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="192">
-              <caret line="25" column="63" selection-start-line="25" selection-start-column="63" selection-end-line="25" selection-end-column="63" />
+              <caret line="24" column="63" selection-start-line="24" selection-start-column="63" selection-end-line="24" selection-end-column="63" />
             </state>
           </provider>
         </entry>
@@ -182,11 +175,18 @@
       <option name="presentableId" value="Default" />
       <updated>1534349381434</updated>
     </task>
+    <task id="LOCAL-00001" summary="auth和user的部分tests">
+      <created>1534781001096</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1534781001096</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -209,6 +209,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="auth和user的部分tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="auth和user的部分tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -359,7 +363,7 @@
     <entry file="file://$PROJECT_DIR$/.beats/workspace/AutoLink/AutoLink_api_tests_demo/002_api_user/001_create_user.robot">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="192">
-          <caret line="25" column="63" selection-start-line="25" selection-start-column="63" selection-end-line="25" selection-end-column="63" />
+          <caret line="24" column="63" selection-start-line="24" selection-start-column="63" selection-end-line="24" selection-end-column="63" />
         </state>
       </provider>
     </entry>
