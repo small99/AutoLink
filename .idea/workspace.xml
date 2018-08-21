@@ -2,17 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ab43467d-ad90-46a2-99ca-651bd4d7e6ad" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.beats/workspace/AutoLink/AutoLink_api_tests_demo/002_api_user/000_public_user_resources.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.beats/workspace/AutoLink/AutoLink_api_tests_demo/002_api_user/002_edit_user.robot" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/img/AutoLink_api_tests_demo_xls.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.beats/jobs/AutoLink/标准项目组织结构_demo/lastFail" beforeDir="false" afterPath="$PROJECT_DIR$/.beats/jobs/AutoLink/标准项目组织结构_demo/lastFail" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.beats/jobs/AutoLink/标准项目组织结构_demo/nextBuildNumber" beforeDir="false" afterPath="$PROJECT_DIR$/.beats/jobs/AutoLink/标准项目组织结构_demo/nextBuildNumber" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.beats/users/AutoLink/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.beats/users/AutoLink/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.beats/workspace/AutoLink/AutoLink_api_tests_demo/002_api_user/001_create_user.robot" beforeDir="false" afterPath="$PROJECT_DIR$/.beats/workspace/AutoLink/AutoLink_api_tests_demo/002_api_user/001_create_user.robot" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.beats/workspace/AutoLink/AutoLink_api_tests_demo/002_api_user/002_for_test.robot" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/如何创建HTTP接口测试用例.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/如何创建HTTP接口测试用例.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/简介.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/简介.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -46,7 +36,7 @@
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file leaf-file-name="如何创建HTTP接口测试用例.md" pinned="false" current-in-tab="false">
+      <file leaf-file-name="如何创建HTTP接口测试用例.md" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/docs/如何创建HTTP接口测试用例.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
@@ -60,7 +50,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="简介.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="简介.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/docs/简介.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
@@ -149,37 +139,6 @@
               <item name="AutoLink" type="b2602c69:ProjectViewProjectNode" />
               <item name="AutoLink" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="AutoLink" type="b2602c69:ProjectViewProjectNode" />
-              <item name="AutoLink" type="462c0819:PsiDirectoryNode" />
-              <item name=".beats" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="AutoLink" type="b2602c69:ProjectViewProjectNode" />
-              <item name="AutoLink" type="462c0819:PsiDirectoryNode" />
-              <item name=".beats" type="462c0819:PsiDirectoryNode" />
-              <item name="workspace" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="AutoLink" type="b2602c69:ProjectViewProjectNode" />
-              <item name="AutoLink" type="462c0819:PsiDirectoryNode" />
-              <item name=".beats" type="462c0819:PsiDirectoryNode" />
-              <item name="workspace" type="462c0819:PsiDirectoryNode" />
-              <item name="AutoLink" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="AutoLink" type="b2602c69:ProjectViewProjectNode" />
-              <item name="AutoLink" type="462c0819:PsiDirectoryNode" />
-              <item name=".beats" type="462c0819:PsiDirectoryNode" />
-              <item name="workspace" type="462c0819:PsiDirectoryNode" />
-              <item name="AutoLink" type="462c0819:PsiDirectoryNode" />
-              <item name="AutoLink_api_tests_demo" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="AutoLink" type="b2602c69:ProjectViewProjectNode" />
-              <item name="AutoLink" type="462c0819:PsiDirectoryNode" />
-              <item name="docs" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -188,7 +147,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+    <property name="settings.editor.selected.configurable" value="settings.github" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -225,11 +184,25 @@
       <option name="project" value="LOCAL" />
       <updated>1534781001096</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="上传http接口测试demo和文档">
+      <created>1534856515178</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1534856515179</updated>
+    </task>
+    <task id="LOCAL-00003" summary="上传http接口测试demo和文档">
+      <created>1534858270693</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1534858270693</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25074404" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -255,7 +228,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="auth和user的部分tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="auth和user的部分tests" />
+    <MESSAGE value="上传http接口测试demo和文档" />
+    <option name="LAST_COMMIT_MESSAGE" value="上传http接口测试demo和文档" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -499,12 +473,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/docs/如何创建HTTP接口测试用例.md">
-      <provider editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/docs/简介.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="385">
-            <caret line="20" column="32" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="32" />
+          <first_editor relative-caret-position="375">
+            <caret line="45" column="39" selection-start-line="45" selection-start-column="39" selection-end-line="45" selection-end-column="39" />
           </first_editor>
           <second_editor>
             <markdownNavigatorState />
@@ -512,11 +485,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/docs/简介.md">
+    <entry file="file://$PROJECT_DIR$/docs/如何创建HTTP接口测试用例.md">
+      <provider editor-type-id="text-editor" />
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="375">
-            <caret line="45" column="39" selection-start-line="45" selection-start-column="39" selection-end-line="45" selection-end-column="39" />
+          <first_editor relative-caret-position="385">
+            <caret line="20" column="32" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="32" />
           </first_editor>
           <second_editor>
             <markdownNavigatorState />

@@ -3,6 +3,7 @@ Resource	./000_public_user_resources.txt
 
 Test Teardown	Delete All Sessions
 
+
 *** Variables ***
 ${method}    create
 ${success_msg}    创建用户成功

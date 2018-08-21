@@ -5,6 +5,7 @@ Resource	../000_resources/所有用例公用变量和关键字.txt
 *** Variables ***
 
 
+
 *** Keywords ***
 Create User Session
     [Arguments]    ${fullname}    ${username}    ${password}    ${email}
@@ -14,7 +15,8 @@ Create User Session
     ${resp}=    Post Request    ${ALIAS}    ${USER_PATH}    data=${data}     headers=${headers}
     Should Be Equal As Strings      ${resp.status_code}     201
     Return From Keyword	    ${resp.json()}
-    
+ 
+ 
 Edit User Session
     [Arguments]    ${fullname}    ${username}    ${password}    ${email}    ${new_password}
     Create Session    ${ALIAS}        ${BASE_URL}

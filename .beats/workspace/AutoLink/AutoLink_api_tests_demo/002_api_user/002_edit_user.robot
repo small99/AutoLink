@@ -3,11 +3,13 @@ Resource	./000_public_user_resources.txt
 
 Test Teardown	Delete All Sessions
 
+
 *** Variables ***
 ${method}    edit
 ${edit_success}    用户信息修改成功
 ${edit_fail_wrong_password}    原始密码错误
 ${edit_not_exist_user}    用户不存在
+
 
 *** Test Cases ***
 Edit Exists User Success
@@ -24,11 +26,6 @@ Edit Not Exists User
     
 
 
-
-
-
-
-   
 
 
 

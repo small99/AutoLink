@@ -9,14 +9,12 @@ ${login_result}		login success
 ${logout_result}	logout success
 
 
-
 *** Test Cases ***  
 Valid Login 
     Login       AutoLink    123456
     
 Valid Logout
     Logout
-
 
 *** Keywords ***
 Open Home Page
