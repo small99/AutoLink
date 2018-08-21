@@ -13,7 +13,7 @@ Email: lymking@foxmail.com
 # coding=utf-8
 import os
 import time
-basedir = '/Users/lyy/Documents/AutoLink'
+basedir = os.getcwd()
 filelists = []
 
 # 指定想要统计的文件类型
