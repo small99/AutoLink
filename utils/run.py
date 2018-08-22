@@ -13,7 +13,7 @@ from flask import current_app, session
 import threading
 import multiprocessing
 import time
-from robot.api import TestSuiteBuilder, ResultWriter
+from robot.api import TestSuiteBuilder, ResultWriter, ExecutionResult
 
 from utils.file import exists_path, make_nod, write_file, read_file, mk_dirs
 
@@ -39,12 +39,22 @@ def robot_run(name, output):
 
     (out, index) = reset_next_build_numb(output)
 
-    result = suite.run(output_directory=out, output=out + "/output.xml", log_level="TRACE")
+    result = suite.run(output_directory=out,
+                       output=out + "/output.xml",
+                       debugfile=out + "/debug.txt",
+                       log_level="TRACE")
 
-    reset_last_status(result, output, index)
+    # reset_last_status(result, output, index)
 
     # Report and xUnit files can be generated based on the result object.
-    ResultWriter(result).write_results(report=out + '/report.html', log=out + '/log.html')
+    # ResultWriter(result).write_results(report=out + '/report.html', log=out + '/log.html')
+    detail_result = ExecutionResult(out + "/output.xml")
+
+    # detail_result.save(out + "/output_new.xml")
+    reset_last_status(detail_result, output, index)
+
+    # Report and xUnit files can be generated based on the result object.
+    ResultWriter(detail_result).write_results(report=out + '/report.html', log=out + '/log.html')
 
 
 def reset_next_build_numb(output):
@@ -142,17 +152,27 @@ class RobotRun(threading.Thread):
 
         self.setName(output)
 
-        self.result = self.suite.run(output_directory=output, output=output + "/output.xml", log_level="TRACE")
+        self.result = self.suite.run(output_directory=output,
+                                     output=output + "/output.xml",
+                                     debugfile=output + "/debug.txt",
+                                     log_level="TRACE")
 
-        self.reset_last_status(index)
+        # self.reset_last_status(index)
 
         # Report and xUnit files can be generated based on the result object.
-        ResultWriter(self.result).write_results(report=output + '/report.html', log=output + '/log.html')
+        # ResultWriter(self.result).write_results(report=output + '/report.html', log=output + '/log.html')
 
         # self.lock.release()
 
         # Generating log files requires processing the earlier generated output XML.
         # ResultWriter(self.output + '/output.xml').write_results()
+
+        self.result = ExecutionResult(out + "/output.xml")
+
+        self.reset_last_status(self.result, output, index)
+
+        # Report and xUnit files can be generated based on the result object.
+        ResultWriter(self.result).write_results(report=out + '/report.html', log=out + '/log.html')
 
     def reset_next_build_numb(self):
 
