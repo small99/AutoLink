@@ -43,8 +43,11 @@ def tree_demo():
 @routes.route("/editor/<project>/<suite>/<case>")
 def editor(project, suite, case):
     t = get_splitext(case)
-    default = "editor.html"
-    if t[1] in (".bmp", ".jpg", ".jpeg", ".png", ".git"):
+
+    default = "default.html"
+    if t[1] in (".txt", ".robot"):
+        default = "editor.html"
+    elif t[1] in (".bmp", ".jpg", ".jpeg", ".png", ".gif"):
         default = "view_img.html"
 
     return render_template(default, project=project, suite=suite, case=case)
