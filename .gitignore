@@ -105,6 +105,10 @@ venv.bak/
 migrations/
 User Guide/
 logs/
+jobs/
+users/
+.idea/
+
 
 # 忽略列表
 .DS_Store/
