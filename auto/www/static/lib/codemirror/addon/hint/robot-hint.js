@@ -62,7 +62,6 @@
   }
 
   function robotScriptHint(editor, options) {
-    console.log(editor.getTokenAt())
     return robotHint(editor, auto_complete,
                       function (e, cur) {return e.getTokenAt(cur);},
                       options);
