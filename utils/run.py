@@ -42,7 +42,7 @@ def robot_run(name, output):
     result = suite.run(output_directory=out,
                        output=out + "/output.xml",
                        debugfile=out + "/debug.txt",
-                       log_level="TRACE")
+                       loglevel="TRACE")
 
     # reset_last_status(result, output, index)
 
@@ -155,7 +155,7 @@ class RobotRun(threading.Thread):
         self.result = self.suite.run(output_directory=output,
                                      output=output + "/output.xml",
                                      debugfile=output + "/debug.txt",
-                                     log_level="TRACE")
+                                     loglevel="TRACE")
 
         # self.reset_last_status(index)
 
