@@ -112,10 +112,22 @@ class ProjectList(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('name', type=str)
+        self.parser.add_argument('category', type=str, default="root")
+        self.parser.add_argument('project', type=str)
+        self.parser.add_argument('suite', type=str)
         self.app = current_app._get_current_object()
 
     def get(self):
-        #args = self.parser.parse_args()
+        args = self.parser.parse_args()
+
+        if args["category"] == "root":
+            return get_projects(self.app, session["username"])
+        elif args["category"] == "project":
+            return get_suite_by_project(self.app, session["username"], args)
+        elif args["category"] == "suite":
+            return get_case_by_suite(self.app, session["username"], args)
+
+        """
         projects = get_project_list(self.app, session['username'])
         children = []
         for p in projects:
@@ -123,6 +135,7 @@ class ProjectList(Resource):
             children.append({
                 "text": p["name"],
                 "iconCls": "icon-project",
+                "state": "closed",
                 "attributes": {
                     "name": p["name"],
                     "description": p["description"],
@@ -131,7 +144,7 @@ class ProjectList(Resource):
                 },
                 "children": detail
             })
-
+        
         return [{
             "text": session['username'],
             "iconCls": "icon-workspace",
@@ -139,6 +152,7 @@ class ProjectList(Resource):
                 "category": "root"
             },
             "children": children}]
+        """
 
 
 def create_project(app, username, project):
@@ -239,3 +253,87 @@ def get_project_detail(app, username, p_name):
 
     return projects
 
+
+def get_projects(app, username):
+    projects = get_project_list(app, username)
+    children = []
+    for p in projects:
+        children.append({
+            "text": p["name"],
+            "iconCls": "icon-project",
+            "state": "closed",
+            "attributes": {
+                "name": p["name"],
+                "description": p["description"],
+                "category": "project",
+                "boolean": p["boolean"]
+            },
+            "children": []
+        })
+
+    return [{
+        "text": session['username'],
+        "iconCls": "icon-workspace",
+        "attributes": {
+            "category": "root"
+        },
+        "children": children}]
+
+
+def get_suite_by_project(app, username, args):
+    path = app.config["AUTO_HOME"] + "/workspace/" + username + "/" + args["name"]
+
+    suites = list_dir(path)
+    children = []
+    if len(suites) > 1:
+        suites.sort()
+    for d in suites:
+        cases = list_dir(path + "/" + d)
+        icons = "icon-suite"
+        if len(cases) > 1:
+            icons = "icon-suite-open"
+
+        children.append({
+            "text": d,
+            "iconCls": icons,
+            "state": "closed",
+            "attributes": {
+                "name": d,
+                "category": "suite"
+            },
+            "children": []
+        })
+
+    return children
+
+
+def get_case_by_suite(app, username, args):
+    path = app.config["AUTO_HOME"] + "/workspace/" + username + "/%s/%s" % (args["project"], args["name"] )
+
+    cases = list_dir(path)
+    if len(cases) > 1:
+        cases.sort()
+    children = []
+    for t in cases:
+        text = get_splitext(t)
+        if text[1] == ".robot":
+            icons = "icon-robot"
+        elif text[1] == ".txt":
+            icons = "icon-resource"
+        elif text[1] in (".bmp", ".jpg", ".jpeg", ".png", ".gif"):
+            icons = "icon-image"
+        else:
+            icons = "icon-file-default"
+
+        children.append({
+            "text": t,
+            "iconCls": icons,
+            "state": "open",
+            "attributes": {
+                "name": text[0],
+                "category": "case",
+                "splitext": text[1]
+            }
+        })
+
+    return children
