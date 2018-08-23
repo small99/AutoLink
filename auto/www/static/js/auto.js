@@ -197,6 +197,28 @@ function expand(){
     $('#project_tree').tree('expand',node.target);
 }
 
+
+function onBeforeExpand(node){
+    if(node){
+        var param = $("#project_tree").tree("options").queryParams;
+        param.category = node.attributes.category;
+        param.name = node.attributes.name;
+        if(node.attributes.category == "suite"){
+            var parent = $("#project_tree").tree('getParent', node.target);
+            param.project = parent.attributes.name;
+
+        }
+        else if(node.attributes.category == "case")
+        {
+            var suite = $("#project_tree").tree('getParent', node.target);
+            param.suite = suite.attributes.name;
+            var project = $("#project_tree").tree('getParent', suite.target);
+            param.project = project.attributes.name;
+        }
+    }
+}
+
+
 function manage_project(win_id, ff_id, method){
     if(method == "create"){
         clear_form(ff_id);
@@ -211,9 +233,55 @@ function manage_project(win_id, ff_id, method){
     open_win(win_id);
 }
 
-function refresh_project_list(data){
+function refresh_workspace(data){
+    var param = $("#project_tree").tree("options").queryParams
+    param.category = "root";
+
     $('#project_tree').tree("reload");
 
+    show_msg('提示信息', data.msg);
+}
+
+function refresh_project_node(data){
+    var node = $('#project_tree').tree('getSelected');
+    if(node){
+        var param = $("#project_tree").tree("options").queryParams;
+        param.category = "project";
+        param.name = node.attributes.name;
+        $('#project_tree').tree('reload', node.target);
+    }
+    show_msg('提示信息', data.msg);
+}
+
+
+function refresh_suite_node(data){
+    var node = $('#project_tree').tree('getSelected');
+    if(node){
+        parent = $('#project_tree').tree('getParent', node.target);
+
+        var param = $("#project_tree").tree("options").queryParams;
+
+        param.category = "suite";
+        param.name = node.attributes.name;
+        param.project = parent.attributes.name;
+
+        $('#project_tree').tree("reload", node.target);
+    }
+    show_msg('提示信息', data.msg);
+}
+
+function refresh_case_node(data){
+    var node = $('#project_tree').tree('getSelected');
+    if(node){
+        var param = $("#project_tree").tree("options").queryParams;
+        param.category = "suite";
+        var suite = $('#project_tree').tree('getParent', node.target);
+        param.suite = suite.attributes.name
+        var project = $("#project_tree").tree('getParent', suite.target);
+        param.project = project.attributes.name;
+
+        $('#project_tree').tree("reload", suite.target);
+    }
     show_msg('提示信息', data.msg);
 }
 
@@ -221,7 +289,7 @@ function create_project(win_id, ff_id){
     var data = $("#{0}".lym_format(ff_id)).serializeObject();
     data["method"] = "create";
 
-    do_ajax('post', '/api/v1/project/', data, refresh_project_list);
+    do_ajax('post', '/api/v1/project/', data, refresh_workspace);
 
     close_win(win_id);
 }
@@ -231,7 +299,7 @@ function rename_project(win_id, ff_id){
     var node = $('#project_tree').tree('getSelected');
     data["name"] = node.attributes['name'];
     data["method"] = "edit";
-    do_ajax('post', '/api/v1/project/', data, refresh_project_list);
+    do_ajax('post', '/api/v1/project/', data, refresh_workspace);
 
     close_win(win_id);
 }
@@ -246,7 +314,7 @@ function delete_project(){
                         "method": "delete"
                     };
 
-                do_ajax('post', "/api/v1/project/", data, refresh_project_list);
+                do_ajax('post', "/api/v1/project/", data, refresh_workspace);
             }
         });
     }
@@ -273,7 +341,7 @@ function create_suite(win_id, ff_id){
         data["method"] = "create";
         data["project_name"] = node.attributes['name'];
 
-        do_ajax('post', '/api/v1/suite/', data, refresh_project_list);
+        do_ajax('post', '/api/v1/suite/', data, refresh_project_node);
 
         close_win(win_id);
     }
@@ -287,7 +355,7 @@ function rename_suite(win_id, ff_id){
         data["name"] = node.attributes['name'];
         data["project_name"] = project.attributes['name'];
         data["method"] = "edit";
-        do_ajax('post', '/api/v1/suite/', data, refresh_project_list);
+        do_ajax('post', '/api/v1/suite/', data, refresh_suite_node);
 
         close_win(win_id);
     }
@@ -305,7 +373,7 @@ function delete_suite(){
                         "method": "delete"
                     };
 
-                do_ajax('post', "/api/v1/suite/", data, refresh_project_list);
+                do_ajax('post', "/api/v1/suite/", data, refresh_suite_node);
             }
         });
     }
@@ -335,7 +403,7 @@ function create_file(win_id, ff_id){
         data["suite_name"] = node.attributes['name'];
         data["project_name"] =  project.attributes['name'];
 
-        do_ajax('post', '/api/v1/case/', data, refresh_project_list);
+        do_ajax('post', '/api/v1/case/', data, refresh_suite_node);
 
         close_win(win_id);
     }
@@ -353,7 +421,7 @@ function rename_file(win_id, ff_id){
         data["project_name"] = project.attributes['name'];
         data["method"] = "edit";
 
-        do_ajax('post', '/api/v1/case/', data, refresh_project_list);
+        do_ajax('post', '/api/v1/case/', data, refresh_case_node);
 
         close_win(win_id);
     }
@@ -377,7 +445,7 @@ function delete_file(){
                             "method": "delete"
                         };
 
-                    do_ajax('post', "/api/v1/case/", data, refresh_project_list);
+                    do_ajax('post', "/api/v1/case/", data, refresh_case_node);
                 }
         });
     }
@@ -390,9 +458,10 @@ function do_upload(win_id, ff_id){
         $("#{0} input#path".lym_format(ff_id)).val("/{0}/{1}/".lym_format(project.attributes['name'], node.attributes['name']));
         $("#{0}".lym_format(ff_id)).form('submit', {
             success: function (result) {
-                $('#project_tree').tree('reload');
+                //var node = $('#project_tree').tree('getSelected');
                 var d = JSON.parse(result);
-                show_msg('提示信息', d.msg);
+                //show_msg('提示信息', d.msg);
+                refresh_suite_node(d);
                 close_win(win_id);
             }
         });
