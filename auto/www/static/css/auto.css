@@ -63,6 +63,10 @@
     background:url('../img/task.png') no-repeat center center;
 }
 
+.icon-image{
+    background:url('../img/image.png') no-repeat center center;
+}
+
 .icon-keyword-list{
     background:url('../img/keyword.list.png') no-repeat center center;
 }
