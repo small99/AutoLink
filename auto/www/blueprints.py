@@ -45,7 +45,7 @@ def editor(project, suite, case):
     t = get_splitext(case)
 
     default = "default.html"
-    if t[1] in (".txt", ".robot"):
+    if t[1] in (".txt", ".robot", ".py", ".js"):
         default = "editor.html"
     elif t[1] in (".bmp", ".jpg", ".jpeg", ".png", ".gif"):
         default = "view_img.html"
