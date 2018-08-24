@@ -22,13 +22,15 @@
 
         <div data-options="region:'center'">
             <textarea id="code_editor" name="code_editor"></textarea>
+            <div id="keyword_help" style="padding:5px;background-color: #F5F5DC;"></div>
         </div>
         <div data-options="region:'east',split:true" title="关键字" style="width:200px;">
             <ul id="keyword_list" class="easyui-tree" data-options="
                     url:'/api/v1/keyword?category=robot',
                     method:'get',
                     animate:true,
-                    onDblClick: onKwDblClick
+                    onDblClick: onKwDblClick,
+                    onClick: onClick
                     ">
             </ul>
         </div>
@@ -109,6 +111,14 @@
                 }
             }
 
+            function onClick(node){
+                var category = node.attributes.category;
+
+                if(category == "keyword"){
+                    $("#keyword_help").html(node.attributes.doc);
+                }
+            }
+
             function newTab(cm){
                 /*if (cm.somethingSelected()) {
                     cm.indentSelection('add');
@@ -116,6 +126,7 @@
                     cm.replaceSelection(cm.getOption) ? "\t" : Array(cm.getOption("indentUnit") + 1).join(" "), "end", "+input");
                 }*/
             }
+
         </SCRIPT>
     </body>
 </html>

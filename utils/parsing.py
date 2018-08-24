@@ -42,12 +42,20 @@ def parser_robot_keyword_list():
 
             # 关键字参数
             params = ""
+            doc_params = []
             for arg in kw.iter("arg"):
                 params += "\t[" + arg.text + "]"
+                doc_params.append(arg.text)
             params += "\n"
+            if len(doc_params) == 0:
+                doc_params = "无"
 
             # 使用说明
             doc = kw.find("doc").text
+            if doc is not None:
+                doc_help = doc .replace("\n", "<br>").replace("\r\t", "<br>")
+            else:
+                doc_help = doc
 
             children.append({
                 "id": keyword,
@@ -57,7 +65,7 @@ def parser_robot_keyword_list():
                     "keyword": keyword,
                     "category": "keyword",
                     "params": params,
-                    "doc": doc
+                    "doc": "<p>关键字: %s<br><br/>所属库: %s<br><br>参数: <br>%s<br><br>文档:<br>%s</p>" % (keyword, k, " | ".join(doc_params), doc_help)
                 }
             })
 
