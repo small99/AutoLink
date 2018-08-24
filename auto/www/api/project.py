@@ -17,6 +17,7 @@ import os
 import codecs
 
 from utils.file import list_dir, mk_dirs, exists_path, rename_file, remove_dir, get_splitext
+from utils.resource import ICONS
 
 
 class Project(Resource):
@@ -316,12 +317,8 @@ def get_case_by_suite(app, username, args):
     children = []
     for t in cases:
         text = get_splitext(t)
-        if text[1] == ".robot":
-            icons = "icon-robot"
-        elif text[1] == ".txt":
-            icons = "icon-resource"
-        elif text[1] in (".bmp", ".jpg", ".jpeg", ".png", ".gif"):
-            icons = "icon-image"
+        if text[1] in ICONS:
+            icons = ICONS[text[1]]
         else:
             icons = "icon-file-default"
 
