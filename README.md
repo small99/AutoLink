@@ -22,6 +22,7 @@ AutoLink开源自动化测试集成解决方案.
 - [上传和下载RobotFramework用例](./docs/上传和下载RobotFramework用例.md)
 - [接口测试示例](./docs/如何创建HTTP接口测试用例.md)
 - [Python自定义关键字](./docs/如何调用Python自定义库.md)
+- [关键字帮助文档](./docs/如何查看关键字详细文档.md)
 
 ## 苦叶子发起
 
