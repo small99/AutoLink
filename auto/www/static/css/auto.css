@@ -75,6 +75,10 @@
     background:url('../img/keyword.png') no-repeat center center;
 }
 
+.icon-keyword-help{
+    background:url('../img/keyword.help.png') no-repeat center center;
+}
+
 .icon-refresh{
     background:url('../img/refresh.png') no-repeat center center;
 }
@@ -89,6 +93,14 @@
 
 .icon-user{
     background:url('../img/user.png') no-repeat center center;
+}
+
+.icon-python{
+    background:url('../img/python.text.png') no-repeat center center;
+}
+
+.icon-excel{
+    background:url('../img/excel.png') no-repeat center center;
 }
 
 .CodeMirror {
