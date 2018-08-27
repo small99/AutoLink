@@ -103,6 +103,14 @@
     background:url('../img/excel.png') no-repeat center center;
 }
 
+.icon-scheduler{
+    background:url('../img/scheduler.png') no-repeat center center;
+}
+
+.icon-update{
+    background:url('../img/update.png') no-repeat center center;
+}
+
 .CodeMirror {
     border: 1px solid #eee;
     height: auto;
