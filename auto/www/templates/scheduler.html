@@ -26,29 +26,57 @@
     <body class="easyui-layout" style="padding:10">
 
         <div data-options="region:'center'" style="padding: 5px 5px 5px 5px">
-            <table id="task_list" class="easyui-datagrid" style="width:100%;height:auto;"
+            <table id="task_scheduler" class="easyui-datagrid" style="width:100%;height:auto;"
                     data-options="singleSelect:true,
                         fitColumns:true,
-                        url:'/api/v1/task_list?name={{ project }}',
-                        method:'get',
+                        url:'/api/v1/task_list/?method=query',
+                        method:'post',
                         toolbar: toolbar"
                     >
                 <thead>
                     <tr>
-                        <th data-options="field:'status',align:'center' , halign: 'center',formatter:show_img">状态</th>
+                        <!--<th data-options="field:'status',align:'center' , halign: 'center',formatter:show_img">状态</th>-->
                         <th data-options="field:'name'">名称</th>
-                        <th data-options="field:'success',align:'center' , halign: 'center'">成功</th>
-                        <th data-options="field:'fail',align:'center' , halign: 'center'">失败</th>
-                        <th data-options="field:'starttime',align:'center' , halign: 'center'">开始时间</th>
-                        <th data-options="field:'endtime',align:'center' , halign: 'center'">结束时间</th>
-                        <th data-options="field:'elapsedtime',align:'center' , halign: 'center'">持续时间(ms)</th>
-                        <th data-options="field:'note',align:'center' , halign: 'center'">备注</th>
-                        <!--<th data-options="field:'cron'">cron表达式</th>
-                        <th data-options="field:'boolean'"></th>-->
+                        <!--<th data-options="field:'last_success',align:'center' , halign: 'center'">上次成功</th>
+                        <th data-options="field:'last_fail',align:'center' , halign: 'center'">上次失败</th>
+                        <th data-options="field:'duration'">持续时间</th>
+                        <th data-options="field:'enable',align:'center' , halign: 'center'">是否启用调度</th>-->
+                        <th data-options="field:'next_time',align:'center' , halign: 'center'">下一次调度时间</th>
+                        <th data-options="field:'cron',align:'center' , halign: 'center'">cron表达式</th>
+                        <!--<th data-options="field:'boolean'"></th>-->
                     </tr>
                 </thead>
             </table>
         </div>
+        <!-- edit project cron -->
+        <div id="cron_win" class="easyui-window" title="编辑Cron表达式"
+             data-options="iconCls:'icon-edit',collapsible:false,minimizable:false,maximizable:false"
+             style="width:400px;height:140px;padding:10px;">
+            <form id="cron_ff" method="post">
+
+                <!--
+                <div style="margin-bottom:10px">
+                    <label for="enable" class="textbox-label">启用:</label>
+                    <input id="enable" type="checkbox" name="enable" value="true" checked>
+                </div>
+                -->
+                <div style="margin-bottom:20px">
+                    <select class="easyui-combobox" name="cron" id="cron" label="Cron表达式" style="width:100%">
+                        <option value="* * * * * *">默认无调度(* * * * * *)</option>
+                        <option value="0 0 1 * * *">每天凌晨1点执行一次(0 0 1 * * *)</option>
+                        <option value="0 0 12 * * *">每天12点调度一次(0 0 12 * * *)</option>
+                        <option value="0 0 23 * * *">每天23点调度一次(0 0 23 * * *)</option>
+                        <option value="0 0/30 * * * *">每隔30分钟调度一次(0 0/5 * * * *)</option>
+                        <option value="0 0 0/1 0 0 6/7">周末每小时调度一次(0 0 0/1 0 0 6/7)</option>
+                        <option value="0 0 0/1 0 0 1/5">工作日每小时调度一次(0 0 0/1 0 0 1/5)</option>
+                    </select>
+                </div>
+                <div style="text-align:right;margin-bottom:10px">
+                    <a href="#" class="easyui-linkbutton" style="width:80px;height:32px" onclick="do_edit();">更新</a>
+                </div>
+            </form>
+        </div>
+        <!-- -->
 
 
         <script src="{{ url_for('static', filename='lib/easyui/jquery.min.js') }}"></script>
@@ -71,27 +99,34 @@
         <script type="text/javascript" src="{{ url_for('static', filename='js/auto.js') }}"></script>
         <SCRIPT type="text/javascript">
             $(document).ready(function(){
-               $('#task_list').datagrid('getPanel').removeClass('lines-both lines-no lines-right lines-bottom').addClass('lines-no');
+               $('#task_scheduler').datagrid('getPanel').removeClass('lines-both lines-no lines-right lines-bottom').addClass('lines-no');
+               $("#cron_win").window('close');
             });
             var toolbar = [
                 {
                     text:'刷新',
                     iconCls:'icon-refresh',
                     handler:function(){
-                        $("#task_list").datagrid('reload');
+                        $("#task_scheduler").datagrid('reload');
                     }
 			    }, '-',
 			    {
-			        text:'运行',
+			        text:'启动',
                     iconCls:'icon-run',
                     handler:function(){
-                        var data ={"method": "run", "category": "project", "project": "{{ project }}" };
-                        do_ajax('post',
-                            '/api/v1/task/',
-                            data,
-                            do_msg);
+                        var row = $('#task_scheduler').datagrid('getSelected');
+                        if(row){
+                            var data ={"method": "start", "name": "{0}".lym_format(row.name), "cron": "{0}".lym_format(row.cron) };
+                            do_ajax('post',
+                                '/api/v1/task_list/',
+                                data,
+                                do_msg);
 
-                        $("#task_list").datagrid('reload');
+                            $("#task_scheduler").datagrid('reload');
+                        }
+                        else{
+                            show_msg("提示信息", "请选择要启动调度的项目");
+                        }
                     }
 			    }, '-',
 			    {
@@ -100,44 +135,48 @@
                     handler:function(){
                         $.messager.confirm('提示信息', '现在停止无法生成报告，确定停止?', function(r){
                             if (r){
-                                var data ={"method": "stop", "category": "project", "project": "{{ project }}" };
-                                do_ajax('post',
-                                    '/api/v1/task/',
-                                    data,
-                                    do_msg);
-
-                                $("#task_list").datagrid('reload');
+                                var row = $('#task_scheduler').datagrid('getSelected');
+                                if(row){
+                                    var data ={"method": "stop", "name": "{0}".lym_format(row.name) };
+                                    do_ajax('post',
+                                        '/api/v1/task_list/',
+                                        data,
+                                        do_msg);
+                                    $("#task_scheduler").datagrid('reload');
+                                }
+                                else{
+                                    show_msg("提示信息", "请选择要停止调度的项目");
+                                }
                             }
                         });
 
                     }
-			    }
-			    , '-',
+			    }, '-',
 			    {
-			        text:'删除',
-                    iconCls:'icon-remove',
+			        text:'编辑',
+                    iconCls:'icon-edit',
                     handler:function(){
-                        $.messager.confirm('提示信息', '确定删除该记录?', function(r){
-                            if (r){
-                                var row = $('#task_list').datagrid('getSelected');
-                                if(row){
-                                    var data ={"method": "delete", "category": "project", "project": "{{ project }}", "task_no": row.task_no };
-                                    do_ajax('post',
-                                        '/api/v1/task/',
-                                        data,
-                                        do_msg);
-                                }
-                                else{
-                                    show_msg("提示信息", "请先选中要删除的记录");
-                                }
-
-                                $("#task_list").datagrid('reload');
-                            }
-                        });
-
+                        var row = $('#task_scheduler').datagrid('getSelected');
+                        if(row){
+                            open_win('cron_win');
+                        }
+                        else{
+                            show_msg("提示信息", "请选择要编辑的项目");
+                        }
                     }
 			    }
 			 ];
+
+			function do_edit(){
+			    var row = $('#task_scheduler').datagrid('getSelected');
+			    var data = {"name": row["name"], "method": "edit", "cron": $("#cron").combobox("getValue")};
+			    do_ajax('post',
+                    '/api/v1/task_list/',
+                    data,
+                    do_msg);
+                $("#task_scheduler").datagrid('reload');
+                close_win("cron_win");
+			}
         </SCRIPT>
     </body>
 </html>
