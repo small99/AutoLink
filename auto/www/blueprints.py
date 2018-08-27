@@ -58,6 +58,11 @@ def task_list(name):
     return render_template('task_list.html', project=name)
 
 
+@routes.route("/scheduler/")
+def scheduler():
+    return render_template('scheduler.html')
+
+
 @routes.route("/user/")
 def user():
     return render_template('user.html')
