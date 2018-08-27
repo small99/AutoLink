@@ -150,6 +150,7 @@ class TaskList(Resource):
 def get_task_list(app, username, project):
     job_path = app.config["AUTO_HOME"] + "/jobs/%s/%s" % (username, project)
     next_build = 0
+    task = []
     if exists_path(job_path):
         next_build = get_next_build_number(job_path)
         if next_build != 0:
@@ -160,7 +161,7 @@ def get_task_list(app, username, project):
                 "success": url_for('static', filename='img/success.png'),
                 "fail": url_for('static', filename='img/fail.png'),
                 "exception": url_for('static', filename='img/exception.png')}
-            task = []
+
             #if exists_path(job_path + "/%s" % (next_build - 1)):
             running = False
             lock = threading.Lock()
@@ -222,6 +223,35 @@ def get_task_list(app, username, project):
     return {"total": next_build-1, "rows": task}
 
 
+def get_last_task(app, username, project):
+    icons = {
+        "running": url_for('static', filename='img/running.gif'),
+        "success": url_for('static', filename='img/success.png'),
+        "fail": url_for('static', filename='img/fail.png'),
+        "exception": url_for('static', filename='img/exception.png')}
+    job_path = app.config["AUTO_HOME"] + "/jobs/%s/%s" % (username, project)
+    status = icons["running"]
+    if exists_path(job_path):
+        next_build = get_next_build_number(job_path)
+        last_job = next_build-1
+        if exists_path(job_path + "/%s" % last_job):
+            try:
+                suite = ExecutionResult(job_path + "/%s/output.xml" % last_job).suite
+                stat = suite.statistics.critical
+                if stat.failed != 0:
+                    status = icons["fail"]
+                else:
+                    status = icons['success']
+            except:
+                status = icons["running"]
+        else:
+            status = icons["exception"]
+    else:
+        status = icons['success']
+
+    return status
+
+
 def get_all_task(app):
     user_path = app.config["AUTO_HOME"] + "/users/" + session["username"]
     if exists_path(user_path):
@@ -263,7 +293,8 @@ def get_all_task(app):
                 #"last_fail": get_last_fail(job_path + "/lastFail"),
                 "enable": p["enable"],
                 "next_time": get_next_time(app, p["name"]),
-                "cron": p["cron"]
+                "cron": p["cron"],
+                "status": get_last_task(app, session["username"], p["name"])
             }
 
             task_list["rows"].append(task)

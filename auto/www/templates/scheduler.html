@@ -43,6 +43,8 @@
                         <th data-options="field:'enable',align:'center' , halign: 'center'">是否启用调度</th>-->
                         <th data-options="field:'next_time',align:'center' , halign: 'center'">下一次调度时间</th>
                         <th data-options="field:'cron',align:'center' , halign: 'center'">cron表达式</th>
+                        <th data-options="field:'task',align:'center' , halign: 'center',formatter:do_view_task">查看任务</th>
+                        <th data-options="field:'status',align:'center' , halign: 'center',formatter:do_view_status">最后一次任务状态</th>
                         <!--<th data-options="field:'boolean'"></th>-->
                     </tr>
                 </thead>
@@ -177,6 +179,14 @@
                 $("#task_scheduler").datagrid('reload');
                 close_win("cron_win");
 			}
+
+			function do_view_task(value, row, index){
+                return '<a href="#" onclick="parent.addTab(\'{0}\', \'/task_list/{1}\', \'icon-task\');">查看</a>'.lym_format(row.name, row.name);
+            }
+
+            function do_view_status(value, row, index){
+                return '<img width="24px" height="24px" border="0" src="{0}"/>'.lym_format(row.status) ;
+            }
         </SCRIPT>
     </body>
 </html>
