@@ -47,3 +47,4 @@ Jay.lee|xhidexj@gmail.com|https://github.com/hatjay/
 - [上传和下载RobotFramework用例](./上传和下载RobotFramework用例.md)
 - [Python自定义关键字](./如何调用Python自定义库.md)
 - [如何查看关键字详细文档](./如何查看关键字详细文档.md)
+- [查看测试报告](./查看测试报告.md)
