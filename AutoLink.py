@@ -18,7 +18,7 @@ from auto.www.app import create_app, load_all_task
 from auto.settings import HEADER
 from utils.help import check_version
 
-if sys.platform.startswith("linux"):
+if sys.platform.startswith("linux") or sys.platform.startswith("darwin"):
     os.environ["PATH"] = os.environ["PATH"] + ":" + os.getcwd() + "/driver"
 else:
     os.environ["PATH"] = os.environ["PATH"] + ";" + os.getcwd() + "/driver"
