@@ -8,5 +8,3 @@ ${ALIAS}    AutoLink
 ${BASE_URL}    http://127.0.0.1:5000
 ${LOGIN_PATH}    /api/v1/auth/
 ${USER_PATH}    /api/v1/user/
-
-

@@ -16,6 +16,5 @@ Resource   ../001_资源集/元素对象.txt
     Input Text    id=${kw_id}    ${SEARCH_WORD}
     Sleep	5s
     Close All Browsers   
-    Call Stored Procedure
-   	
     
+    Log		12312313123

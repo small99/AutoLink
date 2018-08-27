@@ -36,7 +36,7 @@ Logout
     ${resp}=        Get Request     ${ALIAS}    ${LOGIN_PATH}
     Should Be Equal As Strings      ${resp.status_code}     201
     Dictionary Should Contain Value		${resp.json()}    ${logout_result}
-
+	Log    ${login_result}     level=WARN
        
 
 
