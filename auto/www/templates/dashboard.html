@@ -24,7 +24,12 @@
         <div data-options="region:'north',border:true" style="padding:0;height:60px;">
             <div class="easyui-panel" style="padding:0">
                 <a href="https://github.com/small99" target="_blank" class="easyui-linkbutton" data-options="plain:true"><img src="{{ url_for('static', filename='img/logo.min.png') }}" alt="开源优测" style="padding-top:8px;"/></a>
-                <a href="#" onclick="do_logout('{{ username }}');" class="easyui-linkbutton" data-options="iconCls:'icon-logout'" style="float:right;margin-top:10px;margin-right:10px;">注销</a>
+                <a href="#" onclick="addTab('调度管理', '/scheduler/', 'icon-scheduler')" class="easyui-linkbutton" data-options="iconCls:'icon-scheduler'">调度管理</a>
+                <a href="#" onclick="addTab('用户管理', '/user', 'icon-user')" class="easyui-linkbutton" data-options="iconCls:'icon-user'">用户管理</a>
+                <a href="https://github.com/small99/AutoLink/tree/master/docs" target="_blank" class="easyui-linkbutton" data-options="iconCls:'icon-keyword-help'">用户指南</a>
+                <a href="https://github.com/small99/AutoLink/blob/master/UPDATEING.md" target="_blank" class="easyui-linkbutton" data-options="iconCls:'icon-update'">更新清单</a>
+
+
                 <!--<a href="#" class="easyui-menubutton" data-options="plain:true">源码</a>
                 <a href="#" class="easyui-menubutton" data-options="plain:true">运行</a>
                 <a href="#" class="easyui-menubutton" data-options="plain:true">工具</a>
@@ -33,6 +38,7 @@
 
                 <a href="#" class="easyui-menubutton" data-options="plain:true, menu:'#mm2'">Help</a>
                 <a href="#" class="easyui-menubutton" data-options="plain:true, menu:'#mm3'">About</a></a>-->
+                <a href="#" onclick="do_logout('{{ username }}');" class="easyui-linkbutton" data-options="iconCls:'icon-logout'" style="float:right;margin-top:10px;margin-right:10px;">注销</a>
             </div>
             <!--
             <div id="file" style="width:150px;">
@@ -158,29 +164,11 @@
                         </tr>
                     </table>
                 </div>
+                <!--
                 <div title="调度管理" style="padding:10px" data-options="iconCls:'icon-task-list'">
-                    <table id="task_scheduler" class="easyui-datagrid" style="width:100%;height:auto;"
-                        data-options="singleSelect:true,
-                            fitColumns:true,
-                            url:'/api/v1/task_list/?method=query',
-                            method:'post',
-                            toolbar: toolbar"
-                        >
-                    <thead>
-                        <tr>
-                            <!--<th data-options="field:'status',align:'center' , halign: 'center',formatter:show_img">状态</th>-->
-                            <th data-options="field:'name'">名称</th>
-                            <!--<th data-options="field:'last_success',align:'center' , halign: 'center'">上次成功</th>
-                            <th data-options="field:'last_fail',align:'center' , halign: 'center'">上次失败</th>
-                            <th data-options="field:'duration'">持续时间</th>
-                            <th data-options="field:'enable',align:'center' , halign: 'center'">是否启用调度</th>-->
-                            <th data-options="field:'next_time',align:'center' , halign: 'center'">下一次调度时间</th>
-                            <th data-options="field:'cron',align:'center' , halign: 'center'">cron表达式</th>
-                            <!--<th data-options="field:'boolean'"></th>-->
-                        </tr>
-                    </thead>
-                </table>
+
                 </div>
+                -->
             </div>
 
         </div>
@@ -356,35 +344,7 @@
         </form>
         <!-- file download end-->
 
-        <!-- edit project cron -->
-        <div id="cron_win" class="easyui-window" title="编辑Cron表达式"
-             data-options="iconCls:'icon-edit',collapsible:false,minimizable:false,maximizable:false"
-             style="width:400px;height:140px;padding:10px;">
-            <form id="cron_ff" method="post">
 
-                <!--
-                <div style="margin-bottom:10px">
-                    <label for="enable" class="textbox-label">启用:</label>
-                    <input id="enable" type="checkbox" name="enable" value="true" checked>
-                </div>
-                -->
-                <div style="margin-bottom:20px">
-                    <select class="easyui-combobox" name="cron" id="cron" label="Cron表达式" style="width:100%">
-                        <option value="* * * * * *">默认无调度(* * * * * *)</option>
-                        <option value="0 0 1 * * *">每天凌晨1点执行一次(0 0 1 * * *)</option>
-                        <option value="0 0 12 * * *">每天12点调度一次(0 0 12 * * *)</option>
-                        <option value="0 0 23 * * *">每天23点调度一次(0 0 23 * * *)</option>
-                        <option value="0 0/30 * * * *">每隔30分钟调度一次(0 0/5 * * * *)</option>
-                        <option value="0 0 0/1 0 0 6/7">周末每小时调度一次(0 0 0/1 0 0 6/7)</option>
-                        <option value="0 0 0/1 0 0 1/5">工作日每小时调度一次(0 0 0/1 0 0 1/5)</option>
-                    </select>
-                </div>
-                <div style="text-align:right;margin-bottom:10px">
-                    <a href="#" class="easyui-linkbutton" style="width:80px;height:32px" onclick="do_edit();">更新</a>
-                </div>
-            </form>
-        </div>
-        <!-- -->
 
         <script src="{{ url_for('static', filename='lib/easyui/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='lib/easyui/jquery.easyui.min.js') }}"></script>
@@ -392,84 +352,7 @@
         <script type="text/javascript" src="{{ url_for('static', filename='js/auto.js') }}"></script>
     </body>
     <SCRIPT type="text/javascript">
-            $(document).ready(function(){
-               $('#task_scheduler').datagrid('getPanel').removeClass('lines-both lines-no lines-right lines-bottom').addClass('lines-no');
-               $("#cron_win").window('close');
-            });
-            var toolbar = [
-                {
-                    text:'刷新',
-                    iconCls:'icon-refresh',
-                    handler:function(){
-                        $("#task_scheduler").datagrid('reload');
-                    }
-			    }, '-',
-			    {
-			        text:'启动',
-                    iconCls:'icon-run',
-                    handler:function(){
-                        var row = $('#task_scheduler').datagrid('getSelected');
-                        if(row){
-                            var data ={"method": "start", "name": "{0}".lym_format(row.name), "cron": "{0}".lym_format(row.cron) };
-                            do_ajax('post',
-                                '/api/v1/task_list/',
-                                data,
-                                do_msg);
 
-                            $("#task_scheduler").datagrid('reload');
-                        }
-                        else{
-                            show_msg("提示信息", "请选择要启动调度的项目");
-                        }
-                    }
-			    }, '-',
-			    {
-			        text:'停止',
-                    iconCls:'icon-stop',
-                    handler:function(){
-                        $.messager.confirm('提示信息', '现在停止无法生成报告，确定停止?', function(r){
-                            if (r){
-                                var row = $('#task_scheduler').datagrid('getSelected');
-                                if(row){
-                                    var data ={"method": "stop", "name": "{0}".lym_format(row.name) };
-                                    do_ajax('post',
-                                        '/api/v1/task_list/',
-                                        data,
-                                        do_msg);
-                                    $("#task_scheduler").datagrid('reload');
-                                }
-                                else{
-                                    show_msg("提示信息", "请选择要停止调度的项目");
-                                }
-                            }
-                        });
 
-                    }
-			    }, '-',
-			    {
-			        text:'编辑',
-                    iconCls:'icon-edit',
-                    handler:function(){
-                        var row = $('#task_scheduler').datagrid('getSelected');
-                        if(row){
-                            open_win('cron_win');
-                        }
-                        else{
-                            show_msg("提示信息", "请选择要编辑的项目");
-                        }
-                    }
-			    }
-			 ];
-
-			function do_edit(){
-			    var row = $('#task_scheduler').datagrid('getSelected');
-			    var data = {"name": row["name"], "method": "edit", "cron": $("#cron").combobox("getValue")};
-			    do_ajax('post',
-                    '/api/v1/task_list/',
-                    data,
-                    do_msg);
-                $("#task_scheduler").datagrid('reload');
-                close_win("cron_win");
-			}
         </SCRIPT>
 </html>
