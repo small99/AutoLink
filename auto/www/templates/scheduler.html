@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>AutoLink - 开源优测自动化测试集成解决方案</title>
+
+        <meta name="keywords" content="AutoLink, 开源优测, 苦叶子, web ide"/>
+        <meta name="description" content="A Web-based IDE for Auto Testing using Auto Open Source Testing Framework, do your development anytime, anywhere."/>
+        <meta name="author" content="苦叶子">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/easyui/themes/icon.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/easyui/themes/bootstrap/easyui.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/lib/codemirror.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/addon/hint/show-hint.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/theme/dracula.css') }}">
+        <!--<link rel="stylesheet" href="{{ url_for('static', filename='lib/CodeMirror/addon/fold/foldgutter.css') }}">-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/auto.css') }}">
+
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+        <style type="text/css">
+            .lines-no .datagrid-body td{
+                border-right:1px dotted transparent;
+                border-bottom:1px dotted transparent;
+            }
+        </style>
+    </head>
+    <body class="easyui-layout" style="padding:10">
+
+        <div data-options="region:'center'" style="padding: 5px 5px 5px 5px">
+            <table id="task_list" class="easyui-datagrid" style="width:100%;height:auto;"
+                    data-options="singleSelect:true,
+                        fitColumns:true,
+                        url:'/api/v1/task_list?name={{ project }}',
+                        method:'get',
+                        toolbar: toolbar"
+                    >
+                <thead>
+                    <tr>
+                        <th data-options="field:'status',align:'center' , halign: 'center',formatter:show_img">状态</th>
+                        <th data-options="field:'name'">名称</th>
+                        <th data-options="field:'success',align:'center' , halign: 'center'">成功</th>
+                        <th data-options="field:'fail',align:'center' , halign: 'center'">失败</th>
+                        <th data-options="field:'starttime',align:'center' , halign: 'center'">开始时间</th>
+                        <th data-options="field:'endtime',align:'center' , halign: 'center'">结束时间</th>
+                        <th data-options="field:'elapsedtime',align:'center' , halign: 'center'">持续时间(ms)</th>
+                        <th data-options="field:'note',align:'center' , halign: 'center'">备注</th>
+                        <!--<th data-options="field:'cron'">cron表达式</th>
+                        <th data-options="field:'boolean'"></th>-->
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+
+        <script src="{{ url_for('static', filename='lib/easyui/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/easyui/jquery.easyui.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/lib/codemirror.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/mode/robot/robot.js') }}"></script>
+        <!--<script src="{{ url_for('static', filename='lib/CodeMirror/mode/textile/textile.js') }}"></script>>-->
+
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/display/placeholder.js') }}"></script>
+        <!--
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/foldcode.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/foldgutter.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/brace-fold.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/xml-fold.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/indent-fold.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/CodeMirror/addon/fold/markdown-fold.js') }}"></script>-->
+        <script src="{{ url_for('static', filename='lib/CodeMirror//addon/hint/show-hint.js') }}"></script>
+        <!--<script src="{{ url_for('static', filename='lib/CodeMirror//addon/hint/anyword-hint.js') }}"></script>-->
+        <!-- 自定义js库 -->
+        <script type="text/javascript" src="{{ url_for('static', filename='js/auto.js') }}"></script>
+        <SCRIPT type="text/javascript">
+            $(document).ready(function(){
+               $('#task_list').datagrid('getPanel').removeClass('lines-both lines-no lines-right lines-bottom').addClass('lines-no');
+            });
+            var toolbar = [
+                {
+                    text:'刷新',
+                    iconCls:'icon-refresh',
+                    handler:function(){
+                        $("#task_list").datagrid('reload');
+                    }
+			    }, '-',
+			    {
+			        text:'运行',
+                    iconCls:'icon-run',
+                    handler:function(){
+                        var data ={"method": "run", "category": "project", "project": "{{ project }}" };
+                        do_ajax('post',
+                            '/api/v1/task/',
+                            data,
+                            do_msg);
+
+                        $("#task_list").datagrid('reload');
+                    }
+			    }, '-',
+			    {
+			        text:'停止',
+                    iconCls:'icon-stop',
+                    handler:function(){
+                        $.messager.confirm('提示信息', '现在停止无法生成报告，确定停止?', function(r){
+                            if (r){
+                                var data ={"method": "stop", "category": "project", "project": "{{ project }}" };
+                                do_ajax('post',
+                                    '/api/v1/task/',
+                                    data,
+                                    do_msg);
+
+                                $("#task_list").datagrid('reload');
+                            }
+                        });
+
+                    }
+			    }
+			    , '-',
+			    {
+			        text:'删除',
+                    iconCls:'icon-remove',
+                    handler:function(){
+                        $.messager.confirm('提示信息', '确定删除该记录?', function(r){
+                            if (r){
+                                var row = $('#task_list').datagrid('getSelected');
+                                if(row){
+                                    var data ={"method": "delete", "category": "project", "project": "{{ project }}", "task_no": row.task_no };
+                                    do_ajax('post',
+                                        '/api/v1/task/',
+                                        data,
+                                        do_msg);
+                                }
+                                else{
+                                    show_msg("提示信息", "请先选中要删除的记录");
+                                }
+
+                                $("#task_list").datagrid('reload');
+                            }
+                        });
+
+                    }
+			    }
+			 ];
+        </SCRIPT>
+    </body>
+</html>
