@@ -36,6 +36,7 @@
                 <thead>
                     <tr>
                         <!--<th data-options="field:'status',align:'center' , halign: 'center',formatter:show_img">状态</th>-->
+                        <th data-options="field:'status',align:'center' , halign: 'center',formatter:do_view_status"></th>
                         <th data-options="field:'name'">名称</th>
                         <!--<th data-options="field:'last_success',align:'center' , halign: 'center'">上次成功</th>
                         <th data-options="field:'last_fail',align:'center' , halign: 'center'">上次失败</th>
@@ -44,7 +45,7 @@
                         <th data-options="field:'next_time',align:'center' , halign: 'center'">下一次调度时间</th>
                         <th data-options="field:'cron',align:'center' , halign: 'center'">cron表达式</th>
                         <th data-options="field:'task',align:'center' , halign: 'center',formatter:do_view_task">查看任务</th>
-                        <th data-options="field:'status',align:'center' , halign: 'center',formatter:do_view_status">最后一次任务状态</th>
+
                         <!--<th data-options="field:'boolean'"></th>-->
                     </tr>
                 </thead>
