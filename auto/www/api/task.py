@@ -85,6 +85,7 @@ class TaskList(Resource):
         if args["method"] == "query":
             return get_all_task(self.app)
         elif args["method"] == "start":
+            result = {"status": "success", "msg": "调度启动成功"}
             job_id = "%s_%s" % (session["username"], args["name"])
             lock = threading.Lock()
             lock.acquire()
@@ -104,13 +105,17 @@ class TaskList(Resource):
                                   day=cron[3],
                                   month=cron[4],
                                   day_of_week=cron[5])
+            else:
+                result["msg"] = "cron表达式为默认* * * * * *, <br><br>无法启动调度，请修改cron表达式"
             lock.release()
-            return {"status": "success", "msg": "调度启动成功"}
+            return result
 
         elif args["method"] == "stop":
             lock = threading.Lock()
             lock.acquire()
-            scheduler.remove_job(id="%s_%s" % (session["username"], args["name"]))
+            job = scheduler.get_job(job_id)
+            if job:
+                scheduler.remove_job(id="%s_%s" % (session["username"], args["name"]))
             lock.release()
             return {"status": "success", "msg": "停止调度成功"}
         elif args["method"] == "edit":
