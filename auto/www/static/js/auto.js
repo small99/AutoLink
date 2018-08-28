@@ -253,7 +253,6 @@ function refresh_project_node(data){
     show_msg('提示信息', data.msg);
 }
 
-
 function refresh_suite_node(data){
     var node = $('#project_tree').tree('getSelected');
     if(node){
@@ -261,11 +260,10 @@ function refresh_suite_node(data){
 
         var param = $("#project_tree").tree("options").queryParams;
 
-        param.category = "suite";
-        param.name = node.attributes.name;
-        param.project = parent.attributes.name;
+        param.category = "project";
+        param.name = parent.attributes.name;
 
-        $('#project_tree').tree("reload", node.target);
+        $('#project_tree').tree("reload", parent.target);
     }
     show_msg('提示信息', data.msg);
 }

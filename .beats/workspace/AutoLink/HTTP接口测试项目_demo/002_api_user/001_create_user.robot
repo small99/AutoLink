@@ -19,11 +19,3 @@ Create User Fail
     ${result}=    Create User Session    testchen    testchen11    123456    123@33.com
     Dictionary Should Contain Value		${result}    ${fail_msg}
 
- 
-         
-     
-   
-    
-   
-
-

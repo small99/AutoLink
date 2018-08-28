@@ -195,12 +195,13 @@ def remove_project(app, username, name):
 
 
 def get_project_list(app, username):
-    user_path = app.config["AUTO_HOME"] + "/users/" + username
-    if os.path.exists(user_path):
-        config = json.load(codecs.open(user_path + '/config.json', 'r', 'utf-8'))
-        data = config['data']
+    work_path = app.config["AUTO_HOME"] + "/workspace/" + username
+    if os.path.exists(work_path):
+        projects = list_dir(work_path)
+        if len(projects) > 1:
+            projects.sort()
 
-        return data
+            return projects
 
     return []
 
@@ -260,14 +261,14 @@ def get_projects(app, username):
     children = []
     for p in projects:
         children.append({
-            "text": p["name"],
+            "text": p,
             "iconCls": "icon-project",
             "state": "closed",
             "attributes": {
-                "name": p["name"],
-                "description": p["description"],
+                "name": p,
+                # "description": p["description"],
                 "category": "project",
-                "boolean": p["boolean"]
+                # "boolean": p["boolean"]
             },
             "children": []
         })
