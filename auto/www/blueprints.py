@@ -32,7 +32,10 @@ def index():
 
 @routes.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    return render_template('dashboard.html', username=session['username'])
+    if 'username' in session:
+        return render_template('dashboard.html', username=session['username'])
+    else:
+        return render_template('login.html')
 
 
 @routes.route('/tree_demo')
