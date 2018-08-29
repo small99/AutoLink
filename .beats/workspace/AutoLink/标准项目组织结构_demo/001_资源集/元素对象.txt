@@ -1,0 +1,6 @@
+*** Variables ***
+${BROWSER}    Chrome
+${HOME}    http://www.baidu.com
+${SEARCH_WORD}    开源优测
+${kw_id}	kw
+
