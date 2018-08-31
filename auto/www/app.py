@@ -85,7 +85,7 @@ def create_app(config_name):
     scheduler.init_app(app)
     scheduler.start()
 
-    # for blurprints
+    # for blueprints
     from .blueprints import routes as routes_blueprint
     app.register_blueprint(routes_blueprint)
 
