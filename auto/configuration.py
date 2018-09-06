@@ -11,20 +11,32 @@ Email: lymking@foxmail.com
 """
 import logging
 import os
+import json
+import codecs
 from apscheduler.executors.pool import ProcessPoolExecutor
 
+from utils.file import exists_path
+
+
 class Config:
-    SECRET_KEY = 'QWERTYUIOPASDFGHJ'
-    MAIL_SERVER = 'smtp.126.com'
-    MAIL_PORT = 587
-    MAIL_USE_TLS = True
-    MAIL_USERNAME = 'username'
-    MAIL_PASSWORD = 'password'
-    FLASKY_MAIL_SUBJECT_PREFIX = 'SUBJECT_PREFIX'
-    FLASKY_MAIL_SENDER = 'MAIL_SENDER'
-    FLASKY_ADMIN = 'ADMIN'
+    # conf_path = os.getcwd() + "/.beats/auto.json"
+
+    #if exists_path(conf_path):
+    #    config = json.load(codecs.open(conf_path, 'r', 'utf-8'))
+
+    #    MAIL_SERVER = config["smtp"]["server"]
+    #    MAIL_PORT = config["smtp"]["port"]
+    #    MAIL_USE_TLS = True
+    #    MAIL_USERNAME = config["smtp"]["username"]
+    #    MAIL_PASSWORD = config["smtp"]["password"]
+    #    DEFAULT_MAIL_SENDER = "lymking@foxmail.com"
+    #    FLASKY_ADMIN = config["smtp"]["username"]
+    #    MAIL_USE_SSL = config["smtp"]["ssl"]
+
+    # MAIL_DEBUG = True
     SSL_REDIRECT = False
 
+    SECRET_KEY = 'QWERTYUIOPASDFGHJ'
     # logging level
     LOGGING_LEVEL = logging.INFO
     AUTO_HOME = os.getcwd().replace('\\', '/') + '/.beats'
