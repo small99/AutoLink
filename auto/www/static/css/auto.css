@@ -111,6 +111,18 @@
     background:url('../img/update.png') no-repeat center center;
 }
 
+.icon-settings{
+    background:url('../img/settings.png') no-repeat center center;
+}
+
+.icon-email{
+    background:url('../img/email.png') no-repeat center center;
+}
+
+.icon-notification{
+    background:url('../img/notification.png') no-repeat center center;
+}
+
 .CodeMirror {
     border: 1px solid #eee;
     height: auto;

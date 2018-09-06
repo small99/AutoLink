@@ -546,3 +546,30 @@ function clear_form(id){
     $('#{0}'.lym_format(id)).form('clear');
 }
 
+function load_smtp(data){
+    $("#edit_smtp_ff").form("load", data);
+    $("#edit_smtp_ff input#ssl").prop("checked", data["ssl"]);
+}
+
+function init_smtp_ff(){
+    var data = {"method": "smtp"};
+    do_ajax('get', '/api/v1/settings/', data, load_smtp);
+}
+
+function load_email(data){
+    $("#notify_ff").form("load", data);
+}
+
+function init_email_ff(name){
+    var data = {"method": "email", "project": name};
+    do_ajax('get', '/api/v1/settings/', data, load_email);
+}
+
+function do_smtp(win_id, ff_id){
+    var data = $("#{0}".lym_format(ff_id)).serializeObject();
+    data["method"] = "smtp";
+
+    do_ajax('post', '/api/v1/settings/', data, do_nop);
+
+    close_win(win_id);
+}
