@@ -15,13 +15,13 @@ import json
 import codecs
 from flask import Flask
 from flask_login import LoginManager
-from flask_mail import Mail
+# from flask_mail import Mail
 from flask_apscheduler import APScheduler
 from auto.configuration import config
 from utils.file import list_dir
 from utils.run import robot_job
 
-mail = Mail()
+# mail = Mail()
 scheduler = APScheduler()
 login_manager = LoginManager()
 login_manager.login_view = 'auto.login'
@@ -80,7 +80,9 @@ def create_app(config_name):
 
     login_manager.init_app(app)
 
-    mail.init_app(app)
+    # mail.init_app(app)
+
+    # app.config["MAIL"] = mail
 
     scheduler.init_app(app)
     scheduler.start()

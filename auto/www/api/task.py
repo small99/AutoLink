@@ -45,7 +45,7 @@ class Task(Resource):
             output = self.app.config["AUTO_HOME"] + "/jobs/%s/%s" % (session['username'], args["project"])
             if category == "project":
                 if not is_run(self.app, args["project"]):
-                    p = multiprocessing.Process(target=robot_run, args=(project, output))
+                    p = multiprocessing.Process(target=robot_run, args=(session["username"], args["project"], project, output))
                     p.start()
                     self.app.config["AUTO_ROBOT"].append({"name": args["project"], "process": p})
                 else:

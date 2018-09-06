@@ -96,6 +96,34 @@
                 </div>
             </div>
             <!-- end -->
+            <!-- edit smtp -->
+            <div id="edit_smtp" class="easyui-window" title="配置SMTP"
+                 data-options="modal:true,closed:true,minimizable:false,maximizable:false,collapsible:false"
+                 style="width:320px;height:290px;padding:10px;">
+                <form id="edit_smtp_ff" method="post">
+                    <div style="margin-bottom:10px">
+                        <input type="checkbox" id="ssl" name="ssl" checked>
+                        <span>启用SSL</span>
+                    </div>
+                    <div style="margin-bottom:10px">
+                        <input class="easyui-textbox" id="server" name="server" label="服务器" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                    <div style="margin-bottom:10px">
+                        <input class="easyui-textbox" id="port" name="port" label="端口" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                    <div style="margin-bottom:10px">
+                        <input class="easyui-textbox" id="username" name="username" label="用户名" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                    <div style="margin-bottom:10px">
+                        <input class="easyui-textbox" id="password" name="password" label="密码" labelPosition="left" style="width:100%" data-options="required:true">
+                    </div>
+                </form>
+                <div style="text-align:right;padding:5px 0">
+                    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="close_win('edit_smtp')" style="width:60px">取消</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="do_smtp('edit_smtp', 'edit_smtp_ff')" style="width:60px">保存</a>
+                </div>
+            </div>
+            <!-- end -->
         </div>
 
 
@@ -119,7 +147,8 @@
         <script type="text/javascript" src="{{ url_for('static', filename='js/auto.js') }}"></script>
         <SCRIPT type="text/javascript">
             $(document).ready(function(){
-               //$('#user_list').datagrid('getPanel').removeClass('lines-both lines-no lines-right lines-bottom').addClass('lines-no');
+                //$('#edit_smtp_ff').form('load','/api/v1/settings?method=smtp');
+
             });
             var toolbar = [
                 {
@@ -178,6 +207,15 @@
                                 }
                             });
                         }
+                    }
+			    }, '-',
+			    {
+			        text:'SMTP',
+                    iconCls:'icon-email',
+                    handler:function(){
+                        init_smtp_ff();
+                        open_win("edit_smtp");
+
                     }
 			    }
 			 ];
