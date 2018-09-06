@@ -51,3 +51,7 @@ AutoLink Web IDE编辑模式截图欣赏
 ![help](./docs/img/keyword_help.png)
 
 ![keyword](./docs/img/double_keyword.png)
+
+邮件通知截图
+
+![email](./docs/img/mail_report.png)
