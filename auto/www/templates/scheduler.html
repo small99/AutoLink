@@ -69,13 +69,32 @@
                         <option value="0 0 1 * * *">每天凌晨1点执行一次(0 0 1 * * *)</option>
                         <option value="0 0 12 * * *">每天12点调度一次(0 0 12 * * *)</option>
                         <option value="0 0 23 * * *">每天23点调度一次(0 0 23 * * *)</option>
-                        <option value="0 0/30 * * * *">每隔30分钟调度一次(0 0/5 * * * *)</option>
+                        <option value="0 0/30 * * * *">每隔30分钟调度一次(0 0/30 * * * *)</option>
                         <option value="0 0 0/1 0 0 6/7">周末每小时调度一次(0 0 0/1 0 0 6/7)</option>
                         <option value="0 0 0/1 0 0 1/5">工作日每小时调度一次(0 0 0/1 0 0 1/5)</option>
                     </select>
                 </div>
                 <div style="text-align:right;margin-bottom:10px">
                     <a href="#" class="easyui-linkbutton" style="width:80px;height:32px" onclick="do_edit();">更新</a>
+                </div>
+            </form>
+        </div>
+        <!-- -->
+        <!-- edit project notifys -->
+        <div id="notify_win" class="easyui-window" title="邮件通知"
+             data-options="iconCls:'icon-notification',collapsible:false,minimizable:false,maximizable:false"
+             style="width:400px;height:210px;padding:10px;">
+            <form id="notify_ff" method="post">
+
+                <div style="margin-bottom:10px">
+                    <input class="easyui-textbox" id="success_list" name="success_list" label="成功列表" labelPosition="left" style="width:100%;height:50px;" data-options="multiline:true">
+                </div>
+                <div style="margin-bottom:10px">
+                    <input class="easyui-textbox" id="fail_list" name="fail_list" label="失败列表" labelPosition="left" style="width:100%;height:50px;" data-options="multiline:true">
+                </div>
+
+                <div style="text-align:right;margin-bottom:10px">
+                    <a href="#" class="easyui-linkbutton" style="width:80px;height:32px" onclick="do_notify_edit();">保存</a>
                 </div>
             </form>
         </div>
@@ -104,6 +123,7 @@
             $(document).ready(function(){
                $('#task_scheduler').datagrid('getPanel').removeClass('lines-both lines-no lines-right lines-bottom').addClass('lines-no');
                $("#cron_win").window('close');
+               $("#notify_win").window('close');
             });
             var toolbar = [
                 {
@@ -167,6 +187,20 @@
                             show_msg("提示信息", "请选择要编辑的项目");
                         }
                     }
+			    }, '-',
+			    {
+			        text:'通知',
+                    iconCls:'icon-notification',
+                    handler:function(){
+                        var row = $('#task_scheduler').datagrid('getSelected');
+                        if(row){
+                            init_email_ff(row["name"]);
+                            open_win("notify_win");
+                        }
+                        else{
+                            show_msg("提示信息", "请选择项目以便编辑其通知");
+                        }
+                    }
 			    }
 			 ];
 
@@ -179,6 +213,21 @@
                     do_msg);
                 $("#task_scheduler").datagrid('reload');
                 close_win("cron_win");
+			}
+
+			function do_notify_edit(){
+			    var row = $('#task_scheduler').datagrid('getSelected');
+			    var data = {
+			        "method": "email",
+			        "project": row["name"],
+			        "success_list": $("#notify_ff input#success_list").textbox('getValue'),
+			        "fail_list": $("#notify_ff input#fail_list").textbox('getValue'),
+			    };
+			    do_ajax('post',
+                    '/api/v1/settings/',
+                    data,
+                    do_msg);
+                close_win("notify_win");
 			}
 
 			function do_view_task(value, row, index){

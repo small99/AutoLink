@@ -24,6 +24,7 @@ AutoLink开源自动化测试集成解决方案.
 - [Python自定义关键字](./docs/如何调用Python自定义库.md)
 - [如何查看关键字详细文档](./docs/如何查看关键字详细文档.md)
 - [查看测试报告](./docs/查看测试报告.md)
+- [配置SMTP及邮件通知](./docs/配置SMTP服务及邮件通知.md)
 
 ## 苦叶子发起
 
@@ -45,8 +46,12 @@ AutoLink Web IDE编辑模式截图欣赏
 
 ![index](./auto/www/static/img/index.png)
 
-![dashboard](./docs/img/dashboard.png)
+![dashboard](./docs/img/dashboard_new.png)
 
 ![help](./docs/img/keyword_help.png)
 
 ![keyword](./docs/img/double_keyword.png)
+
+邮件通知截图
+
+![email](./docs/img/mail_report.png)

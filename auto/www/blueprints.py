@@ -80,6 +80,15 @@ def view_report(project, task):
     return send_file(job_path)
 
 
+@routes.route("/q_view_report/<username>/<project>/<task>")
+def q_view_report(username, project, task):
+    app = current_app._get_current_object()
+
+    job_path = app.config["AUTO_HOME"] + "/jobs/%s/%s/%s/log.html" % (username, project, task)
+
+    return send_file(job_path)
+
+
 @routes.route("/view_img")
 def view_img():
     args = request.args.to_dict()
