@@ -50,8 +50,14 @@ class Task(Resource):
                     self.app.config["AUTO_ROBOT"].append({"name": args["project"], "process": p})
                 else:
                     return {"status": "fail", "msg": "请等待上一个任务完成"}
-            #elif category == "suite":
-            #    pass
+            elif category == "suite":
+                case_path = project + "/%s" % args["suite"]
+                if not is_run(self.app, args["project"]):
+                    p = multiprocessing.Process(target=robot_run, args=(session["username"], args["project"], case_path, output))
+                    p.start()
+                    self.app.config["AUTO_ROBOT"].append({"name": "%s_%s" % (args["project"], args["suite"]), "process": p})
+                else:
+                    return {"status": "fail", "msg": "请等待上一个任务完成"}
             #elif category == "case":
             #    pass
 
