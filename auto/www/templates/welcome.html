@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>AutoLink - 开源优测自动化测试集成解决方案</title>
+
+        <meta name="keywords" content="AutoLink, 开源优测, 苦叶子, web ide"/>
+        <meta name="description" content="A Web-based IDE for Auto Testing using Auto Open Source Testing Framework, do your development anytime, anywhere."/>
+        <meta name="author" content="苦叶子">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/easyui/themes/bootstrap/easyui.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='lib/easyui/themes/icon.css') }}">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/auto.css') }}">
+
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+        <style type="text/css">
+            .lines-no .datagrid-body td{
+                border-right:1px dotted transparent;
+                border-bottom:1px dotted transparent;
+            }
+        </style>
+    </head>
+    <body class="easyui-layout">
+        <div title="欢迎页" style="padding:10px">
+            <p style="font-size:14px">AutoLink开源自动化测试集成解决方案.</p>
+            <ul>
+                <li>AutoLink是RobotFramework的web集成开发环境.</li>
+                <li>AutoLink支持RobotFramework语法高亮，自动提示等功能.</li>
+                <li>AutoLink可以帮助你轻易的构建web自动化测试脚本、HTTP接口自动化测试脚本以及移动自动化测试脚本.</li>
+                <li>AutoLink完美的支持RobotFramework所有的关键字.</li>
+                <li>AutoLink可以直接应用到你的企业实践中，节省框架开发成本.</li>
+                <li>AutoLink是很简单的，但也很容易使用.</li>
+            </ul>
+            <br>
+            <p>苦叶子发起</p>
+            <table>
+                <tr align="center">
+                    <td>
+                        公众号<br><img src="{{ url_for('static', filename='img/公众号.jpg') }}" />
+                    </td>
+                    <td>
+                        读书会<br><img src="{{ url_for('static', filename='img/读书会.png') }}" />
+                    </td>
+                    <td>
+                        开源优测<br><img src="{{ url_for('static', filename='img/开源优测.png') }}" />
+                    </td>
+                    <td>
+                        打赏苦叶子<br><img src="{{ url_for('static', filename='img/赞赏码.png') }}" />
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <p>项目源码</p>
+            <table>
+                <tr align="center">
+                    <td>
+                        <a target="_blank" href="https://github.com/small99">github</a>
+                    </td>
+                    <td>
+                        <a target="_blank" href="https://gitee.com/lym51">码云</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <script src="{{ url_for('static', filename='lib/easyui/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='lib/easyui/jquery.easyui.min.js') }}"></script>
+        <!-- 自定义js库 -->
+        <script type="text/javascript" src="{{ url_for('static', filename='js/auto.js') }}"></script>
+    </body>
+    <SCRIPT type="text/javascript">
+
+
+        </SCRIPT>
+</html>

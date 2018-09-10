@@ -100,3 +100,7 @@ def view_img():
 
     return False
 
+
+@routes.route("/welcome")
+def welcome():
+    return render_template("welcome.html")
