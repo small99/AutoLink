@@ -46,7 +46,7 @@ AutoLink Web IDE编辑模式截图欣赏
 
 ![index](./auto/www/static/img/index.png)
 
-![dashboard](./docs/img/dashboard.png)
+![dashboard](./docs/img/dashboard_new.png)
 
 ![help](./docs/img/keyword_help.png)
 
