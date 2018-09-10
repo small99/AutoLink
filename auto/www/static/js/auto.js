@@ -134,8 +134,19 @@ function do_task_list(){
     }
 }
 
+function do_in_array(str, array){
+    for(a in array){
+        if(array[a] == str){
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function onDblClick(node) {
     var category = node.attributes.category;
+    var steps = new Array("library", "variable", "step", "user_keyword");
     if(category == "case"){
         var suite = $('#project_tree').tree('getParent', node.target);
         var project = $('#project_tree').tree('getParent', suite.target);
@@ -144,6 +155,29 @@ function onDblClick(node) {
             suite.attributes['name'],
             node.attributes['name'],
             node.attributes['splitext']
+            ), "icon-editor");
+    }
+    else if(do_in_array(category, steps)){
+        var testcase = $('#project_tree').tree('getParent', node.target);
+        var suite = $('#project_tree').tree('getParent', testcase.target);
+        var project = $('#project_tree').tree('getParent', suite.target);
+        addTab(testcase.attributes['name'], '/editor/{0}/{1}/{2}{3}'.lym_format(
+            project.attributes['name'],
+            suite.attributes['name'],
+            testcase.attributes['name'],
+            testcase.attributes['splitext']
+            ), "icon-editor");
+    }
+    else if(category == "keyword"){
+        var step = $('#project_tree').tree('getParent', node.target);
+        var testcase = $('#project_tree').tree('getParent', step.target);
+        var suite = $('#project_tree').tree('getParent', testcase.target);
+        var project = $('#project_tree').tree('getParent', suite.target);
+        addTab(testcase.attributes['name'], '/editor/{0}/{1}/{2}{3}'.lym_format(
+            project.attributes['name'],
+            suite.attributes['name'],
+            testcase.attributes['name'],
+            testcase.attributes['splitext']
             ), "icon-editor");
     }
 }
@@ -214,6 +248,7 @@ function onBeforeExpand(node){
             param.suite = suite.attributes.name;
             var project = $("#project_tree").tree('getParent', suite.target);
             param.project = project.attributes.name;
+            param.splitext = node.attributes.splitext;
         }
     }
 }
