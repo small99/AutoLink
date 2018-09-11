@@ -122,59 +122,13 @@
         -->
         <div data-options="region:'center'">
             <div id="editor_tabs" class="easyui-tabs" style="width:100%;height:100%">
-                <div title="欢迎页" style="padding:10px">
-                    <p style="font-size:14px">AutoLink开源自动化测试集成解决方案.</p>
-                    <ul>
-                        <li>AutoLink是RobotFramework的web集成开发环境.</li>
-                        <li>AutoLink支持RobotFramework语法高亮，自动提示等功能.</li>
-                        <li>AutoLink可以帮助你轻易的构建web自动化测试脚本、HTTP接口自动化测试脚本以及移动自动化测试脚本.</li>
-                        <li>AutoLink完美的支持RobotFramework所有的关键字.</li>
-                        <li>AutoLink可以直接应用到你的企业实践中，节省框架开发成本.</li>
-                        <li>AutoLink是很简单的，但也很容易使用.</li>
-                    </ul>
-                    <br>
-                    <p>苦叶子发起</p>
-                    <table>
-                        <tr align="center">
-                            <td>
-                                公众号<br><img src="{{ url_for('static', filename='img/公众号.jpg') }}" />
-                            </td>
-                            <td>
-                                读书会<br><img src="{{ url_for('static', filename='img/读书会.png') }}" />
-                            </td>
-                            <td>
-                                开源优测<br><img src="{{ url_for('static', filename='img/开源优测.png') }}" />
-                            </td>
-                        </tr>
-                        <tr align="center">
-                            <td>
-                                打赏苦叶子<br><img src="{{ url_for('static', filename='img/赞赏码.png') }}" />
-                            </td>
-                        </tr>
-                    </table>
-                    <br>
-                    <p>项目源码</p>
-                    <table>
-                        <tr align="center">
-                            <td>
-                                <a target="_blank" href="https://github.com/small99">github</a>
-                            </td>
-                            <td>
-                                <a target="_blank" href="https://gitee.com/lym51">码云</a>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <!--
-                <div title="调度管理" style="padding:10px" data-options="iconCls:'icon-task-list'">
 
-                </div>
-                -->
             </div>
 
         </div>
 
         <div id="root_menu" class="easyui-menu" style="width:160px;">
+            <div onclick="addTab('欢迎页', '/welcome', 'icon-workspace');" data-options="iconCls:'icon-workspace'">欢迎页</div>
             <div onclick="manage_project('create_project', 'create_project_ff', 'create')" data-options="iconCls:'icon-project'">创建项目</div>
             <div class="menu-sep"></div>
             <div onclick="expand()" data-options="iconCls:'icon-expand'">展开</div>
@@ -204,8 +158,8 @@
             <div onclick="manage_file('create_file', 'create_file_ff', 'create')">创建文件</div>
             <div onclick="open_win('upload_win');">上传文件</div>
             <div class="menu-sep"></div>
-            <!--<div onclick="do_run();" data-options="iconCls:'icon-run'">运行</div>
-            <div class="menu-sep"></div>-->
+            <div onclick="do_run();" data-options="iconCls:'icon-run'">运行</div>
+            <div class="menu-sep"></div>
             <div onclick="manage_suite('edit_suite', 'edit_suite_ff', 'edit')">重命名</div>
             <div onclick="delete_suite()" data-options="iconCls:'icon-remove'">删除</div>
             <div class="menu-sep"></div>
@@ -215,7 +169,8 @@
         <div id="case_menu" class="easyui-menu" style="width:160px;">
             <div onclick="do_open_editor();">打开</div>
             <div onclick="do_download('download_ff');">下载</div>
-            <!--<div onclick="do_run();" data-options="iconCls:'icon-run'">运行</div>-->
+            <div class="menu-sep"></div>
+            <div onclick="do_run();" data-options="iconCls:'icon-run'">运行</div>
             <div class="menu-sep"></div>
             <div onclick="manage_file('edit_file', 'edit_file_ff', 'edit')">重命名</div>
             <div onclick="delete_file()" data-options="iconCls:'icon-remove'">删除</div>
@@ -353,7 +308,8 @@
         <script type="text/javascript" src="{{ url_for('static', filename='js/auto.js') }}"></script>
     </body>
     <SCRIPT type="text/javascript">
-
-
-        </SCRIPT>
+        $(function () {
+            addTab("欢迎页", "/welcome", "icon-workspace");
+        });
+    </SCRIPT>
 </html>

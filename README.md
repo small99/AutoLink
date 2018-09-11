@@ -8,6 +8,7 @@ AutoLink开源自动化测试集成解决方案.
 - AutoLink完美的支持RobotFramework所有的关键字.
 - AutoLink可以直接应用到你的企业实践中，节省框架开发成本.
 - AutoLink是很简单的，但也很容易使用.
+- AutoLink支持项目级、套件级、用例级运行
 
 ## 用户指南
 
