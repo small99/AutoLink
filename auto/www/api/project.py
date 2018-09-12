@@ -207,7 +207,7 @@ def get_project_list(app, username):
         if len(projects) > 1:
             projects.sort()
 
-            return projects
+        return projects
 
     return []
 
