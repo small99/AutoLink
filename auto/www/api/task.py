@@ -96,11 +96,11 @@ class TaskList(Resource):
 
     def post(self):
         args = self.parser.parse_args()
+        job_id = "%s_%s" % (session["username"], args["name"])
         if args["method"] == "query":
             return get_all_task(self.app)
         elif args["method"] == "start":
             result = {"status": "success", "msg": "调度启动成功"}
-            job_id = "%s_%s" % (session["username"], args["name"])
             lock = threading.Lock()
             lock.acquire()
             job = scheduler.get_job(job_id)
@@ -129,14 +129,14 @@ class TaskList(Resource):
             lock.acquire()
             job = scheduler.get_job(job_id)
             if job:
-                scheduler.remove_job(id="%s_%s" % (session["username"], args["name"]))
+                scheduler.remove_job(id=job_id)
             lock.release()
             return {"status": "success", "msg": "停止调度成功"}
         elif args["method"] == "edit":
 
             result = edit_cron(self.app, args["name"], args["cron"])
             if result:
-                job_id = "%s_%s" % (session["username"], args["name"])
+                # job_id = "%s_%s" % (session["username"], args["name"])
                 lock = threading.Lock()
                 lock.acquire()
                 job = scheduler.get_job(job_id)
