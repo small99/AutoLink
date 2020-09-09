@@ -37,9 +37,9 @@ AutoLink开源自动化测试集成解决方案.
 
 - 觉得AutoLink还不错的话，可以打赏一杯咖啡，谢谢
 
-公众号|读书会|知识星球|赞赏码
----|---|---|---
-![公众号](./auto/www/static/img/公众号.jpg)|![读书会](./auto/www/static/img/读书会.png)|![知识星球](./auto/www/static/img/开源优测.png)|![赞赏码](./auto/www/static/img/赞赏码.png)
+公众号
+
+![公众号](./auto/www/static/img/公众号.jpg)
 
 ## 截图
 
