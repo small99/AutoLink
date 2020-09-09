@@ -1,5 +1,5 @@
 Flask_Login==0.2.11
-Flask==0.11
+Flask==1.0
 Flask_SSLify==0.1.5
 Flask_APScheduler==1.8.0
 Flask_RESTful==0.3.6
