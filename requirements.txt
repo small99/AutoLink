@@ -9,7 +9,7 @@ APScheduler==3.5.1
 python_dateutil==2.7.3
 Appium-Python-Client==0.26
 Jinja2==2.8
-requests==2.18.4
+requests==2.20.0
 robotframework==3.0.3
 robotframework-appiumlibrary==1.4.6
 robotframework-requests==0.4.7
