@@ -10,6 +10,7 @@ Email: lymking@foxmail.com
 
 """
 import sys
+import os
 import codecs
 from flask import current_app, session, url_for
 from flask_mail import Mail, Message
@@ -141,7 +142,7 @@ def is_run(app, name):
 
 
 def send_robot_report(username, name, task_no, result, output):
-    app = current_app._get_current_object()
+    # app = current_app._get_current_object()
     build_msg = "<font color='green'>Success</font>"
     if result.statistics.total.critical.failed != 0:
         build_msg = "<font color='red'>Failure</font>"
@@ -172,7 +173,10 @@ def send_robot_report(username, name, task_no, result, output):
     msg["Subject"] = Header("AutoLink通知消息", "utf-8")
 
     try:
-        user_path = app.config["AUTO_HOME"] + "/users/%s/config.json" % session["username"]
+        auto_home = os.getcwd().replace('\\', '/') + '/.beats'
+
+        #user_path = app.config["AUTO_HOME"] + "/users/%s/config.json" % session["username"]
+        user_path = auto_home + "/users/%s/config.json" % session["username"]
         user_conf = json.load(codecs.open(user_path, 'r', 'utf-8'))
         for p in user_conf["data"]:
             if p["name"] == name:
@@ -182,7 +186,8 @@ def send_robot_report(username, name, task_no, result, output):
                     msg["To"] = p["success_list"]
                 break
 
-        conf_path = app.config["AUTO_HOME"] + "/auto.json"
+        # conf_path = app.config["AUTO_HOME"] + "/auto.json"
+        conf_path = auto_home + "/auto.json"
         config = json.load(codecs.open(conf_path, 'r', 'utf-8'))
         msg["From"] = config["smtp"]["username"]
         if config["smtp"]["ssl"]:
