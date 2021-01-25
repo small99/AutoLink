@@ -147,11 +147,12 @@ def send_robot_report(username, name, task_no, result, output):
     if result.statistics.total.critical.failed != 0:
         build_msg = "<font color='red'>Failure</font>"
 
-    report_url = url_for("routes.q_view_report",
-                         _external=True,
-                         username=username,
-                         project=name,
-                         task=task_no)
+    #report_url = url_for("routes.q_view_report",
+    #                     _external=True,
+    #                     username=username,
+    #                     project=name,
+    #                     task=task_no)
+    report_url = "/q_view_report/%s/%s/%s" % (username, name, task_no)
     msg = MIMEText("""Hello, %s<hr>
                 项目名称：%s<hr>
                 构建编号: %s<hr>
