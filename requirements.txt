@@ -8,7 +8,7 @@ Werkzeug==0.14.1
 APScheduler==3.5.1
 python_dateutil==2.7.3
 Appium-Python-Client==0.26
-Jinja2==2.8
+Jinja2==2.11.3
 requests==2.18.4
 robotframework==3.0.3
 robotframework-appiumlibrary==1.4.6
